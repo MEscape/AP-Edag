@@ -1,0 +1,86 @@
+\babel@toc {ngerman}{}\relax 
+\contentsline {chapter}{Inhaltsverzeichnis}{2}{}%
+\contentsline {chapter}{Abbildungsverzeichnis}{3}{}%
+\contentsline {chapter}{Tabellenverzeichnis}{4}{}%
+\contentsline {chapter}{\numberline {1}Einleitung}{1}{}%
+\contentsline {section}{\numberline {1.1}Projektumfeld}{1}{}%
+\contentsline {section}{\numberline {1.2}Projektziel}{2}{}%
+\contentsline {section}{\numberline {1.3}Projektbegründung}{2}{}%
+\contentsline {section}{\numberline {1.4}Projektschnittstellen}{3}{}%
+\contentsline {subsection}{\numberline {1.4.1}Personelle Schnittstellen}{3}{}%
+\contentsline {subsection}{\numberline {1.4.2}Organisatorische Schnittstellen}{3}{}%
+\contentsline {subsection}{\numberline {1.4.3}Wirtschaftliche Schnittstellen}{3}{}%
+\contentsline {subsection}{\numberline {1.4.4}Technische Schnittstellen}{3}{}%
+\contentsline {section}{\numberline {1.5}Projektabgrenzung}{3}{}%
+\contentsline {chapter}{\numberline {2}Analysephase}{5}{}%
+\contentsline {section}{\numberline {2.1}Projektphasen mit Zeitplanung}{5}{}%
+\contentsline {section}{\numberline {2.2}Ressourcenplanung}{5}{}%
+\contentsline {subsubsection}{Hardware}{5}{}%
+\contentsline {subsubsection}{Software}{6}{}%
+\contentsline {subsubsection}{Personal}{6}{}%
+\contentsline {section}{\numberline {2.3}Kostenplanung und Kalkulation}{6}{}%
+\contentsline {section}{\numberline {2.4}Make-or-Buy-Entscheidung}{7}{}%
+\contentsline {section}{\numberline {2.5}Amortisationsrechnung}{7}{}%
+\contentsline {subsection}{\numberline {2.5.1}Ausgangsdaten}{8}{}%
+\contentsline {subsection}{\numberline {2.5.2}Grafische Darstellung der Amortisation}{9}{}%
+\contentsline {section}{\numberline {2.6}Ist-Analyse}{9}{}%
+\contentsline {chapter}{\numberline {3}Projektplanung}{11}{}%
+\contentsline {section}{\numberline {3.1}Vorgehensmodell}{11}{}%
+\contentsline {subsection}{\numberline {3.1.1}Entwurf der Benutzeroberfläche}{11}{}%
+\contentsline {subsection}{\numberline {3.1.2}Architekturdesign}{11}{}%
+\contentsline {subsection}{\numberline {3.1.3}Anwendungsfälle}{13}{}%
+\contentsline {subsection}{\numberline {3.1.4}Datenmodell}{13}{}%
+\contentsline {subsection}{\numberline {3.1.5}Geschäftslogik}{13}{}%
+\contentsline {subsection}{\numberline {3.1.6}Maßnahmen zur Qualitätssicherung}{14}{}%
+\contentsline {subsection}{\numberline {3.1.7}Lokale Entwicklungsumgebung}{14}{}%
+\contentsline {chapter}{\numberline {4}Projektdurchführung}{15}{}%
+\contentsline {section}{\numberline {4.1}Aufsetzen des Projekts}{15}{}%
+\contentsline {subsection}{\numberline {4.1.1}Docker-Compose-Konfiguration}{15}{}%
+\contentsline {subsection}{\numberline {4.1.2}Keycloak-Konfiguration und Realm-Import}{16}{}%
+\contentsline {section}{\numberline {4.2}Implementierung der Domäne}{16}{}%
+\contentsline {subsection}{\numberline {4.2.1}Domain-Modelle als POJOs}{16}{}%
+\contentsline {subsection}{\numberline {4.2.2}JPA-Entities für Persistierung}{17}{}%
+\contentsline {subsection}{\numberline {4.2.3}Automatische Schema-Generierung}{17}{}%
+\contentsline {section}{\numberline {4.3}Implementierung der Geschäftslogik}{17}{}%
+\contentsline {subsection}{\numberline {4.3.1}Repository-Interfaces}{17}{}%
+\contentsline {subsection}{\numberline {4.3.2}Service-Klassen}{18}{}%
+\contentsline {subsection}{\numberline {4.3.3}Data Transfer Objects (DTOs)}{18}{}%
+\contentsline {subsection}{\numberline {4.3.4}REST-Controller}{19}{}%
+\contentsline {section}{\numberline {4.4}Implementierung der Benutzeroberfläche}{19}{}%
+\contentsline {subsection}{\numberline {4.4.1}Projektstruktur und Komponenten}{19}{}%
+\contentsline {subsection}{\numberline {4.4.2}UI-Komponenten und Styling}{19}{}%
+\contentsline {subsection}{\numberline {4.4.3}Grafische Raumvisualisierung mit React Konva}{20}{}%
+\contentsline {subsection}{\numberline {4.4.4}API-Integration und State Management}{20}{}%
+\contentsline {subsection}{\numberline {4.4.5}Internationalisierung}{20}{}%
+\contentsline {subsection}{\numberline {4.4.6}Fehlerbehandlung und Benutzerfreundlichkeit}{20}{}%
+\contentsline {section}{\numberline {4.5}Testen der Anwendung}{21}{}%
+\contentsline {subsection}{\numberline {4.5.1}Unit-Tests}{21}{}%
+\contentsline {subsection}{\numberline {4.5.2}API-Tests}{21}{}%
+\contentsline {subsection}{\numberline {4.5.3}Frontend-Tests}{21}{}%
+\contentsline {section}{\numberline {4.6}Dokumentation}{22}{}%
+\contentsline {section}{\numberline {4.7}Deployment und Abnahme}{22}{}%
+\contentsline {section}{\numberline {4.8}Retrospektive}{22}{}%
+\contentsline {section}{\numberline {4.9}Soll-/Ist-Vergleich}{22}{}%
+\contentsline {section}{\numberline {4.10}Ausblick}{22}{}%
+\contentsline {section}{\numberline {4.11}Fazit}{23}{}%
+\contentsline {subsection}{\numberline {4.11.1}Zielerreichung}{23}{}%
+\contentsline {subsection}{\numberline {4.11.2}Technische Bewertung}{23}{}%
+\contentsline {subsection}{\numberline {4.11.3}Schlusswort}{23}{}%
+\contentsline {chapter}{\numberline {A}Anhänge}{24}{}%
+\contentsline {section}{\numberline {A.1}Datenbankentwurf (ER-Diagramme)}{24}{}%
+\contentsline {section}{\numberline {A.2}UML-Diagramme}{24}{}%
+\contentsline {subsection}{\numberline {A.2.1}Use-Case-Diagramme}{24}{}%
+\contentsline {subsubsection}{Use-Case-Diagramm: Benutzer}{24}{}%
+\contentsline {subsubsection}{Use-Case-Diagramm: Raumadministrator}{24}{}%
+\contentsline {subsubsection}{Use-Case-Diagramm: Systemadministrator}{24}{}%
+\contentsline {subsection}{\numberline {A.2.2}Aktivitätsdiagramme}{24}{}%
+\contentsline {subsection}{\numberline {A.2.3}Komponentendiagramme}{24}{}%
+\contentsline {subsubsection}{Architektur-Komponentendiagramm}{24}{}%
+\contentsline {section}{\numberline {A.3}Screenshots der Benutzeroberfläche}{24}{}%
+\contentsline {subsection}{\numberline {A.3.1}Login und Authentifizierung}{24}{}%
+\contentsline {subsection}{\numberline {A.3.2}Dashboard und Übersicht}{25}{}%
+\contentsline {subsection}{\numberline {A.3.3}Raum-Detailansicht und Arbeitsplatzbuchung}{25}{}%
+\contentsline {subsection}{\numberline {A.3.4}Buchungsverwaltung}{25}{}%
+\contentsline {subsection}{\numberline {A.3.5}Anwesenheitsverwaltung}{25}{}%
+\contentsline {subsection}{\numberline {A.3.6}Administrationsbereich}{26}{}%
+\contentsline {subsection}{\numberline {A.3.7}System-Administration}{26}{}%

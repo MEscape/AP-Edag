@@ -1,0 +1,110 @@
+@startuml sequence_error_handling
+' Sequenzdiagramm: Fehlerbehandlung und Token-Refresh
+' Zeigt 401 Unauthorized, Token Refresh und Error Recovery
+
+title Sequenzdiagramm - Fehlerbehandlung & Token Refresh
+
+actor Benutzer
+participant "Browser\n(React)" as Browser
+participant "Redux\n(RTK Query)" as Redux
+participant "Next.js\nAPI Route" as NextAuth
+participant "Keycloak" as Keycloak
+participant "Backend API" as Backend
+database "PostgreSQL" as DB
+
+== Normale API-Anfrage ==
+Benutzer -> Browser: Interaktion im Dashboard
+Browser -> Redux: API Request
+Redux -> Backend: GET /v1/profiles/me\n(Authorization: Bearer {expired_token})
+
+== Token-Validierung im Backend ==
+Backend -> Backend: OAuth2ResourceServerConfigurer\n.opaqueToken().introspectionUri()
+Backend -> Keycloak: POST /token/introspect\n{token: {access_token}}
+
+alt Token ist abgelaufen
+  Keycloak --> Backend: {active: false}
+  Backend --> Redux: 401 Unauthorized\n{error: "Token expired"}
+  
+  == Automatischer Token Refresh ==
+  Redux -> Redux: baseQueryWithLocale:\nError Status === 401
+  Redux -> NextAuth: Token Refresh erforderlich
+  NextAuth -> NextAuth: jwt callback:\nCheck token expiry
+  
+  NextAuth -> Keycloak: POST /token\n{grant_type: refresh_token,\nrefresh_token: {refresh_token}}
+  
+  alt Refresh Token gültig
+    Keycloak --> NextAuth: New Access Token, Refresh Token
+    NextAuth -> NextAuth: Update Session\n(neue Tokens)
+    
+    NextAuth -> Keycloak: GET /userinfo\n(Authorization: Bearer {new_token})
+    Keycloak --> NextAuth: Updated User Info\n(mit aktuellen Rollen)
+    
+    NextAuth --> Redux: Session aktualisiert
+    
+    == Retry Original Request ==
+    Redux -> Backend: GET /v1/profiles/me\n(Authorization: Bearer {new_token})
+    Backend -> Keycloak: POST /token/introspect\n{token: {new_token}}
+    Keycloak --> Backend: {active: true, ...}
+    Backend -> DB: SELECT * FROM employee_profiles...
+    DB --> Backend: Profile Data
+    Backend --> Redux: 200 OK (Profile)
+    Redux --> Browser: Daten anzeigen
+    Browser --> Benutzer: Erfolg (transparent)
+    
+  else Refresh Token ungültig/abgelaufen
+    Keycloak --> NextAuth: 400 Bad Request\n{error: "invalid_grant"}
+    NextAuth -> NextAuth: jwt callback:\nSet token.error = "RefreshAccessTokenError"
+    
+    == Automatisches Sign-Out ==
+    NextAuth -> Redux: signOut({redirect: true, callbackUrl: '/'})
+    Redux --> Browser: Session beendet
+    Browser --> Benutzer: Weiterleitung zu Login-Seite\n"Sitzung abgelaufen"
+  end
+  
+else Token ist gültig, aber andere Fehler
+  Keycloak --> Backend: {active: true}
+  Backend -> DB: SELECT * FROM employee_profiles\nWHERE user_id = ?
+  
+  alt Profil nicht gefunden
+    DB --> Backend: No rows
+    Backend --> Redux: 404 Not Found\n{message: "Profile not found"}
+    Redux --> Browser: Error State
+    Browser --> Benutzer: "Profil nicht gefunden"
+    
+  else Datenbankfehler
+    DB --> Backend: SQLException
+    Backend -> Backend: GlobalExceptionHandler\n.handleGenericException()
+    Backend --> Redux: 500 Internal Server Error\n{message: "An unexpected error occurred"}
+    Redux --> Browser: Error State
+    Browser --> Benutzer: "Ein Fehler ist aufgetreten.\nBitte versuchen Sie es später erneut."
+    
+  else Autorisierungsfehler
+    Backend -> Backend: User versucht fremdes Profil zu bearbeiten
+    Backend -> Backend: authorizationUtils.validateUserAccess()
+    Backend --> Redux: 403 Forbidden\n{message: "Access denied"}
+    Redux --> Browser: Error State
+    Browser --> Benutzer: "Sie haben keine Berechtigung\nfür diese Aktion"
+  end
+end
+
+== Validation Error (Client-Side) ==
+alt Client-seitige Validierung
+  Benutzer -> Browser: Ungültige Eingabe\n(z.B. Score > 100)
+  Browser -> Browser: Zod Schema Validation
+  Browser --> Benutzer: Formular-Fehler anzeigen\n(ohne API-Call)
+end
+
+== Network Error ==
+alt Netzwerkfehler
+  Redux -> Backend: API Request
+  Backend -x Redux: Connection Timeout/Network Error
+  Redux -> Redux: RTK Query Error Handler
+  Redux --> Browser: Network Error State
+  Browser --> Benutzer: "Netzwerkfehler.\nBitte prüfen Sie Ihre Verbindung."
+  
+  Browser -> Browser: Retry Button anzeigen
+  Benutzer -> Browser: Klick auf "Wiederholen"
+  Browser -> Redux: Retry Request
+end
+
+@enduml

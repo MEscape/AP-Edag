@@ -1,0 +1,285 @@
+% ==========================================
+% PROJEKTDURCHFÜHRUNG
+% ==========================================
+\chapter{Projektdurchführung}
+
+\section{Entwicklungsumgebung}
+
+Die Entwicklungsumgebung wurde containerisiert mit Rancher Desktop\cite{rancher_docs} für Kubernetes\cite{kubernetes_docs}-Support aufgesetzt. Als \glspl{ide} kamen IntelliJ IDEA (Backend) und WebStorm (Frontend)\cite{intellij_docs,webstorm_docs} zum Einsatz. Als KI-gestütztes Entwicklungs-Hilfsmittel wurde GitHub Copilot\cite{github_copilot} eingesetzt, das sowohl beim Schreiben von Code als auch bei der Codebase-Analyse unterstützte und dadurch die Entwicklungsgeschwindigkeit signifikant erhöhte.
+
+\textbf{Lokale Services} (Kubernetes Namespace \texttt{skill-management-system-dev}):
+\begin{itemize}[noitemsep]
+    \item PostgreSQL 15\cite{postgresql_docs} (StatefulSet mit persistentem Volume)
+    \item Keycloak 23\cite{keycloak_docs} (Realm \texttt{skill-management})
+    \item Backend/Frontend lokal für Hot-Reload
+\end{itemize}
+
+Versionsverwaltung erfolgte über Bitbucket\cite{bitbucket_docs} mit Git-Flow-Strategie (\texttt{main}, \texttt{feat/*}-Branches). Das Mono-Repository enthält Backend (Spring Boot\cite{spring_boot_docs}), Frontend (Next.js\cite{nextjs_docs}), Webhook-Extension (Keycloak\cite{keycloak_docs}) und Kubernetes-Konfigurationen. \\
+Die vollständige Repository-Struktur ist im Anhang, Listing~\ref{lst:repo_structure_detail}, dokumentiert. Die Commit-Historie folgt Conventional Commits-Konventionen\cite{conventionalcommits} mit Commit Lint (siehe Abbildung~\ref{fig:commits} im Anhang).
+
+\section{Datenbankdesign und -implementierung}
+
+\subsection{Datenmodell}
+
+Das Datenmodell wurde in 3. Normalform nach relationalen Designprinzipien 
+entworfen\cite{database_design}. Die Datenbank umfasst 14 Tabellen 
+(\texttt{users}, \texttt{employee\_profiles}, \texttt{skills}, 
+\newline\texttt{skill\_categories}, \texttt{projects} etc.) und nutzt 
+\textit{Flyway}-Migrationen für die Versionskontrolle. Das ER-Diagramm (Abbildung~\ref{fig:erd}) zeigt die Kerneinheiten des Systems mit ihren Primär- und Fremdschlüsseln für einen schnellen strukturellen Überblick, während das vollständige Datenbank-Schema (Abbildung~\ref{fig:db_screenshot}) im Anhang (Abschnitt~A.10) alle Tabellen, Attribute und Relationen detailliert darstellt. \\
+
+Kernbeziehungen:
+\begin{itemize}[noitemsep, topsep=2pt]
+    \item \texttt{users} \;1:1\; \texttt{employee\_profiles} (Profildaten)
+    \item n:m \texttt{employee\_skills} (Skill-Zuordnungen mit 
+          Proficiency 0--100)
+    \item n:m \texttt{project\_members} (Team-Zusammensetzungen)
+\end{itemize}
+
+Eine automatisierte Tabelle \texttt{user\_statistics} aggregiert 
+Echtzeit-Metriken über \\ Database-Trigger.
+
+\subsection{Datenbank-Migration mit Flyway}
+
+Für das Datenbankschema-Management wurde Flyway\cite{flyway_docs} eingesetzt. Alle Schemaänderungen sind als versionierte SQL-Migrationsskripte dokumentiert (V1--V15). Dies gewährleistet reproduzierbare Deployments und nachvollziehbare Schemaänderungen über den gesamten Entwicklungszyklus.
+
+Die 15 Migrationen decken folgende Bereiche ab:
+\begin{itemize}[noitemsep]
+    \item \textbf{V1--V4}: Basis-Tabellen (users, skills, projects, analytics)
+    \item \textbf{V5--V8}: Trigger für Timestamps, Statistiken und Audit-Logging
+    \item \textbf{V9}: Initial-Daten (200+ Skills, 55+ Positionen, 30 Standorte)
+    \item \textbf{V10--V13}: Refactoring (Auto-Profile-Init, Project-Members, Team-Size)
+    \item \textbf{V14--V15}: Role-Requests und erweiterte Activity-Logs
+\end{itemize}
+
+Indizes wurden strategisch auf Suchspalten (email, username) und alle Foreign Keys gesetzt. PL/pgSQL-Trigger wurden implementiert, die bei Änderungen automatisch Statistiken und Audit-Logs aktualisieren:
+
+\begin{itemize}[noitemsep]
+    \item \texttt{user\_statistics}: Echtzeit-Berechnung von total\_skills, average\_skill\_score, active\_projects (V6)
+    \item \texttt{activities}: Immutable Audit-Log für 30+ Event-Typen (SKILL\_ADDED, PROJECT\_CREATED, ROLE\_REQUEST\_APPROVED etc.) (V7, V15)
+    \item \texttt{skill\_development}: Monatliche Snapshots für Entwicklungs-Tracking (V8)
+    \item \texttt{projects.team\_size}: Automatische Berechnung basierend auf project\_members (V12)
+\end{itemize}
+
+Auszüge der SQL-Migrationsskripte (V1–V15) sind im Anhang dokumentiert (siehe Tabelle~\ref{tab:db_migrations}).
+
+\section{Backend-Implementierung}
+
+\subsection{Architektur}
+
+Das Backend folgt dem Prinzip der Hexagonalen Architektur (Ports \& Adapters)\cite{hexagonal_architecture}, um eine klare Trennung zwischen Geschäftslogik und technischen Details zu erreichen. Die Implementierung basiert auf Spring Boot 3.5.7 mit Java 25\cite{spring_boot_docs}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    scale=0.9,
+    every node/.style={transform shape},
+    layer/.style={rectangle, draw, minimum width=3cm, minimum height=1.2cm, font=\small, align=center},
+]
+
+% Hexagon (Domain)
+\draw[thick, fill=EDAGDunkelgrau!20] (0,0) 
+    -- (1.5,0.9) 
+    -- (3,0) 
+    -- (3,-1.8) 
+    -- (1.5,-2.7) 
+    -- (0,-1.8) 
+    -- cycle;
+\node[font=\small\bfseries] at (1.5,-0.35) {Domain};
+\node[font=\scriptsize, align=center] at (1.5,-1.2) {Models (Records)\\Port Interfaces\\Exceptions};
+
+% Application Layer
+\node[layer, fill=green!20] (app) at (1.5,-5) {Application\\Service Impl\\@Transactional};
+
+% Adapter außen
+\node[layer, fill=blue!20] (rest) at (6,-1.35) {Infrastructure\\REST Controllers\\DTOs};
+\node[layer, fill=orange!20] (jpa) at (-3,-1.35) {Infrastructure\\JPA Repos\\Entities};
+\node[layer, fill=yellow!20] (keycloak) at (1.5,2) {Infrastructure\\Keycloak Client};
+
+% Verbindungen
+\draw[->, thick] (rest) -- (3,-1.35);
+\draw[->, thick] (0,-1.35) -- (jpa);
+\draw[->, thick] (1.5,0.9) -- (keycloak);
+\draw[->, thick] (app) -- (1.5,-2.7);
+\draw[->, thick] (rest) -- (app);
+\draw[->, thick] (app) -- (jpa);
+
+\end{tikzpicture}
+\caption{Hexagonale Architektur des Backend-Systems}
+\label{fig:hexagonal}
+\end{figure}
+
+\subsection{Schichtenaufteilung}
+
+\paragraph{Domain-Schicht:}
+Enthält die fachliche Kernlogik als immutable Java Records. Zentrale Klassen sind \texttt{User}, \texttt{Employee}, \texttt{ProfileSkill}, \texttt{Project} sowie Port-Interfaces wie \texttt{ProfileService} oder \texttt{EmployeeDiscoveryService}. Die im Anhang dargestellte Klassendiagramm-Übersicht (Abbildung~\ref{fig:domain_model_core}) visualisiert die wichtigsten Bestandteile der Domain, ohne jedoch sämtliche Details abzubilden.
+
+\paragraph{Application-Schicht:}
+Implementiert die Service-Interfaces und orchestriert die Geschäftslogik. So realisiert etwa \texttt{EmployeeDiscoveryServiceImpl} die Mitarbeitersuche unter Verwendung von \texttt{@Transactional}-Management und dynamischen JPA Specifications. Der Suchablauf ist im Aktivitätsdiagramm (Anhang, Abbildung~\ref{fig:employee_search_activity}) dargestellt, während der vollständige Request-Flow über alle Architekturschichten hinweg im Sequenzdiagramm (Anhang, Abbildung~\ref{fig:employee_search_sequence}) visualisiert wird.
+
+\paragraph{Infrastructure-Schicht:}
+Implementiert die technischen Schnittstellen:
+\begin{itemize}
+    \item \textbf{REST-Controller} (\texttt{infrastructure.web}): REST-Endpunkte mit Spring Web
+    \item \textbf{JPA-Repositories} (\texttt{infrastructure.persistence}): Datenbankzugriff über Spring Data JPA mit \gls{orm}-basierten Entities sowie dynamischen Abfragen mittels JPA Specifications
+    \item \textbf{Keycloak-Client} (\texttt{infrastructure.security}): User-Synchronisation via Keycloak Admin API
+\end{itemize}
+
+\subsection{Zentrale API-Endpunkte}
+
+Die \gls{rest}-\gls{api}\cite{rest_api_design} folgt den RESTful-Prinzipien und ist vollständig mittels OpenAPI~3.0\cite{openapi_docs} dokumentiert. Insgesamt umfasst das System über 30 Endpunkte, die in sieben funktionale Bereiche gegliedert sind:
+
+\begin{itemize}
+    \item \textbf{Profilverwaltung} (\texttt{/v1/profiles})
+    \item \textbf{Mitarbeitersuche} (\texttt{/v1/employees})
+    \item \textbf{Projektverwaltung} (\texttt{/v1/projects}, \texttt{/v1/management/projects})
+    \item \textbf{Rollenanfragen} (\texttt{/v1/role-requests})
+    \item \textbf{Analytics} (\texttt{/v1/analytics})
+    \item \textbf{Stammdatenverwaltung} (\texttt{/v1/options})
+    \item \textbf{Administration} (\texttt{/v1/admin})
+\end{itemize}
+
+Eine vollständige Übersicht sämtlicher Endpunkte inklusive HTTP-Methoden, Beschreibungen und Rollenberechtigungen befindet sich im Anhang (Abschnitt~\ref{sec:api_documentation}, Tabelle~\ref{tab:api_endpoints}). Die \gls{api} verwendet \gls{jwt}-basierte Authentifizierung\cite{jwt_rfc} für alle geschützten Ressourcen.
+
+Der vollständige Request-Flow durch alle Architekturschichten ist am Beispiel der Employee-Discovery-API in den Anhängen~\ref{lst:employee_controller} bis~\ref{lst:employee_specification} dargestellt. Die Implementierung demonstriert zentrale Clean-Architecture-Prinzipien wie Dependency Inversion, \gls{dto}-Mapping, dynamisches Query-Building mittels JPA Criteria API sowie N+1-Vermeidung durch Batch-Loading.
+
+\subsection{Authentifizierung und Autorisierung}
+
+Die Integration mit Keycloak\cite{keycloak_docs} erfolgt über Spring Security OAuth2 Resource Server\cite{spring_security_oauth2}. Spring Security validiert Access Tokens von Keycloak und erzwingt Rollen (USER/MANAGER/ADMIN) via \texttt{@PreAuthorize}-Annotations. Der detaillierte OAuth2 Token Introspection Flow ist in Abbildung~\ref{fig:auth_sequence} im Anhang dargestellt. Ein Code-Beispiel für die rollenbasierte Autorisierung im Projektmanagement-Controller ist im Anhang, Listing~\ref{lst:project_management_security} dokumentiert.
+
+Die \texttt{AuthorizationUtils}-Klasse unterstützt den "me"-Alias zur Referenzierung des aktuellen Users und prüft Zugriffsrechte auf Ressourcen-Ebene (z.\,B. User darf nur eigenes Profil ändern, Manager nur eigene Projekte modifizieren).
+
+\section{Frontend-Implementierung}
+
+\subsection{Technologie-Stack und State Management}
+
+Das Frontend basiert auf Next.js 16 mit App Router (Server Components + CSR), Type\-Script für Typsicherheit und Tailwind CSS für responsives Styling\cite{nextjs_docs,typescript_docs,tailwind_docs}. Die Benutzeroberfläche wurde unter Berücksichtigung des EDAG Corporate Designs gestaltet, um eine konsistente visuelle Integration in die Unternehmens-Systemlandschaft zu gewährleisten. Zentrale Bibliotheken: React 19\cite{react_docs}, NextAuth.js\cite{nextauth_docs} (\gls{oauth}2/\gls{oidc} mit Keycloak), Redux Toolkit + RTK Query\cite{redux_toolkit} (State Management mit Caching), shadcn/ui\cite{shadcn_ui} (Radix UI-basierte Komponenten) und Recharts\cite{recharts_docs} für Skill-Visualisierung und Charts.
+
+\subsection{Komponentenstruktur}
+
+Die UI folgt einer feature-basierten Architektur\cite{atomic_design}, umgesetzt mit dem Next.js App Router für dateibasiertes Routing. Die Struktur trennt klar zwischen Routing (\texttt{app/}), wiederverwendbaren UI-Komponenten (\texttt{components/}), Feature-spezifischen Bildschirmen (\texttt{screens/}) sowie dem globalen State Management (\texttt{store/}). Dadurch werden Verantwortlichkeiten sauber gekapselt und Wiederverwendbarkeit wie auch Testbarkeit erhöht.
+
+Das in Woche~2 erstellte UI-Mockup der Dashboard-Startseite (Anhang, Abbildung~\ref{fig:mockup_dashboard}) diente als visuelle Leitlinie während der Implementierung. Die final umgesetzten Screens umfassen Authentifizierung, Dashboard, Profilverwaltung, Mitarbeiter- und Projektsuche sowie Administrationsbereiche (Screenshots siehe Anhang, Abbildungen~\ref{fig:ui_login_1} bis~\ref{fig:ui_admin_2}).
+
+Ein Beispiel für die Umsetzung eines Feature-Screens unter Verwendung von Custom Hooks und RTK Query ist im Anhang in Listings~\ref{lst:use_project_detail} und~\ref{lst:project_detail_page} dargestellt.
+
+\subsection{Kernfunktionen}
+
+\paragraph{Dashboard:}
+Das Dashboard zeigt eine personalisierte Begrüßung, wichtige Kennzahlen zu Skills und Projekten sowie die zeitliche Entwicklung der eigenen Skills in einem Area-Chart. Zusätzlich werden die neuesten Aktivitäten und zuletzt bearbeiteten Projekte dargestellt. Ein Bereich mit Schnellaktionen ermöglicht den direkten Zugriff auf häufig genutzte Funktionen. Die Daten werden serverseitig initial geladen und anschließend clientseitig aktualisiert.
+
+\paragraph{Skill-Verwaltung:}
+Mitarbeitende können ihre \glspl{skill} in einer strukturierten Ansicht nach Kategorien verwalten. Über ein modales Formular lassen sich neue Skills hinzufügen oder bestehende bearbeiten. 
+Dabei können Kategorie, Skill, Erfahrungsjahre, letzter Einsatz sowie ein Proficiency-Score angepasst werden. Vorschlagslisten unterstützen die Auswahl, und clientseitige Prüfungen stellen konsistente Eingaben sicher. Der CRUD-Workflow ist im Sequenzdiagramm (Anhang, Abbildung~\ref{fig:skill_management_sequence}) dargestellt.
+
+\paragraph{Mitarbeitersuche:}
+Die Mitarbeitersuche kombiniert Freitextsuche mit mehreren Filterdimensionen: Verfügbarkeit, Skill-Kategorien, einzelne \glspl{skill}, Standort sowie Mindest-Erfahrung in Jahren. Die Filterlogik basiert auf dynamisch generierten Filter-Optionen aus dem Backend. Ergebnisse werden in einem responsiven Grid dargestellt und können über Pagination effizient durchblättert werden. Die gesamte Filter- und Suchlogik ist mit lokalem UI-State gekoppelt und wird über einen dedizierten Hook (\texttt{useEmployeeDiscover}) gemanagt.
+
+\paragraph{Projektverwaltung (Manager):}
+Die Projektverwaltung ist eng mit der Mitarbeitersuche verknüpft. Manager können Projekte anlegen und anschließend Mitarbeiter in einem speziellen \glqq Selection Mode\grqq{} auswählen.
+
+\textbf{Projekterstellung mit Mitarbeiterauswahl}: Der Projekt-Erstellungs-Flow nutzt sessionStorage als Zwischenspeicher für Dialog-State während der Navigation zur Mitarbeitersuche. Die Employee-Discovery-Ansicht wird im Selection Mode um auswählbare Karten und einen Selection-Banner erweitert; nach Rückkehr werden Formulardaten und ausgewählte Mitarbeiter wiederhergestellt. Abbildung~\ref{fig:project_creation_flow_detail} im Anhang zeigt den vollständigen Ablauf.
+
+\subsection{State Management}
+
+Das State Management erfolgt mit Redux Toolkit. RTK Query verwaltet Server-Daten mit automatischem Caching und Background-Refetching. API-Endpoints (\texttt{searchEmployees}, \texttt{getFilterOptions} etc.) werden deklarativ mit \texttt{createApi} und \texttt{baseQuery} definiert. Durch \texttt{providesTags} und \texttt{invalidatesTags} wird eine gezielte Cache-Invalidierung ermöglicht. Die vollständige Implementierung ist im Anhang in Listing~\ref{lst:rtk_query_detail} dokumentiert.
+
+\section{Systemintegration}
+
+\subsection{Keycloak-Anbindung und User-Synchronisation}
+
+Keycloak 23\cite{keycloak_docs} dient als zentraler \gls{idp} mit dediziertem Realm \texttt{skill-management}. Die Konfiguration umfasst einen Confidential Client (\gls{oauth}2 Authorization Code Flow), Realm-Rollen (\texttt{user}, \texttt{admin}, \texttt{manager}) und eine Access Token Lifespan von 5 Minuten.
+
+Die User-Synchronisation erfolgt ereignisbasiert über einen Custom Event Listener (\texttt{WebhookEventListenerProvider}). Dieser reagiert auf \texttt{REGISTER}-Events und Admin-Events (\texttt{CREATE}/\texttt{UPDATE}/\texttt{DELETE}) und sendet HTTP-POST-Requests mit Basic Auth an \newline\texttt{KeycloakWebhookController}. Der \texttt{UserSyncServiceImpl} persistiert User-Daten transaktional in die \texttt{users}-Tabelle (vollständige Controller-Implementierung siehe Anhang, Listing~\ref{lst:webhook_sync_detail}).
+
+\subsection{Rollenanfrage-Workflow (Self-Service)}
+
+Das System implementiert einen Self-Service-Workflow für Rollenanfragen, der es Benutzern ermöglicht, eigenständig erweiterte Berechtigungen (MANAGER-Rolle) anzufordern. Der Workflow minimiert administrativen Aufwand und schafft Transparenz durch automatisierte Activity-Logs.
+
+Der Prozess umfasst drei Zustände (siehe Zustandsdiagramm im Anhang, Abbildung~\ref{fig:role_request_state}):
+\begin{itemize}[noitemsep]
+    \item \textbf{PENDING}: User erstellt Rollenanfrage über UI (\texttt{/v1/role-requests})
+    \item \textbf{APPROVED}: Admin genehmigt Anfrage → Backend weist Rolle in Keycloak zu → Activity-Log-Eintrag
+    \item \textbf{REJECTED}: Admin lehnt ab → Status-Update in DB → Activity-Log-Eintrag
+\end{itemize}
+
+\section{Kubernetes-Deployment}
+\label{sec:kubernetes_deployment}
+
+Das System wird in einem lokalen Kubernetes-Cluster mit drei isolierten Namespaces betrieben: \textbf{skill-management-system-dev} (Keycloak, PostgreSQL für Entwicklung), \textbf{skill-management-system-prod} (Frontend, Backend, Keycloak, PostgreSQL), \textbf{skill-management-devops-prod} (Jenkins, SonarQube, Docker Registry, PostgreSQL). Traefik Ingress Controller exponiert Services über Hostnames (siehe Tabelle~\ref{tab:ingress_config} im Anhang für vollständige Übersicht). Deployment erfolgt über PowerShell-Skripte (\texttt{generate-secrets.ps1}, \texttt{deploy.ps1}) mit Kustomize Base/Overlay-Pattern für umgebungsspezifische Anpassungen.
+
+Die Kubernetes-Architektur ist in Abbildung~\ref{fig:kubernetes_architecture} visualisiert und zeigt die Namespace-Struktur, Service-Komponenten und Ingress-Routing.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=0.7cm and 1.2cm,
+  component/.style={rectangle, draw=black!70, thick, fill=white, rounded corners=1pt, minimum width=2.2cm, minimum height=0.55cm, align=center, font=\footnotesize},
+  namespace/.style={rectangle, draw=black!50, thick, fill=white, rounded corners=2pt, minimum width=11cm},
+  ingress/.style={rectangle, draw=black!70, thick, fill=gray!5, rounded corners=1pt, minimum width=4cm, minimum height=0.5cm, align=center, font=\footnotesize},
+  db/.style={cylinder, draw=black!70, thick, fill=white, shape border rotate=90, minimum width=1.4cm, minimum height=0.45cm, aspect=0.15, align=center, font=\footnotesize},
+  label/.style={font=\footnotesize\bfseries}
+]
+
+% Traefik Ingress (Top)
+\node[ingress] (traefik) at (0,0) {Traefik Ingress};
+
+% Namespace: skill-management-system-dev
+\node[namespace, minimum height=1.5cm] (ns_dev) at (0,-2) {};
+\node[label, anchor=north west, font=\scriptsize\bfseries] at (ns_dev.north west) {skill-management-system-dev};
+\node[component] (dev_kc) at (-4,-2.25) {Keycloak};
+\node[db] (dev_pg) at (1,-2.25) {PostgreSQL};
+
+% Namespace: skill-management-system-prod
+\node[namespace, minimum height=2.6cm] (ns_prod) at (0,-4.8) {};
+\node[label, anchor=north west, font=\scriptsize\bfseries] at (ns_prod.north west) {skill-management-system-prod};
+\node[component] (prod_fe) at (-4,-4.5) {Frontend};
+\node[component] (prod_be) at (-1.5,-4.5) {Backend};
+\node[component] (prod_kc) at (4,-4.5) {Keycloak};
+\node[db] (prod_pg) at (1.25,-5.65) {PostgreSQL};
+
+% Namespace: skill-management-devops-prod
+\node[namespace, minimum height=1.5cm] (ns_devops) at (0,-7.5) {};
+\node[label, anchor=north west, font=\scriptsize\bfseries] at (ns_devops.north west) {skill-management-devops-prod};
+\node[component] (jenkins) at (-4,-7.75) {Jenkins};
+\node[component] (sonar) at (-1.5,-7.75) {SonarQube};
+\node[db] (sonar_pg) at (1.25,-7.75) {PostgreSQL};
+\node[component] (registry) at (4,-7.75) {Registry};
+
+% Hilfspunkt für Verzweigung
+\coordinate (branch) at (0,-0.6);
+
+% Ingress Routes - gerade nach unten, dann horizontal
+\draw[->, thick, black!60] (traefik.south) -- (branch);
+\draw[->, thick, black!60] (branch) -| (dev_kc.north);
+\draw[->, thick, black!60] (branch) -| (dev_pg.north);
+\draw[->, thick, black!60] (branch) -| (prod_fe.north);
+\draw[->, thick, black!60] (branch) -| (prod_be.north);
+\draw[->, thick, black!60] (branch) -| (prod_kc.north);
+\draw[->, thick, black!60] (branch) -| (jenkins.north);
+\draw[->, thick, black!60] (branch) -| (sonar.north);
+\draw[->, thick, black!60] (branch) -| (registry.north);
+
+% Internal Connections
+\draw[->, thick, dashed, black!60] (dev_kc.east) -- (dev_pg.west);
+\draw[->, thick, dashed, black!60] (prod_be.south) -- (prod_pg.north);
+\draw[->, thick, dashed, black!60] (prod_kc.south) -- (prod_pg.north);
+\draw[->, thick, dashed, black!60] (sonar.east) -- (sonar_pg.west);
+
+\end{tikzpicture}
+\caption{Kubernetes-Architektur: 3 Namespaces mit Services und Ingress-Routing}
+\label{fig:kubernetes_architecture}
+\end{figure}
+
+\section{CI/CD-Pipeline}
+\label{sec:cicd_pipeline}
+
+Die automatisierte \gls{cicd}-Pipeline wurde als Jenkins Declarative Pipeline mit Kubernetes-Agents implementiert\cite{jenkins_docs}. Sequenzielle Stages: \textbf{Checkout} (Bitbucket), \textbf{Backend Build \& Analyze} (Maven \texttt{clean test package}, SonarQube\cite{sonarqube_docs}-Analyse, Quality Gate A-Rating), \textbf{Frontend Build \& Analyze} (\texttt{npm ci \&\& npm run build}, ESLint-Analyse, Quality Gate). Bei Branch \texttt{main}: \textbf{Build \& Push Images} (parallele Docker\cite{docker_docs}-Builds für Backend/Frontend, Push an Registry mit Tags \texttt{\$\{BUILD\_NUMBER\}} und \texttt{latest}), \textbf{Trigger Deploy} (\texttt{kubectl apply} via \texttt{skill-management-deploy}-Job). Pipeline bricht bei Quality-Gate-Verletzung ab. Die vollständige Pipeline-Visualisierung ist im Anhang, Abbildung~\ref{fig:jenkins_pipeline} dargestellt. Die Jenkinsfile-Konfiguration ist in Listing~\ref{lst:jenkinsfile} dokumentiert.
+
+\section{Qualitätssicherung}
+
+Alle 15 Use Cases (siehe Anhang, Tabelle~\ref{tab:use_cases}) wurden in der Produktionsumgebung systematisch getestet. Die Tests umfassten alle Kernbereiche: Authentifizierung (Login/Logout, Rollenprüfung), Profilverwaltung (Skill-CRUD, Proficiency-Updates), Mitarbeitersuche (Freitext-/Skill-/Standort-Filter), Projektverwaltung (Projekt-CRUD, \\ 
+Team-Zusammenstellung) sowie Analytics (Activity-Log). Edge-Cases wie fehlende Eingaben, ungültige Token und Netzwerk-Timeouts wurden validiert.
+
+Drei Testpersonen aus der Zielgruppe (Projektleiter, Entwickler, Administrator) validierten die Benutzerfreundlichkeit. Feedback führte zu UI-Verbesserungen (Tooltips für Skill-Level, klarere Filterbeschriftungen).
+
+Alle Feature-Branches durchliefen Code-Reviews durch den betrieblichen Betreuer (Clean Code\cite{clean_code}, Architekturkonformität, Dokumentation). Pull Requests wurden nur nach Approval und erfolgreichem Quality Gate gemerged.

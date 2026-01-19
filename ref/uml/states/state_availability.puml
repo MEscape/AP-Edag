@@ -1,0 +1,91 @@
+@startuml state_availability
+' Zustandsdiagramm: Mitarbeiter-Verfügbarkeit
+' Zeigt Verfügbarkeitsstatus und Übergänge
+
+title Zustandsdiagramm - Employee Availability Status
+
+[*] --> UNAVAILABLE : Profil erstellt\n(Default)
+
+state UNAVAILABLE {
+  UNAVAILABLE : availability = 'UNAVAILABLE'
+  UNAVAILABLE : Nicht für Projekte verfügbar
+  UNAVAILABLE : Wird nicht in Discovery angezeigt
+  UNAVAILABLE : Keine Projekt-Zuweisungen möglich
+}
+
+UNAVAILABLE --> AVAILABLE : Mitarbeiter setzt\nVerfügbarkeit auf "Verfügbar"
+UNAVAILABLE --> PARTIALLY_AVAILABLE : Mitarbeiter setzt\nVerfügbarkeit auf "Teilweise verfügbar"
+
+state AVAILABLE {
+  AVAILABLE : availability = 'AVAILABLE'
+  AVAILABLE : Vollständig verfügbar
+  AVAILABLE : Kann neuen Projekten zugewiesen werden
+  AVAILABLE : Priorität in Discovery-Suche
+  AVAILABLE : Sichtbar für Manager
+}
+
+AVAILABLE --> PARTIALLY_AVAILABLE : Mitarbeiter wird\nProjekt zugewiesen\n(automatisch oder manuell)
+AVAILABLE --> UNAVAILABLE : Mitarbeiter setzt\nStatus auf "Nicht verfügbar"
+
+state PARTIALLY_AVAILABLE {
+  PARTIALLY_AVAILABLE : availability = 'PARTIALLY_AVAILABLE'
+  PARTIALLY_AVAILABLE : Bereits in Projekt(en) eingeteilt
+  PARTIALLY_AVAILABLE : Begrenzte Kapazität
+  PARTIALLY_AVAILABLE : In Discovery mit Warnung angezeigt
+  PARTIALLY_AVAILABLE : Kann weiteren Projekten zugewiesen werden
+}
+
+PARTIALLY_AVAILABLE --> AVAILABLE : Alle aktiven Projekte\nabgeschlossen
+PARTIALLY_AVAILABLE --> UNAVAILABLE : Mitarbeiter setzt\nStatus auf "Nicht verfügbar"
+PARTIALLY_AVAILABLE --> PARTIALLY_AVAILABLE : Weiteres Projekt\nzugewiesen
+
+note right of AVAILABLE
+  Automatische Änderungen:
+  - Bei Projektzuweisung → PARTIALLY_AVAILABLE
+  - Trigger: project_member_added
+  
+  Filterung:
+  - Höchste Priorität in Discovery
+  - "Sofort verfügbar" Badge
+  - Keine Warnung
+  
+  Manager-Perspektive:
+  - Bevorzugte Anzeige
+  - Grüner Status-Indikator
+end note
+
+note right of PARTIALLY_AVAILABLE
+  Automatische Änderungen:
+  - Wenn active_projects = 0 → AVAILABLE
+  - Trigger: project_status_changed
+  - Trigger: project_member_removed
+  
+  Filterung:
+  - Mittlere Priorität in Discovery
+  - "Begrenzt verfügbar" Badge
+  - Warnung bei Zuweisung
+  
+  Manager-Perspektive:
+  - Gelber Status-Indikator
+  - Anzahl aktiver Projekte angezeigt
+end note
+
+note left of UNAVAILABLE
+  Verwendung:
+  - Urlaub / Abwesenheit
+  - Vollständig ausgelastet
+  - Sabbatical
+  - Krankheit (temporär)
+  - Andere Verpflichtungen
+  
+  Filterung:
+  - Nicht in Discovery sichtbar
+  - Kann über Direct Profile gefunden werden
+  - Roter Status-Indikator
+  
+  Kann überschrieben werden:
+  - Admin kann trotzdem zuweisen
+  - Mit expliziter Warnung
+end note
+
+@enduml

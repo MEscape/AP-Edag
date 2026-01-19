@@ -1,0 +1,26 @@
+\babel@toc {ngerman}{}\relax 
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Amortisationsvergleich: Eigenentwicklung vs. kommerzielle Lizenzkosten}}{9}{}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {A.1}{\ignorespaces Keycloak Single Sign-On Login-Seite}}{24}{}%
+\contentsline {figure}{\numberline {A.2}{\ignorespaces Dashboard mit Übersicht über nächste Buchungen. Oben rechts: Benutzermenü zum Abmelden oder Ändern des Profilbilds}}{25}{}%
+\contentsline {figure}{\numberline {A.3}{\ignorespaces Raum-Übersicht mit Kachelansicht. Oben links: Sprachwechsel zwischen Deutsch und Englisch}}{25}{}%
+\contentsline {figure}{\numberline {A.4}{\ignorespaces Raum-Detailansicht mit grafischer 2D-Darstellung der Arbeitsplätze. Kalender und Tagesübersicht zeigen Homeoffice- und Office-Tage. Benutzer können ihren Status veröffentlichen und sehen, ob für den Tag bereits ein Arbeitsplatz reserviert ist}}{25}{}%
+\contentsline {figure}{\numberline {A.5}{\ignorespaces Team-Anwesenheitsübersicht mit Filterung nach Datum und Büro}}{25}{}%
+\contentsline {figure}{\numberline {A.6}{\ignorespaces Buchungsdialog mit Datums- und Zeitauswahl}}{25}{}%
+\contentsline {figure}{\numberline {A.7}{\ignorespaces Meine Buchungen - Übersicht aller eigenen Buchungen}}{25}{}%
+\contentsline {figure}{\numberline {A.8}{\ignorespaces Buchung bearbeiten - Dialog}}{25}{}%
+\contentsline {figure}{\numberline {A.9}{\ignorespaces Dialog zum Hinzufügen eines neuen Raums mit Eingabefeldern für Raumdetails}}{25}{}%
+\contentsline {figure}{\numberline {A.10}{\ignorespaces Raumadministrator-Ansicht mit Möglichkeit zur Raumbearbeitung und Verwaltung zugewiesener Räume}}{25}{}%
+\contentsline {figure}{\numberline {A.11}{\ignorespaces Hinzufügen neuer Arbeitsplätze im Raum. Dialog zur Definition von Arbeitsplatz-Eigenschaften}}{25}{}%
+\contentsline {figure}{\numberline {A.12}{\ignorespaces 2D-Editor für Arbeitsplätze. Benutzer können Arbeitsplätze per Drag-and-Drop verschieben und drehen}}{26}{}%
+\contentsline {figure}{\numberline {A.13}{\ignorespaces Benutzerverwaltung für Raum. Zuweisung von Raumadministratoren und Berechtigungen}}{26}{}%
+\contentsline {figure}{\numberline {A.14}{\ignorespaces Arbeitsplatzverwaltung innerhalb eines Raums. Übersicht aller Arbeitsplätze mit Bearbeitungsmöglichkeiten}}{26}{}%
+\contentsline {figure}{\numberline {A.15}{\ignorespaces Buchungserstellung für Arbeitsplatz mit Auswahl von Datum und Zeitbereich}}{26}{}%
+\contentsline {figure}{\numberline {A.16}{\ignorespaces Übersicht der Arbeitsplatzreservierungen mit Datum, Zeit und Status}}{26}{}%
+\contentsline {figure}{\numberline {A.17}{\ignorespaces Teilweise Reservierung eines Arbeitsplatzes für einen bestimmten Zeitraum (z.B. 09:00-12:00 Uhr)}}{26}{}%
+\contentsline {figure}{\numberline {A.18}{\ignorespaces Ganztagesreservierung eines Arbeitsplatzes für den gesamten Arbeitstag}}{26}{}%
+\contentsline {figure}{\numberline {A.19}{\ignorespaces Kalenderfilterung zur Auswahl des gewünschten Reservierungsdatums}}{26}{}%

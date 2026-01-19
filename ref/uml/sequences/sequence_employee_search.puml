@@ -1,0 +1,77 @@
+@startuml sequence_employee_search
+' Sequenzdiagramm: Mitarbeiter nach Skills suchen
+' Zeigt komplexe Filterung mit PostgreSQL Full-Text Search
+
+title Sequenzdiagramm - Mitarbeitersuche mit Skill-Filter
+
+actor Manager
+participant "Browser\n(React)" as Browser
+participant "Redux\n(RTK Query)" as Redux
+participant "EmployeeDiscoveryController" as Controller
+participant "EmployeeDiscoveryServiceImpl" as Service
+participant "EmployeeRepository" as Repository
+database "PostgreSQL" as DB
+
+== Suchseite aufrufen ==
+Manager -> Browser: Navigation zu /discover/employees
+Browser -> Redux: useGetFilterOptionsQuery()
+Redux -> Repository: GET /v1/discover/employees/filter-options
+Repository -> DB: SELECT DISTINCT\n  sc.id, sc.name,\n  s.id, s.name\nFROM skill_categories sc\nJOIN skills s ON s.category_id = sc.id\nWHERE s.is_active = true
+DB --> Repository: Skills & Kategorien
+Repository --> Redux: FilterOptions
+Redux --> Browser: Filter-Panel mit Optionen
+
+== Filter anwenden ==
+Manager -> Browser: Wählt Filter:\n- Skills: [Java, Spring Boot]\n- Availability: [AVAILABLE]\n- Location: [Fulda]\n- Min Experience: 2.0
+Manager -> Browser: Eingabe Suchtext: "Backend"
+
+Browser -> Redux: useSearchEmployeesQuery(filters)
+Redux -> Controller: GET /v1/discover/employees/search?\n  skills=uuid1,uuid2\n  &availability=AVAILABLE\n  &location=uuid3\n  &minExperience=2.0\n  &searchTerm=Backend\n  &page=0\n  &size=20
+  
+== Service Layer ==
+Controller -> Service: searchEmployees(searchCriteria, pageable)
+Service -> Service: Erstelle EmployeeSearchCriteria
+
+== Repository mit Specification Pattern ==
+Service -> Repository: findBySearchCriteria(criteria, pageable)
+Repository -> Repository: EmployeeSpecification.build(criteria)
+
+== Dynamische Query-Generierung ==
+Repository -> DB: WITH skill_matches AS (\n  SELECT employee_id,\n    COUNT(*) as match_count\n  FROM employee_skills\n  WHERE skill_id IN (?, ?)\n  GROUP BY employee_id\n  HAVING COUNT(*) >= 2\n)\nSELECT DISTINCT\n  ep.user_id,\n  u.first_name,\n  u.last_name,\n  u.email,\n  ep.position_id,\n  p.name as position,\n  ep.location_id,\n  l.name as location,\n  ep.availability,\n  ep.years_of_experience,\n  sm.match_count,\n  (\n    SELECT json_agg(json_build_object(\n      'skillName', s.name,\n      'category', sc.name,\n      'proficiencyScore', es.proficiency_score\n    ))\n    FROM employee_skills es\n    JOIN skills s ON es.skill_id = s.id\n    JOIN skill_categories sc ON s.category_id = sc.id\n    WHERE es.employee_id = ep.user_id\n  ) as skills\nFROM employee_profiles ep\nJOIN users u ON ep.user_id = u.id\nLEFT JOIN positions p ON ep.position_id = p.id\nLEFT JOIN locations l ON ep.location_id = l.id\nINNER JOIN skill_matches sm ON sm.employee_id = ep.user_id\nWHERE\n  ep.availability = 'AVAILABLE'\n  AND ep.location_id = ?\n  AND ep.years_of_experience >= 2.0\n  AND (\n    to_tsvector('english', u.first_name || ' ' || u.last_name || ' ' || p.name)\n    @@ plainto_tsquery('english', 'Backend')\n  )\nORDER BY sm.match_count DESC, ep.years_of_experience DESC\nLIMIT 20 OFFSET 0
+
+note right of DB
+  PostgreSQL Features:
+  - CTE (WITH clause) für Skill-Matching
+  - JSON Aggregation für Skills
+  - Full-Text Search (tsvector)
+  - Dynamic Filtering
+  - Pagination
+end note
+
+DB --> Repository: Ergebnis-Set (Employee[], Total Count)
+
+Repository --> Service: Page<Employee>
+Service --> Controller: Page<Employee>
+
+== Response Mapping ==
+Controller -> Controller: EmployeeSearchResponseDto.from(page)
+Controller --> Redux: 200 OK\n{employees: [...], pagination: {...}}
+
+== Cache und UI Update ==
+Redux -> Redux: Cache Result mit Filter-Key
+Redux --> Browser: Employee Search Results
+
+Browser -> Browser: Rendere Employee Cards
+Browser -> Browser: Update Pagination
+Browser -> Browser: Zeige Anzahl Treffer
+Browser --> Manager: Gefilterte Mitarbeiter anzeigen
+
+== Mitarbeiter auswählen ==
+Manager -> Browser: Klick auf Mitarbeiter-Karte
+Browser -> Redux: useGetProfileQuery(employeeId)
+Redux -> Controller: GET /v1/profiles/{employeeId}
+Controller --> Redux: Vollständiges Profil
+Redux --> Browser: Employee Detail Modal
+Browser --> Manager: Detaillierte Informationen
+
+@enduml

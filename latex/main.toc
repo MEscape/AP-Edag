@@ -1,0 +1,153 @@
+\babel@toc {ngerman}{}\relax 
+\contentsline {chapter}{Zusammenfassung}{i}{chapter*.1}%
+\contentsline {chapter}{Persönliche Erklärung}{ii}{chapter*.1}%
+\contentsline {chapter}{Abkürzungsverzeichnis}{x}{section*.5}%
+\contentsline {chapter}{Glossar}{xi}{section*.7}%
+\contentsline {chapter}{\numberline {1}Einleitung}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Projektumfeld}{1}{section.1.1}%
+\contentsline {subsection}{\numberline {1.1.1}Unternehmen}{1}{subsection.1.1.1}%
+\contentsline {subsection}{\numberline {1.1.2}Abteilung}{1}{subsection.1.1.2}%
+\contentsline {section}{\numberline {1.2}Ist-Analyse}{1}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Probleme des aktuellen Prozesses}{1}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}Wirtschaftliche Auswirkungen}{2}{subsection.1.2.2}%
+\contentsline {section}{\numberline {1.3}Zielsetzung}{2}{section.1.3}%
+\contentsline {subsection}{\numberline {1.3.1}Funktionale Anforderungen}{2}{subsection.1.3.1}%
+\contentsline {paragraph}{Mitarbeiter (Employee):}{2}{section*.9}%
+\contentsline {paragraph}{Projektleiter (Manager):}{2}{section*.10}%
+\contentsline {paragraph}{Administrator (Admin):}{3}{section*.11}%
+\contentsline {subsection}{\numberline {1.3.2}Nicht-funktionale Anforderungen}{3}{subsection.1.3.2}%
+\contentsline {subsection}{\numberline {1.3.3}Use-Case-Übersicht}{3}{subsection.1.3.3}%
+\contentsline {section}{\numberline {1.4}Projektnutzen}{4}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Projektabgrenzung}{5}{section.1.5}%
+\contentsline {chapter}{\numberline {2}Projektplanung}{6}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Projektphasenmodell}{6}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Phasenübersicht}{6}{subsection.2.1.1}%
+\contentsline {section}{\numberline {2.2}MVP-Definition und Priorisierung}{7}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}MVP-Kernfunktionen}{7}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Abgrenzung: Nicht im MVP enthalten}{7}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Gantt-Diagramm}{7}{subsection.2.2.3}%
+\contentsline {section}{\numberline {2.3}Ressourcenplanung}{8}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Wirtschaftlichkeitsbetrachtung}{8}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Kostenplanung}{8}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Make-or-Buy-Entscheidung}{9}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}Nutzenanalyse}{9}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.4}Amortisationsrechnung}{9}{subsection.2.4.4}%
+\contentsline {chapter}{\numberline {3}Projektdurchführung}{11}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Entwicklungsumgebung}{11}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Datenbankdesign und -implementierung}{11}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Datenmodell}{11}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Datenbank-Migration mit Flyway}{12}{subsection.3.2.2}%
+\contentsline {section}{\numberline {3.3}Backend-Implementierung}{12}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Architektur}{12}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Schichtenaufteilung}{13}{subsection.3.3.2}%
+\contentsline {paragraph}{Domain-Schicht:}{13}{section*.19}%
+\contentsline {paragraph}{Application-Schicht:}{13}{section*.20}%
+\contentsline {paragraph}{Infrastructure-Schicht:}{13}{section*.21}%
+\contentsline {subsection}{\numberline {3.3.3}Zentrale API-Endpunkte}{13}{subsection.3.3.3}%
+\contentsline {subsection}{\numberline {3.3.4}Authentifizierung und Autorisierung}{14}{subsection.3.3.4}%
+\contentsline {section}{\numberline {3.4}Frontend-Implementierung}{14}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Technologie-Stack und State Management}{14}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Komponentenstruktur}{15}{subsection.3.4.2}%
+\contentsline {subsection}{\numberline {3.4.3}Kernfunktionen}{15}{subsection.3.4.3}%
+\contentsline {paragraph}{Dashboard:}{15}{section*.22}%
+\contentsline {paragraph}{Skill-Verwaltung:}{15}{section*.23}%
+\contentsline {paragraph}{Mitarbeitersuche:}{15}{section*.24}%
+\contentsline {paragraph}{Projektverwaltung (Manager):}{15}{section*.25}%
+\contentsline {subsection}{\numberline {3.4.4}State Management}{16}{subsection.3.4.4}%
+\contentsline {section}{\numberline {3.5}Systemintegration}{16}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Keycloak-Anbindung und User-Synchronisation}{16}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Rollenanfrage-Workflow (Self-Service)}{16}{subsection.3.5.2}%
+\contentsline {section}{\numberline {3.6}Kubernetes-Deployment}{17}{section.3.6}%
+\contentsline {section}{\numberline {3.7}CI/CD-Pipeline}{17}{section.3.7}%
+\contentsline {section}{\numberline {3.8}Qualitätssicherung}{18}{section.3.8}%
+\contentsline {chapter}{\numberline {4}Projektergebnisse}{19}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Funktionale Systemvalidierung}{19}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Testabdeckung}{19}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Code-Qualitätsmetriken}{19}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}Performance-Ergebnisse}{19}{subsection.4.1.3}%
+\contentsline {section}{\numberline {4.2}Soll-Ist-Vergleich}{20}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Zeitliche Zielerreichung}{20}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Funktionale Zielerreichung}{20}{subsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.2.3}Wirtschaftliche Zielerreichung}{21}{subsection.4.2.3}%
+\contentsline {section}{\numberline {4.3}Systemdemonstration}{21}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Abweichungen und Anpassungen}{21}{section.4.4}%
+\contentsline {paragraph}{Technische Anpassungen:}{21}{section*.29}%
+\contentsline {paragraph}{Funktionale Erweiterungen:}{21}{section*.30}%
+\contentsline {chapter}{\numberline {5}Fazit}{22}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Projektzusammenfassung}{22}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Zentrale Ergebnisse}{22}{subsection.5.1.1}%
+\contentsline {section}{\numberline {5.2}Zielerreichung}{22}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Wirtschaftliche Ziele}{22}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Qualitätsziele}{23}{subsection.5.2.2}%
+\contentsline {section}{\numberline {5.3}Reflexion und Lernerfahrungen}{23}{section.5.3}%
+\contentsline {paragraph}{Technische Herausforderungen:}{23}{section*.31}%
+\contentsline {paragraph}{Fachliche Kompetenzerweiterung:}{23}{section*.32}%
+\contentsline {section}{\numberline {5.4}Ausblick und Weiterentwicklung}{23}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Schlusswort}{24}{section.5.5}%
+\contentsline {chapter}{\numberline {A}Anhang}{25}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Projektplanung \& Wirtschaftlichkeit}{25}{section.A.1}%
+\contentsline {subsection}{\numberline {A.1.1}Detaillierte Zeitplanung}{25}{subsection.A.1.1}%
+\contentsline {subsection}{\numberline {A.1.2}Technologie-Stack}{26}{subsection.A.1.2}%
+\contentsline {subsection}{\numberline {A.1.3}Wirtschaftlichkeitsberechnung Details}{26}{subsection.A.1.3}%
+\contentsline {subsubsection}{\numberline {A.1.3.1}IST-Prozess (manuell)}{26}{subsubsection.A.1.3.1}%
+\contentsline {subsubsection}{\numberline {A.1.3.2}SOLL-Prozess (automatisiert)}{27}{subsubsection.A.1.3.2}%
+\contentsline {subsection}{\numberline {A.1.4}Make-or-Buy-Vergleich}{27}{subsection.A.1.4}%
+\contentsline {section}{\numberline {A.2}Architektur \& Implementierung}{27}{section.A.2}%
+\contentsline {subsection}{\numberline {A.2.1}Repository-Struktur}{27}{subsection.A.2.1}%
+\contentsline {subsection}{\numberline {A.2.2}Code-Beispiele}{30}{subsection.A.2.2}%
+\contentsline {subsubsection}{\numberline {A.2.2.1}Backend: Employee Discovery Request Flow}{30}{subsubsection.A.2.2.1}%
+\contentsline {paragraph}{Controller Layer (Inbound Adapter)}{30}{section*.38}%
+\contentsline {paragraph}{Service Layer (Application)}{31}{section*.39}%
+\contentsline {paragraph}{Repository Layer (Outbound Adapter)}{32}{section*.40}%
+\contentsline {paragraph}{Specification Pattern (Dynamic Query Building)}{34}{section*.41}%
+\contentsline {subsubsection}{\numberline {A.2.2.2}Frontend: Projektdetail-Feature}{36}{subsubsection.A.2.2.2}%
+\contentsline {paragraph}{Custom Hook (Business Logic Layer)}{36}{section*.42}%
+\contentsline {paragraph}{Feature Screen (Presentation Layer)}{36}{section*.43}%
+\contentsline {subsubsection}{\numberline {A.2.2.3}Redux Toolkit Query API Slice}{38}{subsubsection.A.2.2.3}%
+\contentsline {subsubsection}{\numberline {A.2.2.4}Webhook-basierte User-Synchronisation}{39}{subsubsection.A.2.2.4}%
+\contentsline {subsubsection}{\numberline {A.2.2.5}Rollenbasierte Autorisierung}{40}{subsubsection.A.2.2.5}%
+\contentsline {section}{\numberline {A.3}Diagramme}{41}{section.A.3}%
+\contentsline {subsection}{\numberline {A.3.1}Sequenzdiagramme}{41}{subsection.A.3.1}%
+\contentsline {subsubsection}{\numberline {A.3.1.1}OAuth2 Authentifizierung und Autorisierung}{41}{subsubsection.A.3.1.1}%
+\contentsline {subsubsection}{\numberline {A.3.1.2}Mitarbeitersuche mit dynamischer Filterung}{42}{subsubsection.A.3.1.2}%
+\contentsline {subsubsection}{\numberline {A.3.1.3}Skill-Verwaltung (CRUD-Operationen)}{44}{subsubsection.A.3.1.3}%
+\contentsline {subsection}{\numberline {A.3.2}Aktivitätsdiagramme}{46}{subsection.A.3.2}%
+\contentsline {subsubsection}{\numberline {A.3.2.1}Projekterstellung mit Mitarbeiterauswahl}{46}{subsubsection.A.3.2.1}%
+\contentsline {subsubsection}{\numberline {A.3.2.2}Mitarbeitersuche mit Multi-Filter}{47}{subsubsection.A.3.2.2}%
+\contentsline {subsection}{\numberline {A.3.3}Klassendiagramm}{48}{subsection.A.3.3}%
+\contentsline {subsubsection}{\numberline {A.3.3.1}Domain Model}{48}{subsubsection.A.3.3.1}%
+\contentsline {subsection}{\numberline {A.3.4}Zustandsdiagramm}{50}{subsection.A.3.4}%
+\contentsline {subsubsection}{\numberline {A.3.4.1}Rollenanfrage-Workflow}{50}{subsubsection.A.3.4.1}%
+\contentsline {section}{\numberline {A.4}Qualitätssicherung \& CI/CD}{50}{section.A.4}%
+\contentsline {subsection}{\numberline {A.4.1}Code-Qualitätsmetriken}{50}{subsection.A.4.1}%
+\contentsline {subsection}{\numberline {A.4.2}CI/CD und Quality Assurance}{51}{subsection.A.4.2}%
+\contentsline {subsubsection}{\numberline {A.4.2.1}Commit-Historie und Conventional Commits}{51}{subsubsection.A.4.2.1}%
+\contentsline {subsubsection}{\numberline {A.4.2.2}SonarQube Code-Analyse}{51}{subsubsection.A.4.2.2}%
+\contentsline {paragraph}{Backend Quality Gate}{51}{figure.caption.54}%
+\contentsline {paragraph}{Frontend Quality Gate}{52}{figure.caption.56}%
+\contentsline {subsubsection}{\numberline {A.4.2.3}Jenkins CI/CD Pipeline}{52}{subsubsection.A.4.2.3}%
+\contentsline {subsubsection}{\numberline {A.4.2.4}Jenkinsfile Deklaration}{53}{subsubsection.A.4.2.4}%
+\contentsline {subsubsection}{\numberline {A.4.2.5}Lighthouse Performance Audit}{55}{subsubsection.A.4.2.5}%
+\contentsline {section}{\numberline {A.5}Deployment \& Konfiguration}{56}{section.A.5}%
+\contentsline {subsection}{\numberline {A.5.1}ER-Datenmodell}{56}{subsection.A.5.1}%
+\contentsline {subsubsection}{\numberline {A.5.1.1}Datenbankmodell}{56}{subsubsection.A.5.1.1}%
+\contentsline {subsection}{\numberline {A.5.2}Datenbank-Migrationen}{57}{subsection.A.5.2}%
+\contentsline {subsubsection}{\numberline {A.5.2.1}Migrations-Übersicht}{58}{subsubsection.A.5.2.1}%
+\contentsline {paragraph}{Beispiel-Listings}{58}{section*.62}%
+\contentsline {subparagraph}{V1: Basis-Tabellen (Auszug)}{58}{section*.63}%
+\contentsline {subparagraph}{V2: Employee Skills Junction-Tabelle (Auszug)}{58}{section*.64}%
+\contentsline {subsection}{\numberline {A.5.3}Kubernetes Ingress-Konfiguration}{59}{subsection.A.5.3}%
+\contentsline {section}{\numberline {A.6}Dokumentation}{60}{section.A.6}%
+\contentsline {subsection}{\numberline {A.6.1}UI-Screenshots}{60}{subsection.A.6.1}%
+\contentsline {subsubsection}{\numberline {A.6.1.1}Authentifizierung und Onboarding}{60}{subsubsection.A.6.1.1}%
+\contentsline {subsubsection}{\numberline {A.6.1.2}Dashboard und Home}{62}{subsubsection.A.6.1.2}%
+\contentsline {subsubsection}{\numberline {A.6.1.3}Profilverwaltung}{63}{subsubsection.A.6.1.3}%
+\contentsline {subsubsection}{\numberline {A.6.1.4}Mitarbeiter- und Projektsuche}{64}{subsubsection.A.6.1.4}%
+\contentsline {subsubsection}{\numberline {A.6.1.5}Administrationsoberfläche}{67}{subsubsection.A.6.1.5}%
+\contentsline {subsubsection}{\numberline {A.6.1.6}UI-Mockup (Planungsphase)}{68}{subsubsection.A.6.1.6}%
+\contentsline {subsection}{\numberline {A.6.2}Use Cases}{68}{subsection.A.6.2}%
+\contentsline {subsubsection}{\numberline {A.6.2.1}Übersicht der 15 implementierten Use Cases}{68}{subsubsection.A.6.2.1}%
+\contentsline {subsection}{\numberline {A.6.3}Benutzer- und Entwicklerdokumentation}{69}{subsection.A.6.3}%
+\contentsline {subsection}{\numberline {A.6.4}API-Dokumentation}{70}{subsection.A.6.4}%
+\contentsline {subsubsection}{\numberline {A.6.4.1}Vollständige API-Endpunkt-Übersicht}{71}{subsubsection.A.6.4.1}%
+\contentsline {chapter}{Literaturverzeichnis}{73}{appendix*.90}%

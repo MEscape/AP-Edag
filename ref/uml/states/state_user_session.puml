@@ -1,0 +1,104 @@
+@startuml state_user_session
+' Zustandsdiagramm: Benutzer-Session (NextAuth)
+' Zeigt Session-Zustände und Token-Lifecycle
+
+title Zustandsdiagramm - User Session (NextAuth)
+
+[*] --> Unauthenticated : App Start
+
+state Unauthenticated {
+  Unauthenticated : Kein Session Cookie
+  Unauthenticated : Keine Tokens
+  Unauthenticated : Nur Public Pages zugänglich
+}
+
+Unauthenticated --> Authenticating : Benutzer klickt "Login"
+
+state Authenticating {
+  Authenticating : OAuth2 Flow läuft
+  Authenticating : Redirect zu Keycloak
+  Authenticating : Warte auf Credentials
+}
+
+Authenticating --> Authenticated : Login erfolgreich\n(Tokens erhalten)
+Authenticating --> Unauthenticated : Login fehlgeschlagen\noder abgebrochen
+
+state Authenticated {
+  state "Token Valid" as TokenValid
+  state "Token Expiring" as TokenExpiring
+  state "Token Expired" as TokenExpired
+  
+  [*] --> TokenValid : Neue Session\n(Access Token gültig)
+  
+  TokenValid : accessToken vorhanden
+  TokenValid : accessTokenExpires > now
+  TokenValid : refreshToken vorhanden
+  TokenValid : Session Cookie gesetzt
+  TokenValid : Benutzer-Daten im Token
+  TokenValid : Rollen verfügbar
+  
+  TokenValid --> TokenExpiring : Token läuft ab\n(< 5 Min Restlaufzeit)
+  
+  TokenExpiring : Automatischer Refresh\nwird vorbereitet
+  TokenExpiring : Noch gültig für Requests
+  TokenExpiring : Warn-Interval läuft
+  
+  TokenExpiring --> TokenValid : Token Refresh erfolgreich\n(neue Tokens erhalten)
+  TokenExpiring --> TokenExpired : Refresh fehlgeschlagen
+  
+  TokenExpired : accessToken abgelaufen
+  TokenExpired : API-Requests liefern 401
+  TokenExpired : Refresh wird versucht
+  
+  TokenExpired --> TokenValid : Refresh erfolgreich\n(Silent Refresh)
+  TokenExpired --> [*] : Refresh fehlgeschlagen
+}
+
+Authenticated --> Unauthenticated : Logout\n(signOut called)
+Authenticated --> Unauthenticated : RefreshAccessTokenError\n(Token kann nicht erneuert werden)
+Authenticated --> Unauthenticated : 401 von Backend\n(Token revoked in Keycloak)
+
+note right of TokenValid
+  JWT Claims:
+  - sub (User ID)
+  - email
+  - name, given_name, family_name
+  - preferred_username
+  - realm_access.roles[]
+  - groups[]
+  - exp, iat
+  
+  Session Check:
+  - Alle 60 Sekunden
+  - Bei Page Focus
+  - Bei Tab-Wechsel (sync)
+end note
+
+note right of TokenExpiring
+  Refresh Strategie:
+  1. Prüfe Expiry Time
+  2. Wenn < 5 Min: Refresh
+  3. POST /token mit refresh_token
+  4. Neue Tokens erhalten
+  5. Update Session Cookie
+  6. Hole aktuelle Roles (userinfo)
+  
+  Bei Fehler:
+  - Log Error
+  - Setze token.error
+  - Trigger Logout
+end note
+
+note left of Unauthenticated
+  Public Routes:
+  - /
+  - /welcome
+  - /api/auth/signin
+  - /api/auth/callback
+  
+  Redirect:
+  - Geschützte Routes → /api/auth/signin
+  - Nach Login → /dashboard/home
+end note
+
+@enduml

@@ -1,0 +1,76 @@
+@startuml state_role_request
+' Zustandsdiagramm: Rollenanfrage-Status
+' Zeigt den Lifecycle einer Role Request
+
+title Zustandsdiagramm - RoleRequest Entity
+
+[*] --> PENDING : Mitarbeiter stellt Anfrage
+
+state PENDING {
+  PENDING : status = PENDING
+  PENDING : Anfrage wartet auf Bearbeitung
+  PENDING : Admin muss prüfen
+  PENDING : Begründung ist sichtbar
+}
+
+state "Bearbeitung durch Admin" as Review {
+  state choice <<choice>>
+  
+  choice --> APPROVED : Admin genehmigt\n(optional mit Kommentar)
+  choice --> REJECTED : Admin lehnt ab\n(Kommentar Pflicht)
+}
+
+PENDING --> Review : Admin öffnet Anfrage
+
+state APPROVED {
+  APPROVED : status = APPROVED
+  APPROVED : reviewed_at ist gesetzt
+  APPROVED : reviewed_by enthält Admin-ID
+  APPROVED : review_comment optional
+  APPROVED : Rolle wird in Keycloak zugewiesen
+}
+
+state REJECTED {
+  REJECTED : status = REJECTED
+  REJECTED : reviewed_at ist gesetzt
+  REJECTED : reviewed_by enthält Admin-ID
+  REJECTED : review_comment ist Pflicht
+  REJECTED : Keine Keycloak-Änderung
+}
+
+APPROVED --> [*] : Anfrage abgeschlossen\n(Rolle aktiv)
+REJECTED --> [*] : Anfrage abgeschlossen\n(abgelehnt)
+
+note right of PENDING
+  Validierungen:
+  - Nur eine PENDING-Anfrage pro User
+  - Begründung min. 50 Zeichen
+  - Role muss gültig sein (MANAGER)
+  
+  Datenbank-Trigger:
+  - log_role_request()
+  - INSERT INTO activities
+end note
+
+note right of APPROVED
+  Keycloak-Integration:
+  1. Authentifizierung mit Admin-Client
+  2. Benutzer in Keycloak finden
+  3. Rolle zuweisen via Admin API
+  4. Bei Fehler: ROLLBACK
+  
+  Bei Erfolg:
+  - Activity: ROLE_APPROVED
+  - Benutzer sieht neue Features
+  - Token refresh mit neuen Rollen
+end note
+
+note right of REJECTED
+  Workflow:
+  - Ablehnungsgrund dokumentieren
+  - Benutzer wird informiert
+  - Activity: ROLE_REJECTED
+  - Benutzer kann erneut anfragen
+end note
+
+@enduml

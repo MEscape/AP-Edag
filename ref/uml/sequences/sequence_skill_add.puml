@@ -1,0 +1,90 @@
+@startuml sequence_skill_add
+' Sequenzdiagramm: Skill zu Profil hinzufügen
+' Zeigt Validierung, Persistierung und Trigger-Aktivierung
+
+title Sequenzdiagramm - Skill hinzufügen
+
+actor Mitarbeiter
+participant "Browser\n(React)" as Browser
+participant "Redux\n(RTK Query)" as Redux
+participant "SkillsController" as Controller
+participant "SkillManagementServiceImpl" as Service
+participant "ProfileSkillRepository" as SkillRepo
+participant "OptionsRepository" as OptionsRepo
+database "PostgreSQL" as DB
+
+== Skill-Dialog öffnen ==
+Mitarbeiter -> Browser: Klick auf "Skill hinzufügen"
+Browser -> Redux: useGetSkillOptionsQuery()
+Redux -> OptionsRepo: GET /v1/options/skills
+OptionsRepo -> DB: SELECT s.*, sc.name as category\nFROM skills s\nJOIN skill_categories sc ON s.category_id = sc.id\nWHERE s.is_active = true
+DB --> OptionsRepo: Verfügbare Skills
+OptionsRepo --> Redux: Skill-Liste
+Redux --> Browser: Skills im Dropdown
+
+== Skill auswählen und speichern ==
+Mitarbeiter -> Browser: Füllt Formular aus\n(Skill, Score, Experience, Last Used)
+Mitarbeiter -> Browser: Klick auf "Speichern"
+
+Browser -> Browser: Validiere Formular\n(Zod Schema)
+alt Validierung erfolgreich
+  Browser -> Redux: useAddSkillMutation()
+  Redux -> Controller: POST /v1/profiles/me/skills\n{categoryId, skillId, score, yearsOfExperience, lastUsed}
+  
+  == Authorization ==
+  Controller -> Controller: authorizationUtils.validateUserAccess('me', principal)
+  note right: Stellt sicher, dass User\nnur eigene Skills bearbeiten kann
+  
+  == Service Layer ==
+  Controller -> Service: addSkill(userId, addSkillRequest)
+  
+  Service -> OptionsRepo: skillExists(skillId, categoryId)
+  OptionsRepo -> DB: SELECT EXISTS(\n  SELECT 1 FROM skills\n  WHERE id = ? AND category_id = ?\n  AND is_active = true\n)
+  DB --> OptionsRepo: true/false
+  
+  alt Skill existiert nicht oder inaktiv
+    OptionsRepo --> Service: false
+    Service --> Controller: throw SkillNotFoundException
+    Controller --> Browser: 404 Not Found
+    Browser --> Mitarbeiter: Fehler: Skill nicht gefunden
+  else Skill ist gültig
+    Service -> SkillRepo: existsByEmployeeAndSkill(userId, skillId)
+    SkillRepo -> DB: SELECT EXISTS(\n  SELECT 1 FROM employee_skills\n  WHERE employee_id = ? AND skill_id = ?\n)
+    DB --> SkillRepo: true/false
+    
+    alt Skill bereits vorhanden
+      SkillRepo --> Service: true
+      Service --> Controller: throw DuplicateSkillException
+      Controller --> Browser: 409 Conflict
+      Browser --> Mitarbeiter: Fehler: Skill bereits vorhanden
+    else Skill noch nicht vorhanden
+      Service -> SkillRepo: save(ProfileSkill)
+      SkillRepo -> DB: INSERT INTO employee_skills\n(employee_id, skill_id, proficiency_score, years_of_experience, last_used)\nVALUES (?, ?, ?, ?, ?)
+      
+      == Datenbank-Trigger ==
+      DB -> DB: TRIGGER: log_skill_addition()
+      DB -> DB: INSERT INTO activities\n(user_id, activity_type, entity_type, entity_id)
+      
+      DB -> DB: TRIGGER: update_user_statistics()
+      DB -> DB: UPDATE user_statistics\nSET total_skills = total_skills + 1,\naverage_skill_score = (...)\nWHERE user_id = ?
+      
+      DB --> SkillRepo: ProfileSkill (mit ID)
+      SkillRepo --> Service: ProfileSkill
+      Service --> Controller: ProfileSkill
+      
+      Controller -> Controller: ProfileSkillResponseDto.from(profileSkill)
+      Controller --> Redux: 201 Created (JSON)
+      
+      == Cache Invalidation ==
+      Redux -> Redux: Invalidate Tags:\n['Profile-{userId}', 'Skills']
+      note right: Löst automatisch Re-Fetch\naller abhängigen Queries aus
+      
+      Redux --> Browser: Skill erfolgreich hinzugefügt
+      Browser --> Mitarbeiter: Erfolgsmeldung anzeigen\nProfil wird aktualisiert
+    end
+  end
+else Validierungsfehler
+  Browser --> Mitarbeiter: Formularfehler anzeigen
+end
+
+@enduml

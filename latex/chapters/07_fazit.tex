@@ -1,0 +1,53 @@
+% ==========================================
+% FAZIT
+% ==========================================
+\chapter{Fazit}
+
+\section{Projektzusammenfassung}
+
+Das Skill Management System wurde erfolgreich als \gls{mvp} und moderne Cloud-Native-Lösung für die Abteilung \textit{Mobility IT} der EDAG Engineering GmbH entwickelt. Das als interne Lösung konzipierte \gls{mvp} adressiert die identifizierten Schwachstellen des manuellen Projektbesetzungsprozesses durch eine zentrale, durchsuchbare Skill-Datenbank mit 200+ technischen Kompetenzen und umfassender Projektverwaltung.
+
+\subsection{Zentrale Ergebnisse}
+
+Die Projektdurchführung verlief planmäßig innerhalb des 80-Stunden-Budgets (1. Oktober -- 1. Dezember 2025). Alle definierten funktionalen und nicht-funktionalen Anforderungen wurden vollständig umgesetzt:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Technische Architektur}: Moderne \gls{three_tier} mit Next.js 16\cite{nextjs_docs} Frontend, Spring Boot 3.5\cite{spring_boot_docs} Backend nach Hexagonaler Architektur, PostgreSQL 15\cite{postgresql_docs} mit 15 Flyway-Migrationen\cite{flyway_docs}
+\item \textbf{Security \& DevOps}: \gls{oauth}2/\gls{oidc}-Integration mit Keycloak 23\cite{keycloak_docs} (OAuth2-Authentifizierung und Autorisierung), Kubernetes-Deployment\cite{kubernetes_docs}, \gls{cicd}-Pipeline mit Jenkins\cite{jenkins_docs} und SonarQube\cite{sonarqube_docs} \glspl{quality_gate} (Maintainability/Security Rating A)
+    \item \textbf{Code-Qualität}: 18.300+ LOC (Backend 7.800+, Frontend 10.500+), Intuitive UI mit \gls{wcag} 2.1 AA\cite{wcag}, responsive Design, Internationalisierung (DE/EN)
+\end{itemize}
+
+\section{Zielerreichung}
+
+\subsection{Wirtschaftliche Ziele}
+
+Die wirtschaftlichen Projektziele wurden vollständig erreicht. Das System amortisiert sich nach 4,5 Monaten bei einem \gls{roi} von 166\% nach 12 Monaten (detaillierte Berechnung siehe Kapitel~\ref{sec:wirtschaftlichkeit} und~\ref{sec:amortisation}). Die Zeitreduktion von 2,5 Stunden auf 15 Minuten pro Projektbesetzung entspricht einer Effizienzsteigerung von 90\%. Neben den quantifizierten Einsparungen bietet das System strategische Mehrwerte wie verbesserte Skill-Transparenz und fundierte Weiterbildungsplanung.
+
+\subsection{Qualitätsziele}
+
+Alle Qualitätsziele wurden erfüllt oder übertroffen (siehe Anhang, Tabelle~\ref{tab:sonarqube_metrics_detail}):
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Maintainability}: SonarQube\cite{sonarqube_docs} Rating A
+    \item \textbf{Security}: Rating A, keine Security Hotspots, sichere \gls{oauth}2-Integration\cite{oauth2_spec}
+    \item \textbf{Performance}: \gls{api}-Antwortzeiten < 200 ms (95. Perzentil), Frontend-Ladezeit < 2s\cite{web_performance}
+    \item \textbf{Usability}: Intuitive Navigation, kein Schulungsaufwand, barrierefreie Bedienung nach \gls{wcag} 2.1 AA\cite{wcag}
+\end{itemize}
+
+\section{Reflexion und Lernerfahrungen}
+
+\paragraph{Technische Herausforderungen:}
+Die Implementierung der Hexagonalen Architektur im Backend erforderte initiales Refactoring, zahlte sich jedoch durch hohe Testbarkeit aus. Der Next.js 16 App Router\cite{nextjs_docs} stellte Herausforderungen bei der Balance zwischen Server Components und Client Components; die ereignisbasierte Keycloak-Webhook-Integration erforderte tiefes SPI-Verständnis; Kustomize Base/Overlay-Pattern für drei Namespaces (dev/prod/devops) erforderte Einarbeitung. Die parallele Dokumentation während der Entwicklung reduzierte Abschlussaufwand; der \gls{mvp}-Ansatz mit Feature-Priorisierung verhinderte \gls{scope_creep}.
+
+\paragraph{Fachliche Kompetenzerweiterung:}
+Das Projekt ermöglichte praxisnahe Anwendung moderner Praktiken: Clean Architecture (Hexagonale Architektur), Cloud-Native Development (Kubernetes, Container-Orchestrierung), DevOps (CI/CD-Pipeline, SonarQube, Docker Multi-Stage Builds), Security (OAuth2/OIDC, JWT-Validierung), Fullstack-Entwicklung (Spring Boot, React, PostgreSQL, API-Design).
+
+\section{Ausblick und Weiterentwicklung}
+
+Das entwickelte System bietet eine solide Basis für zukünftige Erweiterungen. \textbf{Funktional}: Skill-Gap-Analyse, KI-gestützte Weiterbildungsempfehlungen, Benachrichtigungssystem, erweiterte Analytics (Skill-Heatmaps, Team-Kompetenz-Matrix), LDAP/AD-Integration, Jira/Confluence-Integration, Export-Funktionen (PDF-Reports, Excel). \textbf{Technisch}: Redis-Caching\cite{redis_docs} für Filter-Optionen, Lazy Loading, Lighthouse\cite{lighthouse_docs}-Tests, Playwright\cite{playwright_docs} E2E-Tests, Prometheus\cite{prometheus_docs}/Grafana\cite{grafana_docs}-Monitoring, Jaeger\cite{jaeger_docs}-Tracing, PostgreSQL-Backups\cite{postgresql_backup} mit Point-in-Time-Recovery, Multi-Region-Deployment.
+
+\section{Schlusswort}
+
+Das entwickelte Skill Management System demonstriert die erfolgreiche Umsetzung moderner Cloud-Native-Architekturen im Enterprise-Kontext. Der \gls{mvp}-Ansatz ermöglichte die zeitgerechte Lieferung eines funktionsfähigen Systems mit den wichtigsten Features. Die Kombination aus hexagonalem Backend-Design\cite{hexagonal_architecture}, server-side-rendered Frontend und Kubernetes\cite{kubernetes_docs}-Orchestrierung resultiert in einem wartbaren, skalierbaren und sicheren System.
+
+Die wirtschaftliche Amortisation nach 4,5 Monaten und der \gls{roi} von 166\% nach 12 Monaten (siehe Kapitel~\ref{sec:amortisation}) belegen den Mehrwert für die Organisation. Darüber hinaus schafft das System strategische Vorteile durch verbesserte Transparenz über verfügbare Kompetenzen, datengetriebene Teamzusammenstellung und fundierte Weiterbildungsplanung. Die während der Projektdurchführung erworbenen Kompetenzen in \gls{clean_architecture}, \gls{devops}-Praktiken und Cloud-Native Development bilden eine solide Grundlage für zukünftige Enterprise-Projekte. Die konsequente Anwendung von Best Practices resultierte in qualitativ hochwertigem, wartbarem Code, der bereit für den Produktiveinsatz ist.

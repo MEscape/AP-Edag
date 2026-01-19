@@ -1,0 +1,122 @@
+% ==========================================
+% PROJEKTERGEBNISSE
+% ==========================================
+\chapter{Projektergebnisse}
+
+\section{Funktionale Systemvalidierung}
+
+Das entwickelte \gls{mvp} deckt alle definierten Kernfunktionen ab und wurde erfolgreich getestet. Der \gls{mvp}-Ansatz ermöglichte die Fokussierung auf die wesentlichen Features für die Projektbesetzung. Ergänzend zu dieser Projektdokumentation wurden umfassende Benutzer- und Entwicklerdokumentationen erstellt (siehe Anhang, Abbildung~\ref{fig:doc_user_guide}), die Auszüge zur funktionalen Übersicht aus der Benutzerdokumentation (Abbildung~\ref{fig:doc_functional_overview}) sowie zur Architektur-Bausteinsicht aus der Entwicklerdokumentation (Abbildung~\ref{fig:doc_architecture_blocks}) enthalten.
+
+\subsection{Testabdeckung}
+
+Alle 15 Use Cases (siehe Anhang, Tabelle~\ref{tab:use_cases}) wurden systematisch getestet und validiert. Die Systemtests wurden manuell mit Fokus auf funktionale Korrektheit, Benutzererführung und Security durchgeführt. Alle kritischen Pfade wurden erfolgreich validiert, einschließlich der Kernbereiche Authentifizierung \& Profile, Discovery \& Suche, Projektverwaltung sowie Analytics. Edge-Cases und Fehlerszenarien wurden ebenfalls geprüft.
+
+\subsection{Code-Qualitätsmetriken}
+
+SonarQube\cite{sonarqube_docs}-Analysen ergaben nach 15 Builds durchgehend A-Ratings (Maintainability/Security/Reliability), 7.800+ LOC Backend, 10.500+ LOC Frontend, < 2\% Duplizierungen (Details siehe Anhang, Tabelle~\ref{tab:sonarqube_metrics_detail} und Abbildungen~\ref{fig:sonarqube_backend},~\ref{fig:sonarqube_frontend}). Alle \glspl{quality_gate} wurden erfüllt; Pipeline-Konfiguration mit \texttt{abortPipeline: true} stellte sicher, dass nur qualitativ hochwertiger Code deployed wurde.
+
+\subsection{Performance-Ergebnisse}
+
+\textbf{API-Antwortzeiten}: < 200 ms für 95\% aller Requests (Browser DevTools, Anforderung aus Kapitel~\ref{sec:nicht_funktionale_anforderungen} erfüllt). \textbf{Frontend-Ladezeit}: < 2s initial, < 300 ms Navigation durch Next.js\cite{nextjs_docs} App Router. Lighthouse\cite{lighthouse_docs}-Audit bestätigt Performance-Score 100/100 (First Contentful Paint 0.3s, Largest Contentful Paint 0.4s, siehe Anhang Abbildung~\ref{fig:lighthouse_welcome}). Datenbankabfragen optimiert durch Indizes und JPA Specifications\cite{spring_data_jpa}. Docker-Images: Backend 459 MB, Frontend 1.58 GB (Multi-Stage Builds\cite{docker_multistage}).
+
+\section{Soll-Ist-Vergleich}
+
+\subsection{Zeitliche Zielerreichung}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\rowcolors{2}{EDAGDunkelgrau!10}{white}
+\begin{tabularx}{\textwidth}{|X|p{2cm}|p{2cm}|p{1.8cm}|}
+\hline
+\rowcolor{EDAGDunkelgrau!10}
+\textbf{Phase} & \textbf{Geplant} & \textbf{Tatsächlich} & \textbf{Abweichung} \\
+\hline
+Analysephase & 8h & 7h & -1h \\
+\hline
+Planungsphase & 12h & 13h & +1h \\
+\hline
+Durchführungsphase & 44h & 45h & +1h \\
+\hline
+Abschlussphase & 16h & 15h & -1h \\
+\hline
+\rowcolor{EDAGDunkelgrau!30}
+\textbf{Gesamt} & \textbf{80h} & \textbf{80h} & \textbf{0h} \\
+\hline
+\end{tabularx}
+\caption{Soll-Ist-Vergleich der Projektphasen}
+\label{tab:soll_ist_zeit}
+\end{table}
+
+Das Projekt wurde exakt im geplanten Zeitrahmen abgeschlossen. Geringfügige Abweichungen in einzelnen Phasen kompensierten sich gegenseitig:
+
+\begin{itemize}
+    \item \textbf{Analysephase (-1h)}: IST-Analyse effizienter durch strukturierte Interviews
+    \item \textbf{Planungsphase (+1h)}: Zusätzlicher Aufwand für Mockup-Erstellung und Wirtschaftlichkeitsberechnung
+    \item \textbf{Durchführungsphase (+1h)}: Keycloak-Webhook-Integration benötigte mehr Zeit als geplant
+    \item \textbf{Abschlussphase (-1h)}: Dokumentation parallel zur Entwicklung reduzierte Abschlussaufwand
+\end{itemize}
+
+\subsection{Funktionale Zielerreichung}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\rowcolors{2}{EDAGDunkelgrau!10}{white}
+\begin{tabularx}{\textwidth}{|X|p{2.5cm}|}
+\hline
+\rowcolor{EDAGDunkelgrau!10}
+\textbf{Anforderung (vgl. Kapitel~3)} & \textbf{Status} \\
+\hline
+Personalisiertes Dashboard mit Skill-Entwicklung & \checkmark\,Vollständig \\
+\hline
+Profilverwaltung mit Selbsteinschätzung (0--100) & \checkmark\,Vollständig \\
+\hline
+Mitarbeiter-/Skill-/Projektsuche & \checkmark\,Vollständig \\
+\hline
+Projektmanagement (Manager): Anlegen, Teams zusammenstellen & \checkmark\,Vollständig \\
+\hline
+Benutzerverwaltung (Admin): Rollenzuweisung & \checkmark\,Vollständig \\
+\hline
+Stammdatenverwaltung (Admin): Skills, Kategorien, Standorte & \checkmark\,Vollständig \\
+\hline
+Authentifizierung über \gls{oauth}2/\gls{oidc} mit Keycloak\cite{keycloak_docs} & \checkmark\,Vollständig \\
+\hline
+Rollenbasierte Zugriffskontrolle (USER/MANAGER/ADMIN) & \checkmark\,Vollständig \\
+\hline
+Antwortzeiten < 2s für Suchanfragen\cite{web_performance} & \checkmark\,Vollständig \\
+\hline
+Responsive UI konform zu \gls{wcag} 2.1 AA\cite{wcag} & \checkmark\,Vollständig \\
+\hline
+Kubernetes-Deployment mit \gls{cicd}-Pipeline\cite{kubernetes_docs,jenkins_docs} & \checkmark\,Vollständig \\
+\hline
+\end{tabularx}
+\caption{Funktionale Anforderungen -- Zielerreichung}
+\label{tab:anforderungen_status}
+\end{table}
+
+Alle definierten Anforderungen aus Kapitel~3 wurden vollständig umgesetzt. Das \gls{mvp} befindet sich im finalen Teststadium und erfüllt alle priorisierten Must-Have- und Should-Have-Kriterien (siehe Tabelle~\ref{tab:mvp_features}).
+
+\subsection{Wirtschaftliche Zielerreichung}
+
+Die wirtschaftlichen Ziele wurden erreicht. Die Amortisationsrechnung aus Kapitel~\ref{sec:amortisation} zeigt folgende Ergebnisse bei 50 Projektbesetzungen pro Jahr:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{IST-Prozess} (siehe Tabelle~\ref{tab:ist_prozess_detail}): 125 Stunden × 75\,EUR/h = 9.375\,EUR
+    \item \textbf{SOLL-Prozess} (siehe Tabelle~\ref{tab:soll_prozess_detail}): 12,5 Stunden × 75\,EUR/h = 937,50\,EUR
+    \item \textbf{Jährliche Einsparung}: \textbf{8.437,50\,EUR}
+\end{itemize}
+
+Die Entwicklungskosten von 3.175\,EUR (siehe Tabelle~\ref{tab:kosten_detail}) amortisieren sich nach Berechnung in Kapitel~\ref{sec:amortisation} innerhalb von \textbf{4,5 Monaten}. Der \gls{roi} beträgt 166\% im ersten Jahr.
+
+\section{Systemdemonstration}
+
+Das Kernszenario demonstriert den vollständigen Workflow: Manager authentifiziert sich via Keycloak OAuth2/OIDC, nutzt Multi-Filter-Suche (Skills, Standort, Verfügbarkeit) zur Mitarbeiterauswahl, erstellt Projekt im Selection Mode mit Positionszuweisung, API-Request erstellt automatisch Projekt inkl. Team-Zuordnungen und Activity-Log. Der Workflow reduziert die Projektbesetzungszeit von 2,5 Stunden auf \textbf{15 Minuten} (90\% Reduktion) durch zentralisierte Skill-Datenbank und automatisierte Teamzusammenstellung. Das Dashboard bietet personalisierte Insights (Skill-Entwicklung als Area-Chart, Projekt-Statistiken, Activity Feed, Schnellaktionen) zur Identifikation von Skill-Gaps und Ableitung von Weiterbildungsbedarfen.
+
+\section{Abweichungen und Anpassungen}
+
+\paragraph{Technische Anpassungen:}
+Keycloak-Webhook statt zeitgesteuerter Batch-Sync (Echtzeit-Synchronisation), Redux Toolkit + RTK Query statt TanStack Query (vereint Server State Caching und komplexes Client State Management\cite{redux_toolkit}), Kustomize statt Helm (leichtgewichtigeres Overlay-Pattern dev/prod).
+
+\paragraph{Funktionale Erweiterungen:}
+Rollenanfrage-Workflow (Self-Service statt Admin-Zuweisung), Skill Development Tracking (über monatliche Snapshots in \texttt{skill\_development}-Tabelle), Project Members Refactoring (dedizierte \texttt{project\_members}-Tabelle mit Position-Zuordnung). Alle Anpassungen verbesserten die Systemqualität ohne den Projektzeitrahmen zu überschreiten.

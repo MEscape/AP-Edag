@@ -1,0 +1,48 @@
+\babel@toc {ngerman}{}\relax 
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Use-Case-Diagramm des Skill Management Systems}}{4}{figure.caption.12}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Gantt-Diagramm des Projektzeitplans}}{8}{figure.caption.15}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Amortisationsanalyse über 12 Monate}}{10}{figure.caption.17}%
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Hexagonale Architektur des Backend-Systems}}{13}{figure.caption.18}%
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Kubernetes-Architektur: 3 Namespaces mit Services und Ingress-Routing}}{17}{figure.caption.26}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {A.1}{\ignorespaces OAuth2 Token Introspection Flow mit rollenbasierter Autorisierung}}{41}{figure.caption.44}%
+\contentsline {figure}{\numberline {A.2}{\ignorespaces Mitarbeitersuche: Request-Flow mit JPA Specification Pattern}}{43}{figure.caption.45}%
+\contentsline {figure}{\numberline {A.3}{\ignorespaces Skill-Verwaltung: CRUD-Workflow mit RTK Query Cache-Management}}{45}{figure.caption.46}%
+\contentsline {figure}{\numberline {A.4}{\ignorespaces Aktivitätsdiagramm: Projekterstellung mit Mitarbeiterauswahl}}{47}{figure.caption.47}%
+\contentsline {figure}{\numberline {A.5}{\ignorespaces Aktivitätsdiagramm: Mitarbeitersuche mit dynamischen Filtern}}{48}{figure.caption.48}%
+\contentsline {figure}{\numberline {A.6}{\ignorespaces Skill Management System: Domain Model - Kernentitäten}}{49}{figure.caption.49}%
+\contentsline {figure}{\numberline {A.7}{\ignorespaces Zustandsdiagramm: Rollenanfrage-Workflow (Self-Service Pattern)}}{50}{figure.caption.50}%
+\contentsline {figure}{\numberline {A.8}{\ignorespaces Commit-Historie mit Conventional Commits und Commit Lint}}{51}{figure.caption.52}%
+\contentsline {figure}{\numberline {A.9}{\ignorespaces SonarQube Analyse -- Backend (SMS Backend, Branch: main)}}{51}{figure.caption.54}%
+\contentsline {figure}{\numberline {A.10}{\ignorespaces SonarQube Analyse -- Frontend (SMS Frontend, Branch: main)}}{52}{figure.caption.56}%
+\contentsline {figure}{\numberline {A.11}{\ignorespaces Jenkins Declarative Pipeline -- Build \#7 (Trigger Deploy Stage)}}{52}{figure.caption.57}%
+\contentsline {figure}{\numberline {A.12}{\ignorespaces Google Lighthouse Audit -- Welcome Screen (Performance: 100, Best Practices: 81)}}{55}{figure.caption.58}%
+\contentsline {figure}{\numberline {A.13}{\ignorespaces Entity-Relationship-Diagramm nach UML-Standard (Kernentitäten)}}{56}{figure.caption.59}%
+\contentsline {figure}{\numberline {A.14}{\ignorespaces Datenbank-Schema: Vollständige Tabellenstruktur mit 15 Tabellen}}{57}{figure.caption.60}%
+\contentsline {figure}{\numberline {A.15}{\ignorespaces Login-Seite mit Keycloak OAuth2/OIDC-Integration}}{60}{figure.caption.66}%
+\contentsline {figure}{\numberline {A.16}{\ignorespaces Keycloak-Authentifizierungsmaske}}{60}{figure.caption.67}%
+\contentsline {figure}{\numberline {A.17}{\ignorespaces Login-Erfolgsmeldung und Weiterleitung}}{61}{figure.caption.68}%
+\contentsline {figure}{\numberline {A.18}{\ignorespaces Welcome-Seite: Erste Schritte nach Registrierung}}{61}{figure.caption.69}%
+\contentsline {figure}{\numberline {A.19}{\ignorespaces Welcome-Seite: Profilkonfiguration}}{61}{figure.caption.70}%
+\contentsline {figure}{\numberline {A.20}{\ignorespaces Welcome-Seite: Skill-Auswahl}}{62}{figure.caption.71}%
+\contentsline {figure}{\numberline {A.21}{\ignorespaces Dashboard-Übersicht mit personalisierten Kennzahlen}}{62}{figure.caption.72}%
+\contentsline {figure}{\numberline {A.22}{\ignorespaces Dashboard mit Skill-Entwicklungstrends}}{63}{figure.caption.73}%
+\contentsline {figure}{\numberline {A.23}{\ignorespaces Profil-Bearbeitung: Persönliche Daten und Skills}}{63}{figure.caption.74}%
+\contentsline {figure}{\numberline {A.24}{\ignorespaces Profil-Ansicht: Skill-Matrix mit Proficiency-Scores}}{64}{figure.caption.75}%
+\contentsline {figure}{\numberline {A.25}{\ignorespaces Mitarbeitersuche mit Skill-basierten Filtern}}{64}{figure.caption.76}%
+\contentsline {figure}{\numberline {A.26}{\ignorespaces Projektübersicht mit Status-Filter}}{65}{figure.caption.77}%
+\contentsline {figure}{\numberline {A.27}{\ignorespaces Projekt-Detailansicht mit Team-Zusammensetzung}}{65}{figure.caption.78}%
+\contentsline {figure}{\numberline {A.28}{\ignorespaces Projekt-Erstellung: Formular für neue Projekte}}{66}{figure.caption.79}%
+\contentsline {figure}{\numberline {A.29}{\ignorespaces Projekt-Team-Management: Mitglieder hinzufügen}}{66}{figure.caption.80}%
+\contentsline {figure}{\numberline {A.30}{\ignorespaces Admin-Dashboard: Systemstatistiken und Benutzeraktivitäten}}{67}{figure.caption.81}%
+\contentsline {figure}{\numberline {A.31}{\ignorespaces Admin-Panel: Rollenanfragen-Verwaltung}}{67}{figure.caption.82}%
+\contentsline {figure}{\numberline {A.32}{\ignorespaces Initiales UI-Mockup aus der Planungsphase}}{68}{figure.caption.83}%
+\contentsline {figure}{\numberline {A.33}{\ignorespaces Benutzer- und Entwicklerdokumentation: Deckblatt der Benutzerdokumentation}}{69}{figure.caption.85}%
+\contentsline {figure}{\numberline {A.34}{\ignorespaces Benutzer- und Entwicklerdokumentation: Auszug aus der funktionalen Übersicht (Kapitel 3)}}{69}{figure.caption.86}%
+\contentsline {figure}{\numberline {A.35}{\ignorespaces Benutzer- und Entwicklerdokumentation: Auszug aus der Architekturübersicht (Kapitel 4 - Bausteine)}}{70}{figure.caption.87}%
+\contentsline {figure}{\numberline {A.36}{\ignorespaces API-Dokumentation: Übersicht der verfügbaren Endpunkte gruppiert nach Funktionsbereichen}}{71}{figure.caption.88}%

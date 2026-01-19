@@ -1,0 +1,82 @@
+@startuml state_project
+' Zustandsdiagramm: Projekt-Lebenszyklus
+' Zeigt alle Zustände und Übergänge eines Projekts
+
+title Zustandsdiagramm - Project Entity
+
+[*] --> PLANNED : Manager erstellt Projekt
+
+state PLANNED {
+  PLANNED : Status = PLANNED
+  PLANNED : Projekt ist in Planung
+  PLANNED : Team kann noch angepasst werden
+}
+
+PLANNED --> ACTIVE : Manager startet Projekt\n(startDate erreicht)
+PLANNED --> CANCELLED : Manager bricht Projekt ab\n(noch vor Start)
+
+state ACTIVE {
+  ACTIVE : Status = ACTIVE
+  ACTIVE : Projekt läuft
+  ACTIVE : Team arbeitet aktiv
+  ACTIVE : Skills werden genutzt
+}
+
+ACTIVE --> ON_HOLD : Manager pausiert Projekt\n(temporäre Unterbrechung)
+ACTIVE --> COMPLETED : Projekt abgeschlossen\n(endDate erreicht oder manuell)
+ACTIVE --> CANCELLED : Projekt abgebrochen\n(vorzeitige Beendigung)
+
+state ON_HOLD {
+  ON_HOLD : Status = ON_HOLD
+  ON_HOLD : Projekt pausiert
+  ON_HOLD : Keine aktive Entwicklung
+  ON_HOLD : Team kann umverteilt werden
+}
+
+ON_HOLD --> ACTIVE : Manager reaktiviert Projekt
+ON_HOLD --> CANCELLED : Manager bricht pausiertes Projekt ab
+ON_HOLD --> COMPLETED : Projekt wird als abgeschlossen markiert
+
+state COMPLETED {
+  COMPLETED : Status = COMPLETED
+  COMPLETED : Projekt erfolgreich beendet
+  COMPLETED : endDate ist gesetzt
+  COMPLETED : Keine Änderungen mehr möglich
+  COMPLETED : Daten für Reporting verfügbar
+}
+
+state CANCELLED {
+  CANCELLED : Status = CANCELLED
+  CANCELLED : Projekt vorzeitig beendet
+  CANCELLED : Grund kann dokumentiert sein
+  CANCELLED : Keine weiteren Übergänge möglich
+}
+
+COMPLETED --> [*] : Projekt archiviert
+CANCELLED --> [*] : Projekt archiviert
+
+note right of PLANNED
+  Aktionen in diesem Zustand:
+  - Team-Mitglieder hinzufügen/entfernen
+  - Projekdaten bearbeiten
+  - Technologien anpassen
+  - Rollen zuweisen
+end note
+
+note right of ACTIVE
+  Auswirkungen:
+  - user_statistics.active_projects++
+  - Activities werden geloggt
+  - Skills werden mit Projekten verknüpft
+  - Verfügbarkeit wird beeinflusst
+end note
+
+note right of COMPLETED
+  Trigger bei Übergang:
+  - user_statistics.active_projects--
+  - skill_development Einträge erstellen
+  - Activity LOG: PROJECT_COMPLETED
+  - Berechne Projekt-Dauer
+end note
+
+@enduml

@@ -1,0 +1,400 @@
+@startuml er_model
+' Entity-Relationship Diagramm: Skill Management System
+' Zeigt vollständiges Datenbankmodell mit allen Relationen
+
+title ER-Modell - Skill Management System (PostgreSQL)
+
+!define TABLE(name) class name << (T,#FFAAAA) >>
+!define PK(x) <b><u>x</u></b>
+!define FK(x) <i>x</i>
+!define UK(x) <color:blue>x</color>
+
+' ============================================================================
+' CORE ENTITIES (Basis-Tabellen)
+' ============================================================================
+
+entity "users" as users {
+  PK(id) : UUID
+  --
+  UK(username) : VARCHAR(128) NOT NULL
+  UK(email) : VARCHAR(320) NOT NULL
+  first_name : VARCHAR(128)
+  last_name : VARCHAR(128)
+  created_at : TIMESTAMP NOT NULL
+  updated_at : TIMESTAMP NOT NULL
+  ==
+  Indexes:
+  - idx_users_email
+  - idx_users_username
+  - idx_users_created_at
+}
+
+entity "positions" as positions {
+  PK(id) : UUID
+  --
+  UK(name) : VARCHAR(128) NOT NULL
+  is_active : BOOLEAN NOT NULL DEFAULT true
+  created_at : TIMESTAMP NOT NULL
+  updated_at : TIMESTAMP NOT NULL
+  ==
+  Indexes:
+  - idx_positions_active
+  - idx_positions_name
+}
+
+entity "locations" as locations {
+  PK(id) : UUID
+  --
+  UK(name) : VARCHAR(128) NOT NULL
+  is_active : BOOLEAN NOT NULL DEFAULT true
+  created_at : TIMESTAMP NOT NULL
+  updated_at : TIMESTAMP NOT NULL
+  ==
+  Indexes:
+  - idx_locations_active
+  - idx_locations_name
+}
+
+entity "skill_categories" as skill_categories {
+  PK(id) : UUID
+  --
+  UK(name) : VARCHAR(128) NOT NULL
+  is_active : BOOLEAN NOT NULL DEFAULT true
+  created_at : TIMESTAMP NOT NULL
+  updated_at : TIMESTAMP NOT NULL
+  ==
+  Indexes:
+  - idx_skill_categories_active
+  - idx_skill_categories_name
+}
+
+entity "skills" as skills {
+  PK(id) : UUID
+  --
+  UK(name) : VARCHAR(128) NOT NULL
+  FK(category_id) : UUID NOT NULL
+  is_active : BOOLEAN NOT NULL DEFAULT true
+  created_at : TIMESTAMP NOT NULL
+  updated_at : TIMESTAMP NOT NULL
+  ==
+  Indexes:
+  - idx_skills_category_active
+  ==
+  Constraints:
+  - CHK: is_active IN (true, false)
+}
+
+' ============================================================================
+' EMPLOYEE PROFILE & SKILLS
+' ============================================================================
+
+entity "employee_profiles" as employee_profiles {
+  PK(FK(user_id)) : UUID
+  --
+  FK(position_id) : UUID
+  FK(location_id) : UUID
+  availability : VARCHAR(50) NOT NULL DEFAULT 'UNAVAILABLE'
+  years_of_experience : NUMERIC(3,1) NOT NULL DEFAULT 0.0
+  bio : TEXT
+  created_at : TIMESTAMP NOT NULL
+  updated_at : TIMESTAMP NOT NULL
+  ==
+  Indexes:
+  - idx_employee_profiles_location
+  - idx_employee_profiles_position
+  - idx_employee_profiles_availability
+  - idx_employee_profiles_experience
+  ==
+  Constraints:
+  - CHK: years_of_experience >= 0
+  - CHK: LENGTH(bio) <= 500
+  - CHK: availability IN ('AVAILABLE', 'PARTIALLY_AVAILABLE', 'UNAVAILABLE')
+}
+
+entity "employee_skills" as employee_skills {
+  PK(id) : UUID
+  --
+  FK(employee_id) : UUID NOT NULL
+  FK(skill_id) : UUID NOT NULL
+  proficiency_score : INTEGER NOT NULL
+  years_of_experience : NUMERIC(3,1) NOT NULL DEFAULT 0.0
+  last_used : DATE
+  ==
+  Indexes:
+  - idx_employee_skills_employee
+  - idx_employee_skills_skill
+  - idx_employee_skills_skill_proficiency
+  ==
+  Constraints:
+  - UK: (employee_id, skill_id)
+  - CHK: proficiency_score BETWEEN 0 AND 100
+  - CHK: years_of_experience >= 0
+}
+
+' ============================================================================
+' PROJECTS
+' ============================================================================
+
+entity "projects" as projects {
+  PK(id) : UUID
+  --
+  name : VARCHAR(255) NOT NULL
+  description : TEXT
+  status : VARCHAR(32) NOT NULL DEFAULT 'PLANNED'
+  start_date : DATE NOT NULL
+  end_date : DATE
+  client : VARCHAR(255)
+  team_size : INTEGER
+  FK(created_by_user_id) : UUID NOT NULL
+  created_at : TIMESTAMP NOT NULL
+  updated_at : TIMESTAMP NOT NULL
+  ==
+  Indexes:
+  - idx_projects_created_by_start_date
+  - idx_projects_created_by_status
+  - idx_projects_start_date
+  - idx_projects_status
+  ==
+  Constraints:
+  - CHK: end_date IS NULL OR end_date >= start_date
+  - CHK: team_size IS NULL OR team_size > 0
+  - CHK: LENGTH(description) <= 2000
+  - CHK: status IN ('PLANNED', 'ACTIVE', 'ON_HOLD', 'COMPLETED', 'CANCELLED')
+}
+
+entity "project_members" as project_members {
+  PK(id) : UUID
+  --
+  FK(project_id) : UUID NOT NULL
+  FK(employee_id) : UUID NOT NULL
+  employee_name : VARCHAR(256) NOT NULL
+  FK(position_id) : UUID NOT NULL
+  position_name : VARCHAR(128) NOT NULL
+  ==
+  Indexes:
+  - idx_project_members_project
+  - idx_project_members_employee
+  ==
+  Constraints:
+  - UK: (project_id, employee_id)
+}
+
+entity "project_skills" as project_skills {
+  PK(id) : UUID
+  --
+  FK(project_id) : UUID NOT NULL
+  FK(skill_id) : UUID NOT NULL
+  ==
+  Indexes:
+  - idx_project_skills_project
+  - idx_project_skills_skill
+  ==
+  Constraints:
+  - UK: (project_id, skill_id)
+}
+
+' ============================================================================
+' ROLE MANAGEMENT
+' ============================================================================
+
+entity "role_requests" as role_requests {
+  PK(id) : UUID
+  --
+  FK(user_id) : UUID NOT NULL
+  role_type : VARCHAR(50) NOT NULL
+  status : VARCHAR(20) NOT NULL DEFAULT 'PENDING'
+  justification : TEXT NOT NULL
+  FK(reviewed_by) : UUID
+  reviewed_at : TIMESTAMP
+  review_comment : TEXT
+  created_at : TIMESTAMP NOT NULL
+  ==
+  Indexes:
+  - idx_role_requests_user
+  - idx_role_requests_status
+  - idx_role_requests_created
+  ==
+  Constraints:
+  - CHK: status IN ('PENDING', 'APPROVED', 'REJECTED')
+  - CHK: role_type IN ('MANAGER')
+  - CHK: LENGTH(justification) >= 50
+  - CHK: (status = 'PENDING') OR (reviewed_by IS NOT NULL AND reviewed_at IS NOT NULL)
+}
+
+' ============================================================================
+' ANALYTICS & TRACKING
+' ============================================================================
+
+entity "user_statistics" as user_statistics {
+  PK(FK(user_id)) : UUID
+  --
+  total_projects : INTEGER NOT NULL DEFAULT 0
+  active_projects : INTEGER NOT NULL DEFAULT 0
+  total_skills : INTEGER NOT NULL DEFAULT 0
+  average_skill_score : NUMERIC(5,2) DEFAULT 0.0
+  profile_completion_rate : NUMERIC(5,2) DEFAULT 0.0
+  join_date : DATE
+  last_activity_at : TIMESTAMP
+  created_at : TIMESTAMP NOT NULL
+  updated_at : TIMESTAMP NOT NULL
+  ==
+  Indexes:
+  - idx_user_statistics_total_projects
+  - idx_user_statistics_active_projects
+  ==
+  Constraints:
+  - CHK: total_projects >= 0
+  - CHK: active_projects >= 0 AND active_projects <= total_projects
+  - CHK: total_skills >= 0
+  - CHK: average_skill_score BETWEEN 0 AND 100
+  - CHK: profile_completion_rate BETWEEN 0 AND 100
+}
+
+entity "activities" as activities {
+  PK(id) : UUID
+  --
+  FK(user_id) : UUID NOT NULL
+  activity_type : VARCHAR(50) NOT NULL
+  entity_type : VARCHAR(50)
+  entity_id : UUID
+  details : JSONB
+  created_at : TIMESTAMP NOT NULL
+  ==
+  Indexes:
+  - idx_activities_user_created
+  - idx_activities_type
+  ==
+  Types:
+  - USER_CREATED, PROFILE_UPDATED
+  - SKILL_ADDED, SKILL_UPDATED, SKILL_REMOVED
+  - PROJECT_CREATED, PROJECT_UPDATED, PROJECT_DELETED
+  - ASSIGNED_TO_PROJECT, REMOVED_FROM_PROJECT
+  - ROLE_REQUESTED, ROLE_APPROVED, ROLE_REJECTED
+}
+
+entity "skill_development" as skill_development {
+  PK(id) : UUID
+  --
+  FK(user_id) : UUID NOT NULL
+  FK(skill_id) : UUID NOT NULL
+  proficiency_score : INTEGER NOT NULL
+  years_of_experience : NUMERIC(3,1) NOT NULL
+  recorded_at : TIMESTAMP NOT NULL
+  ==
+  Indexes:
+  - idx_skill_development_user_skill
+  - idx_skill_development_recorded
+  ==
+  Purpose:
+  Historical tracking of skill progression over time
+}
+
+' ============================================================================
+' RELATIONSHIPS (Foreign Keys)
+' ============================================================================
+
+' Skills & Categories
+skills }o--|| skill_categories : category_id
+
+' Employee Profiles
+employee_profiles ||--|| users : user_id
+employee_profiles }o--o| positions : position_id
+employee_profiles }o--o| locations : location_id
+
+' Employee Skills
+employee_skills }o--|| employee_profiles : employee_id
+employee_skills }o--|| skills : skill_id
+
+' Projects
+projects }o--|| users : created_by_user_id
+
+' Project Members
+project_members }o--|| projects : project_id
+project_members }o--|| employee_profiles : employee_id
+project_members }o--|| positions : position_id
+
+' Project Skills
+project_skills }o--|| projects : project_id
+project_skills }o--|| skills : skill_id
+
+' Role Requests
+role_requests }o--|| users : user_id
+role_requests }o--o| users : reviewed_by
+
+' Analytics
+user_statistics ||--|| users : user_id
+activities }o--|| users : user_id
+skill_development }o--|| users : user_id
+skill_development }o--|| skills : skill_id
+
+' ============================================================================
+' DATABASE TRIGGERS (Automatische Prozesse)
+' ============================================================================
+
+note top of employee_profiles
+  **Trigger: create_employee_profile_on_user_insert**
+  Automatisch bei INSERT INTO users:
+  - Erstellt employee_profiles Eintrag
+  - Setzt availability = 'UNAVAILABLE'
+  - Initialisiert user_statistics
+end note
+
+note right of user_statistics
+  **Trigger: update_user_statistics**
+  Automatisch aktualisiert bei:
+  - employee_skills INSERT/UPDATE/DELETE
+  - project_members INSERT/DELETE
+  - employee_profiles UPDATE
+  
+  Berechnet:
+  - total_skills, total_projects, active_projects
+  - average_skill_score
+  - profile_completion_rate
+end note
+
+note left of activities
+  **Trigger: log_*_activity**
+  Jede wichtige Aktion wird geloggt:
+  - Skill-Änderungen
+  - Projekt-Operationen
+  - Profil-Updates
+  - Rollenverwaltung
+  
+  Basis für Activity Feed & Audit Trail
+end note
+
+note bottom of skill_development
+  **Trigger: create_skill_development_snapshot**
+  Bei Projekt-Abschluss (COMPLETED):
+  - Snapshot aller Projekt-Skills
+  - Historische Entwicklung tracken
+  - Basis für Skill-Trends
+end note
+
+note right of projects
+  **Trigger: update_project_team_size**
+  Automatisch bei:
+  - project_members INSERT/DELETE
+  - Hält team_size synchron
+  
+  **Trigger: update_availability_on_project_status**
+  Bei Status-Änderung:
+  - ACTIVE → availability prüfen
+  - COMPLETED → active_projects--
+end note
+
+' ============================================================================
+' EXTENSIONS & FEATURES
+' ============================================================================
+
+note bottom of skills
+  **PostgreSQL Features:**
+  - pg_trgm Extension für Full-Text Search
+  - GIN Index auf tsvector für Performance
+  - JSONB für flexible Activity Details
+  - Trigger für automatische Datenintegrität
+  - CHECK Constraints für Validierung
+  - Composite Indexes für komplexe Queries
+end note
+
+@enduml

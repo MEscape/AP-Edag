@@ -1,0 +1,122 @@
+@startuml activity_user_registration
+' Aktivitätsdiagramm: Benutzerregistrierung
+' Zeigt den kompletten Registrierungs- und Onboarding-Flow
+
+title Aktivitätsdiagramm - Benutzerregistrierung
+
+|Benutzer|
+start
+:Besucht Welcome-Seite;
+:Klick auf "Registrieren";
+
+|Keycloak|
+:Zeige Registrierungsformular;
+note right: Custom Theme mit EDAG-Branding
+
+|Benutzer|
+:Eingabe von:
+* Email
+* Username
+* Passwort
+* Vorname, Nachname;
+
+|Keycloak|
+:Validiere Eingaben;
+if (Eingaben gültig?) then (nein)
+  :Zeige Validierungsfehler;
+  stop
+else (ja)
+  :Erstelle Benutzer in Keycloak;
+  :Generiere USER_REGISTER Event;
+  
+  |Webhook Service|
+  fork
+    :Empfange Event\nvon Keycloak;
+    :Validiere Basic Auth;
+    if (Auth gültig?) then (ja)
+      :Extrahiere Benutzerdaten\n(id, username, email, firstName, lastName);
+      
+      |Backend API|
+      :POST /v1/webhook/keycloak;
+      
+      |Database|
+      :BEGIN TRANSACTION;
+      :INSERT INTO users;
+      
+      :TRIGGER:\nAutomatic Profile Creation;
+      :INSERT INTO employee_profiles\n(user_id, availability='UNAVAILABLE');
+      
+      :INSERT INTO user_statistics\n(user_id, defaults);
+      
+      :COMMIT TRANSACTION;
+      
+      |Backend API|
+      :Sende 200 OK an Webhook;
+    else (nein)
+      :Log Fehler;
+      :Sende 401 Unauthorized;
+    endif
+  fork end
+  
+  |Keycloak|
+  :Sende Verifizierungs-Email;
+endif
+
+|Benutzer|
+:Prüfe Email-Postfach;
+:Klick auf Verifizierungs-Link;
+
+|Keycloak|
+:Markiere Email als verifiziert;
+:Weiterleitung zur Login-Seite;
+
+|Benutzer|
+:Login mit Credentials;
+
+|Frontend|
+:Redirect zu Dashboard;
+:Lade User-Profil;
+
+if (Profil unvollständig?) then (ja)
+  :Zeige Onboarding-Banner;
+  note right: "Vervollständigen Sie Ihr Profil\num alle Features nutzen zu können"
+  
+  :Zeige fehlende Felder:
+  * Position
+  * Standort
+  * Bio
+  * Skills;
+  
+  |Benutzer|
+  :Klick auf "Profil vervollständigen";
+  :Navigiere zu /profile/me;
+  
+  :Fülle Profil-Informationen aus;
+  :Speichere Position & Standort;
+  :Erstelle Biografie;
+  :Füge erste Skills hinzu;
+  
+  |Backend|
+  :UPDATE employee_profiles;
+  :INSERT INTO employee_skills;
+  
+  |Database|
+  :TRIGGER: update_profile_completion_rate;
+  :Berechne Completion Rate;
+  
+  fork
+    :TRIGGER: log_profile_update;
+    :INSERT INTO activities;
+  fork end
+  
+  |Frontend|
+  :Aktualisiere Completion Rate;
+  :Verstecke Onboarding-Banner;
+else (nein)
+  :Zeige Dashboard;
+endif
+
+:Benutzer kann System nutzen;
+stop
+
+@enduml

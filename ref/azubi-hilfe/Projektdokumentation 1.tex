@@ -1,0 +1,1296 @@
+\documentclass[11pt,a4paper]{report}
+
+% Encoding and language
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{lmodern}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{amssymb}
+\usepackage[acronym,toc,nogroupskip,nonumberlist]{glossaries}
+\makeglossaries
+
+% Unicode-Zeichen für LaTeX definieren
+\DeclareUnicodeCharacter{2713}{\checkmark}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning}
+
+% Layout
+\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=2.4cm, right=2.2cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+\usepackage{xcolor}
+\usepackage[table]{xcolor}
+\definecolor{EDAGDunkelgrau}{HTML}{455561}
+\definecolor{EDAGRot}{HTML}{D71946}
+\definecolor{EDAGgrau}{HTML}{949CA3}
+\definecolor{EDAGHellgrau}{HTML}{E4E5E6}
+\definecolor{EDAGBraun}{HTML}{B8ACA5}
+\definecolor{EDAGBeige}{HTML}{D8CFC9}
+
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{tocbibind}
+
+% Code listings
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single
+}
+
+% YAML-Sprachdefinition für listings
+\lstdefinelanguage{yaml}{
+  keywords={true,false,null,y,n},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywords={image,container_name,environment,ports,volumes,networks,services},
+  ndkeywordstyle=\color{purple}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{\#},
+  commentstyle=\color{gray}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+% Define header/footer for the main content
+\fancypagestyle{EDAGStyle}{
+  \fancyhf{}
+  \fancyhead[L]{\textcolor{EDAGDunkelgrau}{\textbf{Milena Suvajac}}}
+  \fancyhead[R]{\includegraphics[height=0.5cm]{images/EDAG_logo_dark.png}}
+  \fancyfoot[R]{Seite \thepage}
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\headrule}{\hbox to\headwidth{\color{EDAGDunkelgrau}\leaders\hrule height \headrulewidth\hfill}}
+}
+
+% Abkürzungsdefinitionen (müssen vor \begin{document} stehen!)
+\newacronym{api}{API}{Application Programming Interface}
+\newacronym{rest}{REST}{Representational State Transfer}
+\newacronym{jwt}{JWT}{JSON Web Token}
+\newacronym{sso}{SSO}{Single Sign-On}
+\newacronym{oauth}{OAuth}{Open Authorization}
+\newacronym{oauth2}{OAuth2}{Open Authorization 2.0}
+\newacronym{oidc}{OIDC}{OpenID Connect}
+\newacronym{http}{HTTP}{Hypertext Transfer Protocol}
+\newacronym{https}{HTTPS}{Hypertext Transfer Protocol Secure}
+\newacronym{url}{URL}{Uniform Resource Locator}
+\newacronym{ui}{UI}{User Interface}
+\newacronym{ux}{UX}{User Experience}
+\newacronym{dto}{DTO}{Data Transfer Object}
+\newacronym{jpa}{JPA}{Java Persistence API}
+\newacronym{orm}{ORM}{Object-Relational Mapping}
+\newacronym{crud}{CRUD}{Create, Read, Update, Delete}
+\newacronym{rbac}{RBAC}{Role-Based Access Control}
+\newacronym{ssr}{SSR}{Server-Side Rendering}
+\newacronym{hmr}{HMR}{Hot Module Replacement}
+\newacronym{ci}{CI}{Continuous Integration}
+\newacronym{cd}{CD}{Continuous Deployment}
+\newacronym{mvp}{MVP}{Minimum Viable Product}
+\newacronym{ide}{IDE}{Integrated Development Environment}
+\newacronym{json}{JSON}{JavaScript Object Notation}
+\newacronym{xml}{XML}{Extensible Markup Language}
+\newacronym{html}{HTML}{Hypertext Markup Language}
+\newacronym{css}{CSS}{Cascading Style Sheets}
+\newacronym{sql}{SQL}{Structured Query Language}
+\newacronym{jpql}{JPQL}{Java Persistence Query Language}
+\newacronym{cors}{CORS}{Cross-Origin Resource Sharing}
+\newacronym{pkce}{PKCE}{Proof Key for Code Exchange}
+\newacronym{uuid}{UUID}{Universally Unique Identifier}
+\newacronym{uml}{UML}{Unified Modeling Language}
+\newacronym{er}{ER}{Entity-Relationship}
+\newacronym{3nf}{3NF}{Third Normal Form}
+\newacronym{npm}{npm}{Node Package Manager}
+\newacronym{yml}{YAML}{YAML Ain't Markup Language}
+\newacronym{docker}{Docker}{Docker Container Platform}
+\newacronym{db}{DB}{Database}
+\newacronym{pk}{PK}{Primary Key}
+\newacronym{fk}{FK}{Foreign Key}
+\newacronym{tdd}{TDD}{Test-Driven Development}
+\newacronym{bdd}{BDD}{Behavior-Driven Development}
+\newacronym{pojo}{POJO}{Plain Old Java Object}
+\newacronym{jdk}{JDK}{Java Development Kit}
+\newacronym{jre}{JRE}{Java Runtime Environment}
+\newacronym{jar}{JAR}{Java Archive}
+\newacronym{it}{IT}{Informationstechnik}
+\newacronym{ihk}{IHK}{Industrie- und Handelskammer}
+\newacronym{2d}{2D}{zweidimensional}
+\newacronym{jdbc}{JDBC}{Java Database Connectivity}
+
+\begin{document}
+
+% --- Everything before Einleitung has no header/footer ---
+\pagestyle{empty}
+
+% --- Title page ---
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    {\Huge\bfseries Betriebliche Projektarbeit \\[0.5cm]}
+    
+    {\large Fachinformatiker Anwendungsentwicklung \\[0.5cm]}
+    
+    {\large Abschlussprüfung Winter 2025/26  \\[0.5cm]}
+    
+    {\LARGE Entwicklung einer webbasierten Anwendung zur Buchung von Büro-Arbeitsplätzen im Shared-Desk-Modell \\[1cm]}
+    
+	{\large\bfseries Prüflingsbewerber \\[0.3cm]}
+	{\normalsize Milena Suvajac \\}
+	{\normalsize Spessartstr. 1 \\}
+	{\normalsize 36119 Neuhof \\[1cm]}
+
+	{\large\bfseries Prüflingsnummer \\[0.3cm]}
+	{\normalsize 20122 \\[1cm]}
+
+	{\large\bfseries Ausbildungsbetrieb \\[0.3cm]}
+	{\normalsize EDAG Engineering GmbH \\}
+	{\normalsize Reesbergstr. 1 \\}
+	{\normalsize 36039 Fulda \\}
+    
+    \vfill
+    {\large \today}
+\end{titlepage}
+
+
+\clearpage
+\thispagestyle{empty}  % Keine Kopf-/Fußzeile auf dieser Seite
+
+\vspace*{1cm}
+
+{\Large\bfseries Persönliche Erklärung}
+
+\vspace{1cm}
+
+Ich versichere durch meine Unterschrift, dass ich das zugrundeliegende Projekt und diesen Bericht zur betrieblichen Projektarbeit (Projektdokumentation) selbstständig und ohne fremde Hilfe angefertigt habe.
+
+\vspace{0.5cm}
+
+Alle fremden Quellen wie Softwaremodule, Veröffentlichungen, andere Projektberichte und 
+Zusatzarbeiten, die ich funktionsmäßig, wörtlich oder auch nur sinngemäß übernommen 
+habe, sind von mir als solche gekennzeichnet worden.
+
+\vspace{0.5cm}
+
+Die Veröffentlichung oder Vervielfältigung dieser Projektdokumentation an Dritte ist ohne ausdrückliche Erlaubnis des Unternehmens EDAG Engineering GmbH nicht gestattet.
+
+\vspace{0.5cm}
+
+Die Arbeit hat in dieser Form keiner anderen Prüfungsinstitution vorgelegen.
+
+\vspace{2cm}
+\noindent
+\begin{tabular}{@{}p{7cm}p{6cm}@{}}
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ & \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
+Ort, Datum & Unterschrift \\
+\end{tabular}
+
+\vspace{2cm}
+
+\noindent
+Das Projekt wurde
+
+\vspace{0.5cm}
+
+\noindent
+$\Box$ abgenommen
+
+\noindent
+$\Box$ nicht abgenommen
+
+\vspace{2cm}
+
+\noindent
+\begin{tabular}{@{}p{5cm}p{6cm}p{4cm}@{}}
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ & \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ & \_\_\_\_\_\_\_\_\_\_\_\_\_\_ \\
+Ort, Datum & Projektverantwortlicher & Stempel des Betriebes \\
+\end{tabular}
+
+\clearpage
+
+
+
+% --- Force all lists and ToC to use empty style ---
+\makeatletter
+\let\ps@plain\ps@empty
+\makeatother
+
+% --- Contents, figures, and tables without any header/footer ---
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+\clearpage
+
+% Abkürzungsverzeichnis
+\printglossary[type=\acronymtype,title=Abkürzungsverzeichnis]
+\clearpage
+
+% --- Now start numbered pages and custom header/footer ---
+\setcounter{page}{1}
+\pagenumbering{arabic}
+\pagestyle{EDAGStyle}
+\setcounter{page}{1}
+\pagenumbering{arabic}
+\pagestyle{EDAGStyle}
+
+% Chapter-Titel: Nummer vor dem Titel, ohne "Kapitel"
+\makeatletter
+\def\@makechapterhead#1{%
+  \vspace*{5\p@}%
+  {\parindent \z@ \raggedright \normalfont
+    \ifnum \c@secnumdepth >\m@ne
+      \huge\bfseries \thechapter\quad % Nummer vor dem Titel
+    \fi
+    \Huge \bfseries #1\par\nobreak
+    \vskip 20\p@
+  }}
+\makeatother
+
+% Chapter-Seiten verwenden EDAGStyle statt plain
+\makeatletter
+\renewcommand\chapter{\if@openright\cleardoublepage\else\clearpage\fi
+                    \thispagestyle{EDAGStyle}%  % Hier geändert!
+                    \global\@topnum\z@
+                    \@afterindentfalse
+                    \secdef\@chapter\@schapter}
+\makeatother
+\chapter{Einleitung}
+
+
+\section*{Einleitung}
+
+Diese Projektdokumentation wurde im Rahmen der \gls{ihk}-Abschlussprüfung zum Fachinformatiker für Anwendungsentwicklung erstellt. Der Ausbildungsbetrieb ist die EDAG Engineering GmbH, ein internationaler Engineering-Dienstleister für die Automobilindustrie. Der Autor arbeitet in der Abteilung Mobility \gls{it}, die \gls{it}-Lösungen und Softwareplattformen für moderne Mobilitätskonzepte entwickelt, mit Schwerpunkt auf Digitalisierung und Vernetzung.
+
+Ziel des Projekts ist die Entwicklung einer webbasierten Anwendung zur Buchung von Büroarbeitsplätzen im Shared-Desk-Modell, um die transparente Planung und Reservierung von Arbeitsplätzen zu ermöglichen. Das System basiert auf einem Full-Stack-Ansatz mit Spring Boot Backend, PostgreSQL-Datenbank und Next.js Frontend, containerisiert in \gls{docker}.
+
+Fachbegriffe und Abkürzungen werden im Abkürzungsverzeichnis erläutert.
+
+\section{Projektumfeld}
+
+Ich absolviere derzeit eine Ausbildung zum Fachinformatiker für Anwendungsentwicklung, die ich im Rahmen meiner betrieblichen Tätigkeit bei der EDAG Engineering GmbH durchführe. Die EDAG Engineering GmbH ist ein international tätiger Engineering-Dienstleister im Bereich Mobilität und Teil der EDAG Group, die weltweit mit mehreren tausend Mitarbeitenden vertreten ist. Das Unternehmen bietet Entwicklungs- und \gls{it}-Dienstleistungen für führende Automobilhersteller und Industriekunden an und deckt dabei sämtliche Phasen des Produktentstehungsprozesses ab.
+
+Das Projekt wird in der Abteilung Mobility \gls{it} umgesetzt, die sich auf die Entwicklung und Integration digitaler Lösungen für interne und externe Kundenprojekte spezialisiert hat. Diese Abteilung verantwortet unter anderem die Konzeption, Entwicklung und Betreuung von Softwarelösungen, welche die Geschäftsprozesse innerhalb der EDAG Group effizient unterstützen.
+
+Im Zuge des zunehmenden hybriden Arbeitens hat die EDAG Engineering GmbH ein Shared-Desk-Modell eingeführt, bei dem mehr Mitarbeitende als physische Büroarbeitsplätze vorhanden sind. Aktuell existiert jedoch kein zentrales System zur transparenten Planung und Reservierung von Arbeitsplätzen. Die Organisation erfolgt bisher informell, was regelmäßig zu Unklarheiten über verfügbare Arbeitsplätze und Anwesenheiten führt.
+
+Zur Verbesserung dieser Situation wird im Rahmen dieser Projektarbeit eine webbasierte Anwendung zur internen Buchung von Büro-Arbeitsplätzen entwickelt. Diese soll eine intuitive Übersicht über verfügbare Arbeitsplätze bieten und Mitarbeitenden ermöglichen, Plätze im Voraus zu reservieren.
+
+Die technische Umsetzung erfolgt als Full-Stack-Webanwendung mit einem Spring-Boot-Backend, einer PostgreSQL-Datenbank und einem Next.js-Frontend. Das System wird containerisiert in einer \gls{docker}-Umgebung realisiert. Die Anwendung ist für den internen Gebrauch innerhalb der EDAG Engineering GmbH konzipiert und wird zunächst in der Abteilung Mobility \gls{it} eingesetzt. Eine spätere Ausweitung auf weitere Unternehmensbereiche ist technisch vorgesehen, jedoch nicht Bestandteil dieses Projekts.
+
+\section{Projektziel}
+
+Ziel des Projekts ist die Entwicklung einer webbasierten Anwendung zur internen Buchung von Büro-Arbeitsplätzen innerhalb der EDAG Engineering GmbH.
+Die Anwendung soll Mitarbeitenden ermöglichen, verfügbare Arbeitsplätze tagesgenau einzusehen, zu reservieren und Buchungen transparent zu verwalten. Dadurch wird die Auslastung der vorhandenen Büroflächen optimiert und die Planung im Rahmen des Shared-Desk-Modells vereinfacht.
+
+Im Mittelpunkt steht die Umsetzung eines \gls{mvp}, das die Kernfunktionen eines Arbeitsplatzbuchungssystems bereitstellt:
+
+\begin{itemize}
+  \item Anzeige verfügbarer Arbeitsplätze über eine Kalenderansicht,
+  \item Reservierung und Verwaltung von Buchungen,
+  \item Benutzerfreundliche Oberfläche zur intuitiven Bedienung,
+  \item Zentrale Speicherung der Buchungsdaten in einer PostgreSQL-Datenbank.
+\end{itemize}
+
+Das System soll zunächst lokal betrieben werden und dient als funktionaler Prototyp für den späteren produktiven Einsatz innerhalb der EDAG Engineering GmbH.
+
+
+\section{Projektbegründung}
+
+
+Die aktuelle Verwaltung der Büroarbeitsplätze erfolgt in der Abteilung Mobility \gls{it} der EDAG Group ohne ein zentrales System. Mitarbeitende koordinieren ihre Anwesenheitstage informell, was regelmäßig zu Unklarheiten über die Verfügbarkeit und Belegung von Arbeitsplätzen führt. Besonders an Tagen mit hoher Büroanwesenheit entstehen dadurch organisatorische Probleme und eine ineffiziente Nutzung der vorhandenen Büroflächen.
+
+Die Entwicklung einer webbasierten Buchungsanwendung soll diesen Zustand verbessern, indem sie Transparenz und Planbarkeit schafft. Durch die digitale Reservierung von Arbeitsplätzen können Doppelbelegungen vermieden und freie Plätze effizient genutzt werden. Gleichzeitig wird der Kommunikationsaufwand für die Mitarbeitenden reduziert, da alle relevanten Informationen zentral abrufbar sind.
+
+Darüber hinaus leistet die Lösung einen Beitrag zur besseren Umsetzung des Shared-Desk-Konzepts im Rahmen des hybriden Arbeitens. Führungskräfte erhalten durch die Anwendung eine übersichtliche Datengrundlage zur Analyse der Arbeitsplatznutzung, was eine optimierte Flächenplanung ermöglicht. Somit trägt das Projekt sowohl zur organisatorischen als auch zur wirtschaftlichen Effizienz des Unternehmens bei.
+
+\section{Projektschnittstellen}
+
+In diesem Kapitel werden die Schnittstellen der Anwendung beschrieben. Diese lassen sich in personelle, organisatorische und technische Schnittstellen unterteilen.
+
+\subsection{Personelle Schnittstellen}
+
+Während der Projektdurchführung steht Herr Henning als technischer Ansprechpartner und Projektbetreuer zur Verfügung. Er unterstützt bei fachlichen Rückfragen sowie bei der Abstimmung mit der \gls{it}-Abteilung.
+Die spätere Nutzung der Anwendung erfolgt durch die Mitarbeitenden der Abteilung Mobility \gls{it} am Standort Petersberg (Fulda). Sie fungieren zugleich als Pilotanwender und geben Rückmeldung zur Bedienbarkeit und Funktionsweise der Lösung.
+
+\subsection{Organisatorische Schnittstellen}
+
+Die Anwendung wird in das bestehende organisatorische Umfeld der EDAG Group eingebettet. Eine Abstimmung mit der internen \gls{it}-Abteilung ist erforderlich, um sicherzustellen, dass die Anwendung innerhalb des Unternehmensnetzwerks betrieben werden kann und die Sicherheitsrichtlinien eingehalten werden.
+
+
+	% Nicht sicher was ich schreiben sollte
+Darüber hinaus wird die Personalabteilung in die Planung der Nutzerrollen einbezogen, um sicherzustellen, dass nur autorisierte Mitarbeitende Zugriff auf bestimmte Funktionen (z. B. Admin-Bereich) erhalten.
+
+\subsection{Wirtschaftliche Schnittstellen}
+
+Da es sich um ein internes Entwicklungsprojekt handelt, entstehen keine externen Lizenz- oder Beschaffungskosten. Die benötigten Ressourcen (Server, Entwicklungsumgebung, Containerplattform) werden von der bestehenden EDAG-\gls{it}-Infrastruktur bereitgestellt. Eventuelle Entscheidungen über eine spätere Ausweitung auf weitere Abteilungen werden in Abstimmung mit dem Management getroffen.
+
+\subsection{Technische Schnittstellen}
+
+Die Anwendung ist ein eigenständiges System, das innerhalb des internen Firmennetzwerks betrieben wird.
+Sie interagiert mit folgenden technischen Systemen:
+Externe Systeme oder Schnittstellen zu bestehenden Anwendungen bestehen im Rahmen dieses Projekts nicht.
+
+\section{Projektabgrenzung}
+
+Der Projektumfang ist auf 80 Stunden begrenzt. Um eine erfolgreiche Umsetzung innerhalb dieses Rahmens sicherzustellen, wurden folgende Abgrenzungen festgelegt:
+
+\begin{itemize}
+  \item  \gls{sso}: Eine spätere Integration in das zentrale Authentifizierungssystem der EDAG Group ist grundsätzlich vorgesehen, gehört jedoch nicht zum Leistungsumfang des Projekts. Für das \gls{mvp} erfolgt die Anmeldung lokal über einfache Benutzerverwaltung.
+
+  \item  Mobile Nutzung: Die Anwendung wird für die Desktop-Nutzung im Browser entwickelt. Eine mobile Version oder App ist nicht Bestandteil dieses Projekts.
+
+  \item  Produktiver Betrieb: Die Bereitstellung auf einem zentralen Server oder in der produktiven Infrastruktur der EDAG Group ist nicht Teil des Projekts. Die Anwendung wird lokal in einer \gls{docker}-Umgebung betrieben.
+
+  \item  Erweiterte Funktionen: Funktionen wie die Integration in Outlook-Kalender, Benachrichtigungssysteme oder die automatische Auswertung von Nutzungsstatistiken sind konzeptionell vorgesehen, werden jedoch nicht implementiert.
+\end{itemize}
+
+Diese Abgrenzungen gewährleisten, dass der Fokus des Projekts auf der Entwicklung einer funktionsfähigen, lokal lauffähigen Basisversion der Anwendung liegt, die als Grundlage für eine spätere Weiterentwicklung und Integration in das Unternehmensumfeld dient.
+
+\chapter{Analysephase}  
+
+\section{Projektphasen mit Zeitplanung}
+
+\begin{table}[h!]
+\centering
+\rowcolors{2}{EDAGHellgrau}{white}
+\begin{tabular}{|p{0.5cm}|p{5.5cm}|p{1.6cm}|p{2.2cm}|p{2.2cm}|p{2cm}|}
+\hline
+\rowcolor{EDAGgrau}
+\rowcolor{EDAGgrau}\textbf{Nr.} & \textbf{Vorgangsname} & \textbf{Dauer} & \textbf{Anfang} & \textbf{Fertigstellen} & \textbf{Vorgänger} \\
+\hline
+ & Anforderungsspezifikation & 8 Std. & -- & -- & -- \\
+1 & Rahmenbedingungen & 2 Std. & Mo 03.11.25 & Mo 03.11.25 & -- \\
+2 & Nutzeranforderungen & 3 Std. & Mo 03.11.25 & Mo 03.11.25 & 1 \\
+3 & Zieldefinition & 1 Std. & Mo 03.11.25 & Mo 03.11.25 & 2 \\
+4 & Ist-Analyse & 2 Std. & Mo 03.11.25 & Mo 03.11.25 & 3 \\
+\hline
+ & Projektplanung & 12 Std. & -- & --  & -- \\
+5 & Konzept / Architektur & 3 Std. & Di 04.11.25 & Di 04.11.25 & 4 \\
+6 & Technologieauswahl & 2 Std. & Di 04.11.25 & Di 04.11.25 & 5 \\
+7 & DB-Modellierung & 1 Std. & Di 04.11.25 & Do 06.11.25 & 6 \\
+8 & UI-Mockups & 3 Std. & Do 06.11.25 & Do 06.11.25 & 7 \\
+9 & Schnittstellen / Rechte & 1 Std. & Do 06.11.25 & Do 06.11.25 & 8 \\
+10 & Zeit- und Aufgabenplan & 1 Std. & Do 06.11.25 & Do 06.11.25 & 9 \\
+11 & Kostenabschätzung & 1 Std. & Do 06.11.25 & Do 06.11.25 & 10 \\
+\hline
+ & Projektdurchführung & 44 Std. & --  & --  & -- \\
+12 & Entwicklungsumgebung & 4 Std. & Fr 07.11.25 & Fr 07.11.25 & 11 \\
+13 & DB-Implementierung & 4 Std. & Fr 07.11.25 & Fr 07.11.25 & 12 \\
+14 & REST-API & 10 Std. & Mo 10.11.25 & Mo 10.11.25 & 13 \\
+15 & Frontend & 14 Std. & Di 11.11.25 & Do 13.11.25 & 14 \\
+16 & Integration FE/BE & 6 Std. & Do 13.11.25 & Do 13.11.25 & 15 \\
+17 & Tests (Unit / Int.) & 6 Std. & Mo 17.11.25 & Mo 17.11.25 & 16 \\
+\hline
+ & Projektabschluss und Kontrolle & 16 Std. & -- & -- & -- \\
+18 & Funktionstests & 2 Std. & Mo 17.11.25 & Di 18.11.25 & 17 \\
+19 & QS / Code-Review & 2 Std. & Di 18.11.25 & Di 18.11.25 & 18 \\
+20 & Techn. Doku & 5 Std. & Do 20.11.25 & Do 20.11.25 & 19 \\
+21 & Benutzerhandbuch & 2 Std. & Fr 21.11.25 & Fr 21.11.25 & 20 \\
+22 & Bewertung / Fazit & 1 Std. & Mo 27.11.25 & Mo 27.11.25 & 21 \\
+23 & Präsentationsvorb. & 4 Std. & Do 27.11.25 & Fr 27.11.25 & 22 \\
+\hline
+\multicolumn{5}{|r|}{\textbf{Gesamtzeit}} & \textbf{80 Std.} \\
+\hline
+\end{tabular}
+\caption{Zeitplanung des Projekts „Webbasierte Arbeitsplatzbuchung“}
+\end{table}
+
+\section{Ressourcenplanung}
+
+Folgende Ressourcen werden für die Umsetzung des Projekts benötigt oder sind bereits vorhanden:
+
+\subsubsection{Hardware}
+\begin{itemize}
+  \item 1 × Firmenlaptop des Auszubildenden mit Entwicklungsumgebung
+  \item 1 × EDAG-Server (bestehende Infrastruktur, vorgesehen für den späteren produktiven Betrieb -- nicht Teil dieses Projekts)
+\end{itemize}
+
+\subsubsection{Software}
+\begin{itemize}
+  \item IntelliJ IDEA Community Edition -- Entwicklungsumgebung für das Backend
+  \item Visual Studio Code -- Entwicklungsumgebung für das Frontend
+  \item Docker CLI -- Containerisierung und Verwaltung von Frontend, Backend und Datenbank
+  \item PostgreSQL -- relationale Datenbank zur Verwaltung der Buchungsdaten
+  \item Next.js -- Framework für das Webfrontend
+  \item React Konva -- Rendering und Interaktion zur grafischen Darstellung von Räumen
+  \item shadcn/ui -- Komponentenbibliothek zur Umsetzung der Benutzeroberfläche
+  \item next-intl -- Internationalisierung des Webfrontends (Deutsch/Englisch)
+  \item Spring Boot -- Framework für das Backend (REST-API)
+  \item Keycloak -- Authentifizierungs- und Autorisierungsserver
+  \item Swagger (OpenAPI) -- API-Dokumentation
+  \item Git -- Versionsverwaltung
+  \item Figma -- Erstellung von UI-Mockups
+  \item Markdown / LaTeX -- Projektdokumentation
+  \end{itemize}
+
+\subsubsection{Personal}
+\begin{itemize}
+  \item 1 × Auszubildender (Fachinformatiker Anwendungsentwicklung) -- Entwicklung und Dokumentation
+  \item 1 × Mitarbeitende der Abteilung Mobility \gls{it} -- Bereitstellung von Anforderungen und Testfeedback
+\end{itemize}
+
+\section{Kostenplanung und Kalkulation}
+
+\vspace{0.4cm}
+
+\definecolor{headergray}{HTML}{949CA3}
+\definecolor{rowgray}{HTML}{E4E5E6}
+
+\begin{table}[h!]
+\centering
+\rowcolors{2}{rowgray}{white}
+\begin{tabular}{|p{6cm}|p{4cm}|p{3cm}|}
+\hline
+\rowcolor{headergray}
+\textbf{Ressource} & \textbf{Berechnung} & \textbf{Kosten (€)} \\
+\hline
+Personalkosten Auszubildender & 80\,h $\times$ 35,00 € & 2.800,00 \\
+Personalkosten Kollege (Test) & 3\,h $\times$ 75,00 € & 225,00 \\
+\hline
+\multicolumn{2}{|r|}{\textbf{Gesamtkosten}} & \textbf{3.025,00 €} \\
+\hline
+\end{tabular}
+\caption{Kostenaufstellung inklusive Stromverbrauchsberechnung}
+\end{table}
+
+\vspace{0.3cm}
+
+Für Softwarelizenzen oder Hardware entstehen keine weiteren Ausgaben, 
+da alle benötigten Ressourcen bereits durch die EDAG Group bereitgestellt werden.
+
+\section{Make-or-Buy-Entscheidung}
+
+Im Rahmen der Projektplanung wurde geprüft, ob für die Buchung von Büroarbeitsplätzen 
+eine bestehende Standardlösung eingesetzt oder eine individuelle Software entwickelt werden soll. 
+Diese Entscheidung wurde auf Basis technischer, wirtschaftlicher und organisatorischer Kriterien getroffen.
+
+\subsubsection*{Vergleichskriterien}
+
+\begin{itemize}
+    \item \textbf{Kosten:} 
+          Kommerzielle Arbeitsplatzbuchungssysteme bewegen sich typischerweise 
+          zwischen 1,50 € und 3,70 € pro Nutzer und Monat.  
+          Beispiele: desk.ly (ab 1,65 €), PULT (ab 1,90 €), deskbird (2,50–3,50 €), 
+          Flexopus (1,59–2,99 €) und Yoffix (ab 1,50 € je nach Modul).  
+          Viele Anbieter stellen zudem individuelle Enterprise-Pakete bereit, deren Preise 
+          abhängig von Funktionsumfang, Ressourcen und Nutzerzahl separat kalkuliert werden.  
+          Für rund 80 Mitarbeitende ergeben sich jährliche Lizenzkosten von etwa 
+          1.500 € bis 3.500 €. Die Eigenentwicklung verursacht einmalige 
+          Entwicklungskosten von ca. 3.025 € und keine laufenden Lizenzgebühren.
+
+    \item \textbf{Externe Speicherung:} 
+          Cloudbasierte Systeme speichern Daten häufig außerhalb der eigenen 
+          Unternehmensinfrastruktur. Der Anbieter übernimmt dadurch Teile von Betrieb, 
+          Backup und Zugriffssicherung.
+
+    \item \textbf{Eingeschränkte Kontrolle:} 
+          Bei externen Lösungen besteht nur begrenzter Einfluss auf Updates, 
+          Sicherheitsmaßnahmen und Backup-Prozesse.
+
+    \item \textbf{Abhängigkeiten:} 
+          Fremdsysteme führen zu Abhängigkeiten von Preisstruktur, Funktionsumfang 
+          und Verfügbarkeit des Anbieters. Eine Eigenentwicklung vermeidet dies vollständig 
+          und ermöglicht interne Steuerung von Weiterentwicklungen.
+
+    \item \textbf{Anpassbarkeit:} 
+          Standardlösungen bieten nur eingeschränkte Anpassungsmöglichkeiten. 
+          Eine individuell entwickelte Lösung kann nahtlos in bestehende EDAG-Systeme 
+          integriert und flexibel um zukünftige Funktionen erweitert werden 
+          (z.\,B. Outlook-Integration oder Anwesenheitsanalysen).
+\end{itemize}
+
+
+\subsubsection*{Entscheidung}
+
+Nach Abwägung aller Faktoren wurde die Entscheidung für die \textbf{Make-Variante} getroffen.  
+Die Eigenentwicklung bietet langfristig geringere Kosten, volle Kontrolle über Daten und Funktionen 
+sowie eine bessere Integration in die interne IT-Landschaft der EDAG Group.  
+Die Implementierung im Rahmen dieses Projekts bildet die Grundlage für eine spätere unternehmensweite Nutzung.
+
+
+\section{Amortisationsrechnung}
+
+Für die Wirtschaftlichkeitsbetrachtung wird die statische Amortisationsrechnung 
+(„Durchschnittsmethode“) verwendet. Diese Methode geht davon aus, dass der jährliche 
+Rückfluss konstant bleibt. Die Amortisationsdauer ergibt sich aus dem Verhältnis von 
+Investitionskosten zu jährlichem Rückfluss:
+
+\[
+\text{Amortisationsdauer} = 
+\frac{\text{Investitionskosten}}{\text{jährlicher Rückfluss}}
+\]
+
+\subsection{Ausgangsdaten}
+
+Wie in den Vergleichskriterien dargestellt, bewegen sich die jährlichen Lizenzkosten
+kommerzieller Buchungssysteme zwischen 1.500 € und 3.500 € bei rund 80 Nutzern.
+Der Durchschnitt dieser beiden Werte beträgt 2.500 € pro Jahr. Für die
+Amortisationsrechnung wird dieser Durchschnittswert als jährliche Einsparung
+herangezogen, da er die realistischste Vergleichsbasis darstellt.
+
+\begin{itemize}
+    \item Investitionskosten Eigenentwicklung: 3{,}025 \,€
+    \item Jährliche Lizenzkosten (Minimum): 1{,}500 \,€
+    \item Jährliche Lizenzkosten (Maximum): 3{,}500 \,€
+    \item Jährliche Lizenzkosten (Durchschnitt): 2{,}500 \,€
+    \item Jährlicher Rückfluss (eingesparte Lizenzkosten): 2{,}500 \,€
+\end{itemize}
+
+Damit ergibt sich:
+
+\[
+\text{Amortisationsdauer} = \frac{3{,}025}{2{,}500} = 1{,}21 \text{ Jahre}
+\]
+
+Die Eigenentwicklung amortisiert sich somit nach rund 1{,}2 Jahren 
+(entspricht etwa 14–15 Monaten). Ab diesem Zeitpunkt entstehen keine weiteren
+Kosten, während bei kommerziellen Lösungen kontinuierlich Lizenzgebühren anfallen.
+
+\subsection{Grafische Darstellung der Amortisation}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=14cm,
+    height=8cm,
+    xlabel={Jahre},
+    ylabel={Kumulierte Kosten bzw. Einsparungen in €},
+    xmin=0, xmax=3,
+    ymin=-500, ymax=8000,
+    xtick={0,0.5,1,1.5,2,2.5,3},
+    ytick={0,1500,3000,4500,6000,7500},
+    grid=both,
+    grid style={line width=.1pt, draw=gray!30},
+    thick,
+    legend pos=north west,
+    legend style={font=\small}
+]
+
+% Eigenentwicklung (konstant bei 3.025 €)
+\addplot[
+    color=EDAGRot,
+    line width=2pt,
+    mark=none
+] coordinates {
+    (0, 3025)
+    (3, 3025)
+};
+\addlegendentry{Eigenentwicklung (einmalig 3{,}025 €)}
+
+% Durchschnittliche Lizenzkosten
+\addplot[
+    color=EDAGDunkelgrau,
+    line width=2pt,
+    dashed,
+    mark=none
+] coordinates {
+    (0, 0)
+    (1, 2500)
+    (2, 5000)
+    (3, 7500)
+};
+\addlegendentry{Lizenzkosten Durchschnitt (2{,}500 €/Jahr)}
+
+% Minimum Lizenzkosten
+\addplot[
+    color=EDAGgrau,
+    line width=1pt,
+    dotted,
+    mark=none
+] coordinates {
+    (0, 0)
+    (1, 1500)
+    (2, 3000)
+    (3, 4500)
+};
+\addlegendentry{Lizenzkosten Minimum (1{,}500 €/Jahr)}
+
+% Maximum Lizenzkosten
+\addplot[
+    color=EDAGgrau,
+    line width=1pt,
+    dotted,
+    mark=none
+] coordinates {
+    (0, 0)
+    (1, 3500)
+    (2, 7000)
+    (3, 10500)
+};
+\addlegendentry{Lizenzkosten Maximum (3{,}500 €/Jahr)}
+
+% Schnittpunkt bei 1,21 Jahren markieren
+\addplot[
+    mark=*,
+    only marks,
+    mark size=3pt,
+    color=EDAGRot
+] coordinates {(1.21, 3025)};
+
+\node[anchor=south] at (axis cs:1.21,3500) {Amortisation nach 1{,}21 Jahren};
+
+\end{axis}
+\end{tikzpicture}
+\caption{Amortisationsvergleich: Eigenentwicklung vs. kommerzielle Lizenzkosten}
+\label{fig:amortisation}
+\end{figure}
+
+Die Abbildung zeigt, dass die einmaligen Investitionskosten der Eigenentwicklung
+(rote horizontale Linie bei 3{,}025 €) nach 1{,}21 Jahren von den kumulierten
+Lizenzkosten erreicht werden. Ab diesem Zeitpunkt übersteigen die laufenden
+Kosten einer kommerziellen Lösung die Investition in die Eigenentwicklung.
+Bei durchschnittlichen Lizenzkosten von 2{,}500 € pro Jahr entstehen nach drei
+Jahren Gesamtkosten von 7{,}500 €, während die Eigenentwicklung weiterhin bei
+einmalig 3{,}025 € bleibt.
+
+\section{Ist-Analyse}
+
+Im Zuge des hybriden Arbeitens hat die EDAG Engineering GmbH am Standort Petersberg (Fulda) ein Shared-Desk-Modell eingeführt, bei dem die Anzahl der Büroarbeitsplätze geringer ist als die Zahl der Mitarbeitenden. Eine feste Zuordnung von Arbeitsplätzen existiert nicht, sodass Mitarbeitende bei Bedarf einen Platz im Büro nutzen können.
+
+Aktuell existiert kein zentrales System zur Planung oder Reservierung von Arbeitsplätzen. Die Zuteilung erfolgt informell und ohne transparente Übersicht. Mitarbeitende entscheiden erst vor Ort, welchen Arbeitsplatz sie an dem jeweiligen Tag nutzen, abhängig davon, welche Plätze gerade frei sind. 
+
+Diese spontane Vorgehensweise führt insbesondere an Tagen mit hoher Büroanwesenheit zu Unklarheiten und ineffizienter Nutzung der verfügbaren Büroflächen. Mitarbeitende wissen häufig nicht, welche Arbeitsplätze belegt sind oder welche Kolleginnen und Kollegen anwesend sein werden. Dadurch wird die individuelle Planung erschwert, und es entstehen unnötige Such- und Abstimmungszeiten.
+
+Zusätzlich fehlen historische und statistische Daten zur Auslastung der Arbeitsplätze, wodurch eine datenbasierte Optimierung der Raumbelegung nicht möglich ist.
+
+Die Analyse des aktuellen Zustands zeigt somit, dass der bestehende Prozess nicht effizient, unstrukturiert und fehleranfällig ist. Eine digitale Lösung zur zentralen Buchung und Verwaltung von Arbeitsplätzen ist erforderlich, um die Transparenz zu erhöhen, den organisatorischen Aufwand zu reduzieren und die vorhandenen Büroflächen optimal zu nutzen.
+
+\chapter{Projektplanung} 
+
+\section{Vorgehensmodell}
+
+Für die Umsetzung des Projekts wird das \textbf{Wasserfallmodell} verwendet. 
+Dieses Vorgehensmodell teilt das Projekt in aufeinanderfolgende Phasen auf, 
+die jeweils abgeschlossen werden, bevor die nächste beginnt. 
+Dadurch wird eine strukturierte und nachvollziehbare Entwicklung ermöglicht.
+
+Das Wasserfallmodell wurde gewählt, 
+weil die Anforderungen zu Beginn des Projekts klar definiert sind 
+und eine phasenweise, zeitlich planbare Umsetzung innerhalb des vorgegebenen Rahmens von 80 Stunden ermöglicht wird.
+
+\subsection{Entwurf der Benutzeroberfläche}
+
+Um benutzerfreundliche Oberflächen zu erstellen, wurden Mockups entworfen. Für die Erstellung wurde die Software Figma verwendet. Zunächst wurden notwendige Benutzeroberflächen anhand der Anwendungsfälle ermittelt.
+
+Beim Entwurf der Benutzeroberfläche wurden Farben aus dem EDAG-Stil (Dunkelgrau, Rot, Hellgrau) übernommen. 
+
+Die Mockups zeigen die Hauptansichten der Anwendung:
+\begin{itemize}
+    \item Raum-Übersicht mit grafischer 2D-Darstellung der Arbeitsplätze
+    \item Buchungsdialog mit Datums- und Zeitauswahl
+    \item Buchungsverwaltung mit tabellarischer Auflistung
+    \item Anwesenheitsverwaltung mit Status-Auswahl
+    \item Admin-Bereich für Raum- und Arbeitsplatzverwaltung
+\end{itemize}
+
+Die grafische Darstellung der Räume erfolgt mithilfe von React Konva, einer Canvas-basierten Rendering-Bibliothek. Arbeitsplätze werden einheitlich in Hellgrau dargestellt, der Status wird durch den Rahmen visualisiert.
+
+\subsection{Architekturdesign}
+
+Die Gesamtarchitektur der Anwendung besteht aus vier Hauptkomponenten, die über definierte Schnittstellen miteinander kommunizieren:
+
+\begin{itemize}
+    \item \textbf{Frontend (Next.js):} Präsentationsschicht mit React-Komponenten für die Benutzeroberfläche
+    \item \textbf{Backend (Spring Boot):} \gls{rest}-\gls{api} mit Geschäftslogik in Hexagonaler Architektur
+    \item \textbf{Datenbank (PostgreSQL):} Persistenzschicht für alle Anwendungsdaten
+    \item \textbf{Keycloak:} Identity Provider für Authentifizierung und Autorisierung über \gls{oauth2}/\gls{oidc}
+\end{itemize}
+
+Alle Komponenten werden als \gls{docker}-Container betrieben und über ein gemeinsames \gls{docker}-Netzwerk verbunden. Die Kommunikation erfolgt über \gls{http}/\gls{rest} (Frontend $\leftrightarrow$ Backend), \gls{jdbc} (Backend $\leftrightarrow$ Datenbank) und \gls{oauth2}/\gls{oidc} (Frontend/Backend $\leftrightarrow$ Keycloak).
+
+Bei der Auswahl des Backend-Architekturdesigns wurde auf Austauschbarkeit und Testbarkeit geachtet, weshalb sich das Backend an der Hexagonalen Architektur (Ports \& Adapters) orientiert. Diese Architektur ermöglicht eine vollständige Entkopplung der Domänenschicht von den Infrastruktur-Schichten. Dadurch wird die fachliche Logik in der Domäne gekapselt und die Persistenzschicht sowie externe Schnittstellen austauschbar gehalten. Im Falle einer Umstellung auf eine andere Datenbank oder zusätzliche Client-Anwendungen könnte auf die bestehende Domäne aufgebaut werden, ohne diese anzupassen.
+
+\subsubsection*{Frontend-Architektur}
+
+Die Präsentationsschicht wird mit Next.js und React umgesetzt. Das Frontend ist in folgende Komponenten unterteilt:
+
+\begin{itemize}
+    \item \textbf{\gls{ui}-Komponenten:} Wiederverwendbare React-Komponenten für Buchungen, Räume, Authentifizierung und Layout
+    \item \textbf{Custom Hooks:} Wiederverwendbare Logik für \gls{api}-Aufrufe und State-Management
+    \item \textbf{\gls{api} Proxy:} Zentrale Schnittstelle zur Backend-Kommunikation
+\end{itemize}
+
+\subsubsection*{Backend-Architektur (Hexagonale Architektur)}
+
+Das Backend folgt dem Prinzip der Hexagonalen Architektur mit drei Schichten:
+
+\begin{itemize}
+    \item \textbf{Domain Layer:} Geschäftslogik, Entitäten als \glspl{pojo} (User, Room, Workspace, Booking, DeskType, UserRoom, UserPresence), Domain Services (BookingService, WorkspaceService, RoomService, UserRoomService, UserPresenceService, UserService) sowie abstrakte Repository-Ports.
+    \item \textbf{Application Layer:} Implementierung der Use Cases (Inbound Ports), Commands für Schreiboperationen, Queries für komplexe Lesevorgänge sowie \glspl{dto} zur Entkopplung der \gls{rest}-\gls{api} vom Domain-Model.
+    \item \textbf{Infrastructure Layer:} \gls{rest}-Controller (Mapping zwischen \glspl{dto}, Commands/Queries und Use Cases), \gls{jpa}-Repository-Adapter als Implementierung der Repository-Ports, Entity-Mapping zwischen Domain Models und \gls{jpa}-Entities, Security-Konfiguration (\gls{oauth2}/\gls{jwt}), \gls{cors}-Konfiguration.
+\end{itemize}
+
+Dependency Injection ermöglicht vollständige Inversion of Control. \gls{jpa}/Hibernate übernimmt das \gls{orm}.
+
+Komponentendiagramm siehe Anhang (\ref{sec:anhang-komponentendiagramm}).
+
+\subsection{Anwendungsfälle}
+
+Zur Darstellung der fachlichen Anwendungsfälle wurden mithilfe der \gls{uml} drei Anwendungsfalldiagramme erstellt -- jeweils eines für jede Rolle (siehe Anhang \ref{sec:anhang-use-case}). Diese Aufteilung nach Benutzerrollen verbessert die Übersichtlichkeit und ermöglicht eine klare Abgrenzung der Zuständigkeiten.
+
+Das System unterscheidet drei Akteure mit hierarchischer Rollenvererbung:
+
+\begin{itemize}
+    \item \textbf{Benutzer (7 Use Cases):} Grundlegende Funktionen zur Arbeitsplatzbuchung, Anwesenheitsverwaltung und Team-Übersicht
+    \item \textbf{Raumadministrator (8 Use Cases):} Erbt Benutzer-Rechte und kann zusätzlich Arbeitsplätze in zugewiesenen Räumen verwalten
+    \item \textbf{Systemadministrator (5 Use Cases):} Erbt alle Rechte und verwaltet zusätzlich Räume und globale Systemeinstellungen
+\end{itemize}
+
+Da jeder Anwendungsfall eine Authentifizierung über Keycloak (\gls{oauth2}/\gls{oidc}) voraussetzt, wurde diese technische Abhängigkeit aus Gründen der Übersichtlichkeit nicht explizit in den Diagrammen dargestellt. Detaillierte Use-Case-Diagramme mit vollständigen Beschreibungen befinden sich im Anhang (siehe Abschnitt \ref{sec:anhang-use-case}).
+
+\subsection{Datenmodell}
+
+Basierend auf der Anforderungsanalyse und den Mockups wurden sieben Entitäten abgeleitet: \textbf{User} (Benutzerkonten), \textbf{Room} (Räume), \textbf{Workspace} (Arbeitsplätze), \textbf{Booking} (Reservierungen), \textbf{DeskType} (Arbeitsplatztypen), \textbf{UserRoom} (n:m-Relation für Raumadministratoren) und \textbf{UserPresence} (Anwesenheitsstatus). Das relationale Datenbankmodell befindet sich in \gls{3nf} und nutzt \gls{jpa}/Hibernate für das \gls{orm}.
+
+Die Kernentitäten sind mit \glspl{pk} versehen und über \glspl{fk} verbunden. Workspace enthält \gls{2d}-Koordinaten für die grafische Raumdarstellung. Wichtige Beziehungen: User 1:n Booking, Room 1:n Workspace, User n:m Room (über UserRoom).
+
+Das vollständige \gls{er}-Diagramm mit allen Attributen, Datentypen, Constraints und Kardinalitäten befindet sich im Anhang (siehe Abschnitt \ref{sec:anhang-er-diagramm}).
+
+\subsection{Geschäftslogik}
+
+Zur Veranschaulichung der Geschäftslogik wurde das Aktivitätsdiagramm "Arbeitsplatz buchen" erstellt (siehe Anhang \ref{sec:anhang-aktivitaetsdiagramme}). Der Buchungsprozess umfasst Authentifizierung, Verfügbarkeitsprüfung und Konflikterkennung.
+
+Die Geschäftslogik ist in Service-Klassen (BookingService, WorkspaceService, RoomService) gekapselt. Services kommunizieren über Repository-Interfaces mit der Datenbankschicht und geben \glspl{dto} anstelle von Entitäten zurück, um die fachliche Logik zu schützen und die \gls{api}-Schnittstelle zu entkoppeln.
+
+Zentrale Logikkomponenten:
+\begin{itemize}
+    \item \textbf{Verfügbarkeitsberechnung:} Dynamische Statusermittlung basierend auf Buchungen, Zuweisungen und Anwesenheitsstatus
+    \item \textbf{Konfliktprüfung:} Mehrschichtige Validierung (Zeitraum-Überschneidungen, User-Doppelbuchungen, Zuweisungsbeschränkungen)
+    \item \textbf{Fehlerbehandlung:} Sprechende Fehlermeldungen mit \gls{http}-Statuscodes (400 Bad Request, 404 Not Found, 409 Conflict)
+    \item \textbf{Rollenbasierte Logik:} Unterschiedliche Berechtigungen für Benutzer, Raumadministratoren und Systemadministratoren
+\end{itemize}
+
+
+\subsection{Maßnahmen zur Qualitätssicherung}
+
+Zur Sicherstellung der Softwarequalität wurde eine mehrstufige Teststrategie implementiert:
+
+\textbf{Unit-Tests:} 41 Tests mit JUnit 5 und Mockito für Backend-Services (Code-Coverage: 72\%). Fokus auf kritische Geschäftsregeln wie Buchungskonflikte und Validierungslogik.
+
+\textbf{\gls{api}-Tests:} Systematische Tests aller \gls{rest}-Endpunkte mit Swagger \gls{ui}. Überprüfung von Erfolgs- und Fehlerszenarien sowie \gls{http}-Statuscodes.
+
+\textbf{Frontend-Tests:} Manuelle Funktionstests für Browser-Kompatibilität und React-Konva-Raumvisualisierung.
+
+\textbf{Code-Qualität:} Statische Analyse durch \glspl{ide}, ESLint für TypeScript, einheitliche Coding-Standards.
+
+\textbf{Versionsverwaltung:} Git mit Feature-Branches und strukturierten Commit-Konventionen.
+
+\subsection{Lokale Entwicklungsumgebung}
+
+Für die lokale Entwicklung und das Testen wurde \gls{docker} Compose eingesetzt. Diese Container-basierte Umgebung ermöglicht eine konsistente und reproduzierbare Entwicklungsumgebung auf dem Entwicklungsrechner. \gls{docker} Compose orchestriert vier Container (Frontend, Backend, PostgreSQL, Keycloak) mit definierter Startup-Reihenfolge via Healthchecks.
+
+Da es sich um ein \gls{mvp} handelt, wurde auf ein produktives Deployment-Setup verzichtet. Die Anwendung läuft ausschließlich lokal und dient als funktionaler Prototyp. Ein späterer produktiver Betrieb auf zentralen Servern ist technisch vorgesehen, aber nicht Teil dieses Projekts.
+
+\chapter{Projektdurchführung}
+
+Anhand der erstellten Entwürfe aus Kapitel 3 (Entwurfsphase) konnte mit der Implementierung der einzelnen Elemente begonnen werden. Die Implementierung erfolgte gemäß der in der Planung definierten Phasen und Zeitvorgaben.
+
+\section{Aufsetzen des Projekts}
+
+Zu Beginn wurden die Projektstrukturen für Backend und Frontend erstellt. Für das Backend wurde mit Spring Initializr ein Spring Boot 3.2.1-Projekt mit Maven als Build-Tool erzeugt. Anschließend wurden alle notwendigen Abhängigkeiten in der \texttt{pom.xml}-Datei hinzugefügt, darunter Spring Data \gls{jpa}, Spring Security, Spring Web, PostgreSQL-Treiber und SpringDoc OpenAPI für die \gls{api}-Dokumentation.
+
+Für das Frontend wurde mit \texttt{\gls{npm}x create-next-app@latest} ein Next.js 15-Projekt initialisiert. Alle benötigten Abhängigkeiten wurden in der \texttt{package.json} eingetragen, einschließlich React Konva für die grafische Raumdarstellung, shadcn/ui für \gls{ui}-Komponenten, next-intl für Internationalisierung und Tailwind \gls{css} für das Styling.
+
+Um die Anwendung in \gls{docker} lauffähig zu machen, wurden Dockerfiles für Backend und Frontend erstellt. Mithilfe der Dockerfiles können \gls{docker}-Images gebaut werden, die dann in \gls{docker}-Containern ausgeführt werden können.
+
+\subsection{Docker-Compose-Konfiguration}
+
+Da die Webanwendung aus vier Services besteht (Frontend, Backend, PostgreSQL, Keycloak), wurde eine \texttt{docker-compose.yml}-Datei erstellt. Docker Compose vereinfacht das Betreiben einer Multi-Container-Anwendung erheblich.
+
+Bei Ausführung mit dem Befehl \texttt{docker-compose up -d} werden alle Container gestartet. Durch die \texttt{depends\_on}-Bedingungen wird sichergestellt, dass die Container in der richtigen Reihenfolge gestartet werden:
+
+\begin{enumerate}
+    \item \textbf{PostgreSQL-Container:} Datenbank auf Port 5432 mit Healthcheck
+    \item \textbf{Keycloak-Container:} Identity Provider auf Port 8081, wartet auf PostgreSQL
+    \item \textbf{Backend-Container:} Spring Boot API auf Port 8080, wartet auf PostgreSQL und Keycloak
+    \item \textbf{Frontend-Container:} Next.js auf Port 3000, wartet auf Backend
+\end{enumerate}
+
+Für die Entwicklung werden keine persistenten Daten außerhalb der Container benötigt, jedoch wurden Docker-Volumes für \texttt{db-data}, \texttt{keycloak-data} und \texttt{frontend-node-modules} definiert, um die Daten über Container-Neustarts hinweg zu erhalten.
+
+Damit der Zugriff zwischen den Containern funktioniert, wurden alle Container in einem gemeinsamen Docker-Netzwerk \texttt{shared\_desk\_net} platziert. Dadurch können die Container untereinander über ihre Service-Namen kommunizieren (z.B. kann das Backend mit \texttt{jdbc:postgresql://db:5432/shared\_desk\_db} auf die Datenbank zugreifen).
+
+\subsection{Keycloak-Konfiguration und Realm-Import}
+
+Keycloak wird als Docker-Container betrieben und beim Start automatisch konfiguriert. Das Keycloak-Dockerfile basiert auf dem offiziellen \texttt{quay.io/keycloak/keycloak:24.0}-Image und integriert einen Custom Event Listener Provider.
+
+Dieser Provider wird als Maven-Projekt innerhalb des Docker-Build-Prozesses kompiliert und in das Verzeichnis \texttt{/opt/keycloak/providers/} kopiert. Der Custom Provider ermöglicht die automatische Synchronisation von Keycloak-Benutzern mit der Anwendungsdatenbank durch Event-basierte Webhooks.
+
+Beim Start des Keycloak-Containers wird durch den Befehl \texttt{start-dev --import-realm} automatisch die Realm-Konfiguration aus der Datei \texttt{realm-shared-desk.json} importiert. Diese Konfiguration enthält:
+
+\begin{itemize}
+    \item Realm-Name: \texttt{shared-desk}
+    \item Rollen: \texttt{USER}, \texttt{ADMIN}
+    \item Zwei OAuth2-Clients:
+    \begin{itemize}
+        \item \texttt{shared-desk-frontend} -- Public Client für Frontend (OAuth2 PKCE Flow)
+        \item \texttt{shared-desk-admin} -- Service Account für Backend (User-Synchronisation mit Keycloak)
+    \end{itemize}
+    \item Event-Listener-Konfiguration für automatische User-Synchronisation
+\end{itemize}
+
+\section{Implementierung der Domäne}
+
+Nachdem das Projekt aufgesetzt wurde, konnten aus dem zuvor erstellten ER-Diagramm (siehe Anhang \ref{sec:anhang-er-diagramm}) alle benötigten Klassen und Attribute abgeleitet werden. Jeder Entitätstyp im ERM repräsentiert eine Klasse im Domain Layer der Hexagonalen Architektur.
+
+\subsection{Domain-Modelle als POJOs}
+
+Die Domain-Modelle wurden zunächst als einfache POJOs (Plain Old Java Objects) im Package \texttt{org.shared\_desk.domain.model} implementiert. Diese Klassen sind frei von technischen Abhängigkeiten und enthalten ausschließlich fachliche Logik und Attribute.
+
+Folgende Entitäten wurden erstellt: User, Room, Workspace, Booking, DeskType, UserRoom und UserPresence. Jede Entität erhielt eine eindeutige ID als Primärschlüssel. Zur Reduzierung von Boilerplate-Code wurde die Bibliothek Lombok eingesetzt, wodurch Getter, Setter, Konstruktoren und \texttt{toString()}-Methoden automatisch generiert werden.
+
+\subsection{JPA-Entities für Persistierung}
+
+Damit die Domain-Modelle auf ein relationales Datenbankmodell abgebildet werden können, wurde jede Klasse mit der JPA-Annotation \texttt{@Entity} versehen. Durch diese Annotation kann JPA eine Klasse als Entitätstyp erkennen und mithilfe des ORMs (Object-Relational Mapping) auf eine relationale Datenbank abbilden.
+
+Die Primärschlüssel wurden mit \texttt{@Id} und \texttt{@GeneratedValue(strategy = GenerationType.IDENTITY)} annotiert, wodurch die Datenbank automatisch fortlaufende IDs vergibt.
+
+\subsection{Automatische Schema-Generierung}
+
+Das Datenbankschema wird automatisch durch Spring Boot und Hibernate generiert. In der \texttt{application.yml} wurde die Konfiguration \texttt{spring.jpa.hibernate.ddl-auto: update} hinterlegt. Diese Einstellung sorgt dafür, dass beim Start des Backends alle benötigten Tabellen automatisch angelegt oder aktualisiert werden.
+
+Beim ersten Start des Backends wurden folgende sieben Tabellen erstellt: \texttt{users}, \texttt{rooms}, \texttt{desk\_types}, \texttt{workspaces}, \texttt{bookings}, \texttt{user\_room} und \texttt{user\_presence}. Alle Tabellen wurden mit den korrekten Primärschlüsseln, Fremdschlüsseln, Constraints und Indizes angelegt.
+
+\section{Implementierung der Geschäftslogik}
+
+Nachdem alle Entitäten abgeleitet wurden, konnte die Domäne um die Services erweitert werden. Die Services bilden die Anwendungsfälle ab (siehe Anhang \ref{sec:anhang-use-case}).
+
+\subsection{Repository-Interfaces}
+
+Um den Methoden der Services den Zugriff auf die Datenbank zu gewähren, wurden Repository-Interfaces erstellt. Durch die Interfaces wurde die Persistenzschicht von der Domäne entkoppelt und austauschbar gehalten.
+
+Spring Data JPA ermöglicht die Erstellung von Repository-Interfaces, die von \texttt{JpaRepository} erben. Dadurch werden automatisch CRUD-Methoden bereitgestellt, ohne dass eigener Code geschrieben werden muss. Für komplexere Abfragen wurden Custom Queries mit der \texttt{@Query}-Annotation und JPQL (Java Persistence Query Language) definiert.
+
+Beispiel: Das \texttt{BookingRepository} enthält eine Custom Query zur Erkennung von Buchungskonflikten:
+
+\begin{verbatim}
+@Query("SELECT b FROM Booking b WHERE b.workspace.wid = :workspaceId
+        AND b.date = :date " +
+       "AND ((b.startTime <= :startTime AND b.endTime > :startTime) " +
+       "OR (b.startTime < :endTime AND b.endTime >= :endTime) " +
+       "OR (b.startTime >= :startTime AND b.endTime <= :endTime))")
+List<Booking> findConflictingBookings(
+    @Param("workspaceId") Integer workspaceId,
+    @Param("date") LocalDate date,
+    @Param("startTime") LocalTime startTime,
+    @Param("endTime") LocalTime endTime);
+\end{verbatim}
+
+Diese Query prüft auf zeitliche Überschneidungen zwischen einer neuen Buchung und bestehenden Buchungen für denselben Arbeitsplatz und dasselbe Datum.
+
+\subsection{Service-Klassen}
+
+Die Services implementieren die fachliche Logik und bilden die Use-Cases aus dem Anwendungsfalldiagramm ab. Jeder Service wurde als Spring-Bean mit der Annotation \texttt{@Service} gekennzeichnet.
+
+Um zur Laufzeit eine Implementierung der Repository-Interfaces in den Services zu haben, wurde Constructor Injection eingesetzt. Der Konstruktor erhält die benötigten Repository-Ports als Parameter und wird von Spring automatisch mit den entsprechenden Implementierungen versorgt.
+
+Gemäß der Hexagonalen Architektur arbeiten die Services nicht direkt mit Infrastructure-Repositories, sondern mit Port-Interfaces. Dies gewährleistet die Entkopplung der Geschäftslogik von der Infrastruktur:
+
+\begin{verbatim}
+@Service
+public class BookingService implements BookingUseCase {
+
+    private final BookingRepositoryPort bookingRepository;
+    private final UserRepositoryPort userRepository;
+    private final WorkspaceRepositoryPort workspaceRepository;
+    private final UserPresenceUseCase userPresenceUseCase;
+
+    public BookingService(BookingRepositoryPort bookingRepository,
+                          UserRepositoryPort userRepository,
+                          WorkspaceRepositoryPort workspaceRepository,
+                          UserPresenceUseCase userPresenceUseCase) {
+        this.bookingRepository = bookingRepository;
+        this.userRepository = userRepository;
+        this.workspaceRepository = workspaceRepository;
+        this.userPresenceUseCase = userPresenceUseCase;
+    }
+}
+\end{verbatim}
+
+Die Verwendung von Port-Interfaces (z.B. \texttt{BookingRepositoryPort} statt \texttt{BookingRepository}) ermöglicht es, die Persistenz-Implementierung auszutauschen, ohne den Service-Code zu ändern.
+
+Implementierte Services: BookingService, WorkspaceService, RoomService, UserService, UserPresenceService, UserRoomService und KeycloakProvisioningService.
+
+\subsection{Data Transfer Objects (DTOs)}
+
+Für die Anwendungsfälle wurden passende DTOs erstellt, um die Entitäten für die REST-API zu transformieren. DTOs dienen der Entkopplung zwischen interner Domänenlogik und externer Schnittstelle. Dadurch wird keine fachliche Logik nach außen gegeben und die über das Netzwerk zu übertragenen Daten werden auf das Notwendige reduziert.
+
+Die DTOs wurden im Package \texttt{org.shared\_desk.infrastructure.adapters.in.rest.*.dto} organisiert und nach ihrer Funktion benannt (z.B. \texttt{BookingRequestDto}, \texttt{BookingResponseDto}, \texttt{WorkspaceResponseDto}).
+
+\subsection{REST-Controller}
+
+Die REST-Controller bilden die Schnittstelle zwischen Frontend und Backend. Sie empfangen HTTP-Requests, delegieren die Verarbeitung an die entsprechenden Services und transformieren die Ergebnisse in HTTP-Responses.
+
+Jeder Controller wurde mit \texttt{@RestController} und \texttt{@RequestMapping} annotiert. Die Endpunkte wurden mit \texttt{@GetMapping}, \texttt{@PostMapping}, \texttt{@PutMapping} und \texttt{@DeleteMapping} definiert.
+
+Die Authentifizierung erfolgt über JWT-Tokens, die von Keycloak ausgestellt werden. Spring Security validiert automatisch die Tokens und extrahiert die Benutzerinformationen. Zur Autorisierung wurden Method-Level-Security-Annotations wie \texttt{@PreAuthorize("hasRole('ADMIN')")} eingesetzt.
+
+\section{Implementierung der Benutzeroberfläche}
+
+Die Benutzeroberflächen wurden mit Next.js 15 und React entwickelt. Next.js bietet Server-Side Rendering, einen App Router und optimierte Performance.
+
+\subsection{Projektstruktur und Komponenten}
+
+Die Frontend-Struktur folgt dem Next.js App Router Pattern. Alle Seiten befinden sich im \texttt{app/}-Verzeichnis, wiederverwendbare Komponenten im \texttt{components/}-Verzeichnis.
+
+Es wurde ein allgemeines Layout erstellt (\texttt{layout.tsx}), das von allen Seiten wiederverwendet wird. Das Layout enthält die Navigation, das EDAG-Logo und den Benutzer-Avatar mit Logout-Funktion.
+
+\subsection{UI-Komponenten und Styling}
+
+Für die Gestaltung der Benutzeroberflächen wurde Tailwind CSS eingesetzt. Dabei wurden die EDAG-Farben verwendet (Grau: \#455561, Rot: \#D71946, Hellgrau: \#E4E5E6).
+
+Die UI-Komponenten basieren auf shadcn/ui, einer Sammlung wiederverwendbarer und zugänglicher React-Komponenten. Verwendet wurden unter anderem: Button, Dialog, Card, Select, Calendar, Tooltip und Table-Komponenten.
+
+Die erstellten Mockups aus Abschnitt 3.2 bildeten die Grundlage für die Erstellung der Benutzeroberflächen. Aus ihnen konnten Position, Farbe und Größe der verschiedenen UI-Elemente abgeleitet werden.
+
+\subsection{Grafische Raumvisualisierung mit React Konva}
+
+Für die 2D-Darstellung der Räume mit Arbeitsplätzen wurde React Konva eingesetzt, eine React-Wrapper-Bibliothek für die Canvas-API. React Konva ermöglicht es, grafische Elemente deklarativ mit React-Komponenten zu erstellen.
+
+Jeder Arbeitsplatz wird als Rechteck mit Rotation auf dem Canvas gezeichnet. Die Position wird aus den Datenbank-Koordinaten (\texttt{x\_coord}, \texttt{y\_coord}, \texttt{rotation}) berechnet. Der Verfügbarkeitsstatus wird durch Farbcodierung visualisiert:
+
+\begin{itemize}
+    \item Grün: Verfügbar
+    \item Rot: Gebucht
+    \item Gelb: Fest zugewiesen
+    \item Grau: Inaktiv
+\end{itemize}
+
+Die Arbeitsplätze sind interaktiv und reagieren auf Klicks. Bei einem Klick öffnet sich ein Dialog zur Buchung oder Detail-Ansicht. Für große Räume wurden Zoom- und Pan-Funktionen implementiert.
+
+\subsection{API-Integration und State Management}
+
+Die Kommunikation mit dem Backend erfolgt über Fetch-API-Calls. Für jeden Endpunkt wurde ein API-Client-Modul erstellt, das die HTTP-Requests kapselt und JWT-Tokens automatisch im Authorization-Header mitsendet.
+
+Das State Management erfolgt mit React Hooks (\texttt{useState}, \texttt{useEffect}). Für häufig verwendete Logik wurden Custom Hooks erstellt, z.B. \texttt{useAuth()} für Authentifizierung, \texttt{useBookings()} für Buchungsverwaltung.
+
+\subsection{Internationalisierung}
+
+Mit next-intl wurde Mehrsprachigkeit für Deutsch und Englisch implementiert. Alle UI-Texte wurden in JSON-Dateien ausgelagert (\texttt{messages/de.json}, \texttt{messages/en.json}). Der Sprachwechsel erfolgt über einen Selector in der Navigation.
+
+\subsection{Fehlerbehandlung und Benutzerfreundlichkeit}
+
+Für eine ergonomische Gestaltung der Benutzeroberflächen wurde auf aussagekräftige Fehlermeldungen geachtet. Bei Validierungsfehlern werden die betroffenen Felder rot markiert und eine Fehlermeldung angezeigt.
+
+Der Datenaustausch erfolgt asynchron, sodass die Benutzeroberfläche nicht einfriert. Loading-Spinner zeigen an, wenn Daten geladen werden. Erfolgsmeldungen werden als Toast-Notifications angezeigt.
+
+Screenshots der fertigen Benutzeroberflächen befinden sich im Anhang (siehe Abschnitt \ref{sec:anhang-screenshots}). Es handelt sich um dieselben Ansichten, die auch in den Mockups aus Abschnitt 3.2 gezeigt wurden.
+
+\section{Testen der Anwendung}
+
+Wie in Abschnitt 3.6 (Maßnahmen zur Qualitätssicherung) beschrieben, wurde eine mehrstufige Teststrategie verfolgt.
+
+\subsection{Unit-Tests}
+
+Die Unit-Tests für die Services wurden mit JUnit 5 und Mockito geschrieben. Durch die Constructor Injection in den Service-Klassen war es möglich, mit Mockito Stubs der Repository-Interfaces zu erstellen und dem zu testenden Service zu übergeben.
+
+Dadurch konnte das Datenbankverhalten vorgetäuscht werden und die Unit-Tests konnten isoliert von der Datenbank ausgeführt werden. Die Entkopplung hatte den Vorteil, dass die Laufzeit der Tests verringert und sie unabhängig von Fehlern auf Datenbankebene wurden.
+
+Beispiel eines Unit-Tests:
+
+\begin{verbatim}
+@Test
+void createBooking_shouldReturnBooking_whenValid() {
+    // Arrange
+    WorkspaceRepository mockRepo = Mockito.mock(WorkspaceRepository.class);
+    BookingService service = new BookingService(mockRepo);
+    // Act & Assert
+    ...
+}
+\end{verbatim}
+
+Insgesamt wurden 41 Unit-Tests implementiert mit einer Code-Coverage von 72\%.
+
+
+\subsection{API-Tests}
+
+Alle REST-Endpunkte wurden systematisch mit Swagger UI getestet. Dabei wurden sowohl Erfolgs- als auch Fehlerszenarien überprüft, inklusive der korrekten HTTP-Statuscodes (200, 201, 400, 401, 403, 404, 409) und Fehlermeldungen.
+
+Die interaktive Swagger-Dokumentation unter \texttt{/swagger-ui.html} ermöglicht das direkte Testen aller CRUD-Operationen sowie komplexer Workflows wie Buchungsvorgänge mit Konflikterkennung.
+
+\subsection{Frontend-Tests}
+
+Die Benutzeroberfläche wurde durch manuelle Funktionstests validiert. Dabei wurde die Browser-Kompatibilität mit Chrome, Firefox, Edge und Safari sichergestellt. Besondere Aufmerksamkeit lag auf der Interaktivität der React-Konva-basierten Raumvisualisierung und der korrekten Darstellung in verschiedenen Bildschirmauflösungen.
+
+\textbf{API-Tests:} Swagger-UI für alle Endpunkte (200, 201, 400, 401, 403, 404, 409).
+
+\textbf{Frontend-Tests:} Manuelle Funktionstests, Browser-Kompatibilität (Chrome, Firefox, Edge, Safari).
+
+\textbf{Usability-Tests:} 2 Testpersonen, 6 Aufgaben, Bewertung: 4.3/5.
+
+Alle kritischen Fehler behoben. Code-Review ohne kritische Mängel.
+
+\section{Dokumentation}
+
+\textbf{Entwickler:} README (Backend/Frontend), Swagger-API-Doku (\texttt{/swagger-ui.html}), JavaDoc/JSDoc, ER-Diagramme (Anhang \ref{sec:anhang-er-diagramm}), Docker-Doku, Styling-Guide.
+
+\textbf{Benutzer:} Handbuch (Einführung, Buchung, Verwaltung, Admin, FAQ) mit Screenshots. Inline-Hilfe (Tooltips, Validierung).
+
+\section{Deployment und Abnahme}
+
+\textbf{Deployment:} Lokales MVP mit \texttt{docker-compose up -d} (60-90 Sek.). Container-Reihenfolge: PostgreSQL → Keycloak → Backend → Frontend.
+
+\textbf{Abnahme:} 27.11.2025 durch Projektbetreuer - erfolgreich ohne Beanstandungen. Feedback: Saubere Architektur, umfassende Doku, benutzerfreundlich.
+
+\textbf{Pilotphase:} 5 Testbenutzer, 45 Buchungen, keine kritischen Fehler, Bewertung positiv.
+
+\textbf{Produktiv-Einführung (geplant Q2 2026):} Zentrale Server-Infrastruktur, HTTPS, Monitoring.
+
+\section{Retrospektive}
+
+\textbf{Erfolgsfaktoren:} Projekt in 80h abgeschlossen, gute Technologie-Wahl (Spring Boot/Next.js), saubere Architektur, Docker vereinfachte Deployment, gute Betreuer-Unterstützung.
+
+\textbf{Herausforderungen:} Keycloak-Integration und React Konva zeitaufwendig.
+
+\textbf{Lessons Learned:} Frühe Auseinandersetzung mit komplexen Integrationen, Docker von Anfang an, regelmäßige Reviews, frühes User-Feedback wertvoll.
+
+\section{Soll-/Ist-Vergleich}
+
+\begin{table}[h!]
+\centering
+\rowcolors{2}{EDAGHellgrau}{white}
+\begin{tabular}{|p{5cm}|p{2cm}|p{2cm}|p{2cm}|}
+\hline
+\rowcolor{EDAGgrau}
+\textbf{Phase} & \textbf{Soll (h)} & \textbf{Ist (h)} & \textbf{Differenz} \\
+\hline
+Anforderungsspezifikation & 8 & 8 & 0 \\
+Projektplanung & 12 & 14 & -1 \\
+Projektdurchführung & 44 & 42 & +1 \\
+Projektabschluss & 16 & 16 & 0 \\
+\hline
+\textbf{Gesamt} & \textbf{80} & \textbf{80} & \textbf{0} \\
+\hline
+\end{tabular}
+\caption{Soll-Ist-Vergleich der Zeitplanung}
+\end{table}
+
+
+\section{Ausblick}
+
+Das entwickelte \gls{mvp} bildet eine solide Grundlage für den produktiven Einsatz und zukünftige Erweiterungen:
+
+\begin{itemize}
+    \item \textbf{Kurzfristig:} Deployment auf EDAG-Servern mit \gls{https}-Verschlüsselung, Integration in das \gls{sso}-System, Monitoring und automatisierte Backups sowie Performance-Optimierung für größere Benutzerzahlen
+
+    \item \textbf{Mittelfristig:} Analytics-Dashboard mit Auslastungsstatistiken und Reporting, Serienbuchungen, E-Mail-Benachrichtigungen, Outlook/Calendar-Integration sowie erweiterte Such- und Filterfunktionen
+
+    \item \textbf{Langfristig:} KI-basierte Arbeitsplatzempfehlungen und Predictive Analytics, Multi-Ressourcen-Buchung (Besprechungsräume, Parkplätze), Mobile Apps für iOS/Android, Multi-Mandanten-Fähigkeit für standortübergreifende Nutzung
+\end{itemize}
+
+\section{Fazit}
+
+\subsection{Zielerreichung}
+
+Alle Projektanforderungen erfüllt: MVP in 80h, benutzerfreundliche UI, sichere Keycloak-Auth, alle Kernfunktionen, grafische Raumdarstellung, RBAC, vollständige Dokumentation.
+
+\subsection{Technische Bewertung}
+
+\textbf{Stärken:} Saubere Architektur (Hexagonale Architektur), moderne Technologien, klare Schichttrennung, Skalierbarkeit, hohe Wartbarkeit und Erweiterbarkeit, vollständige API-Dokumentation (Swagger).
+
+\textbf{Verbesserungspotenzial:}
+\begin{itemize}
+    \item \textbf{Bildspeicherung:} Profilbilder werden aktuell als BYTEA in der Datenbank gespeichert. Eine Auslagerung in einen Object Storage (z.B. MinIO, AWS S3) würde die Datenbankgröße reduzieren und die Performance verbessern.
+    \item \textbf{Caching:} Implementierung eines Cache-Layers (z.B. Redis) für häufig abgerufene Daten wie Raum- und Arbeitsplatzinformationen würde die Response-Zeiten weiter reduzieren.
+    \item \textbf{Automatisierte Tests:} Erweiterung der Test-Coverage durch End-to-End-Tests (z.B. mit Playwright) würde die Qualitätssicherung bei UI-Änderungen verbessern.
+    \item \textbf{Monitoring:} Integration von produktionsreifen Monitoring-Tools (z.B. Prometheus, Grafana) für Systemmetriken und Application Performance Monitoring (APM).
+\end{itemize}
+
+\subsection{Schlusswort}
+
+Die Entwicklung des Shared Desk Booking Systems war ein lehrreiches und erfolgreiches Projekt. Es demonstriert die praktische Anwendung moderner Softwareentwicklungs-Prinzipien und -Technologien im betrieblichen Kontext.
+
+Die Anwendung bildet eine solide Grundlage für den produktiven Einsatz und kann schrittweise erweitert werden. Das positive Feedback der Testnutzer bestätigt, dass ein echter Mehrwert für die Mitarbeitenden geschaffen wurde.
+
+Als Fachinformatiker für Anwendungsentwicklung konnte ich durch dieses Projekt meine Fähigkeiten in Full-Stack-Entwicklung, Architektur-Design und Projektmanagement unter Beweis stellen und weiter ausbauen.
+
+\appendix
+\chapter{Anhänge}
+
+\section{Datenbankentwurf (ER-Diagramme)}
+\label{sec:anhang-er-diagramm}
+
+\section{UML-Diagramme}
+\label{sec:anhang-use-case}
+
+\subsection{Use-Case-Diagramme}
+
+
+\subsubsection{Use-Case-Diagramm: Benutzer}
+
+Zeigt die grundlegenden Funktionen für alle angemeldeten Benutzer (7 Use Cases).
+
+\textbf{Datei:} \texttt{UseCase-Benutzer-Detail.puml}
+
+\subsubsection{Use-Case-Diagramm: Raumadministrator}
+
+Zeigt die erweiterten Funktionen für Raumadministratoren (8 zusätzliche Use Cases).
+
+\textbf{Datei:} \texttt{UseCase-RoomAdmin-Detail.puml}
+
+\subsubsection{Use-Case-Diagramm: Systemadministrator}
+
+Zeigt die globalen Verwaltungsfunktionen für Systemadministratoren (5 zusätzliche Use Cases).
+
+\textbf{Datei:} \texttt{UseCase-SystemAdmin-Detail.puml}
+
+Alle Diagramme befinden sich im Ordner: \texttt{dokumentation/diagramme/}
+
+\subsection{Aktivitätsdiagramme}
+\label{sec:anhang-aktivitaetsdiagramme}
+
+
+\subsection{Komponentendiagramme}
+\label{sec:anhang-komponentendiagramm}
+
+
+\subsubsection{Architektur-Komponentendiagramm}
+
+
+\section{Screenshots der Benutzeroberfläche}
+\label{sec:anhang-screenshots}
+
+Dieser Abschnitt zeigt Screenshots der wichtigsten Ansichten der Benutzeroberfläche. Die Benutzeroberfläche verwendet die EDAG-Farben und bietet eine intuitive, moderne Bedienung mit asynchronem Datenaustausch und aussagekräftigen Fehlermeldungen.
+
+\subsection{Login und Authentifizierung}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{screenshots/Screenshot 2025-11-23 131741}
+\caption{Keycloak Single Sign-On Login-Seite}
+\end{figure}
+
+\subsection{Dashboard und Übersicht}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 132134}
+\caption{Dashboard mit Übersicht über nächste Buchungen. Oben rechts: Benutzermenü zum Abmelden oder Ändern des Profilbilds}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 132233}
+\caption{Raum-Übersicht mit Kachelansicht. Oben links: Sprachwechsel zwischen Deutsch und Englisch}
+\end{figure}
+
+\subsection{Raum-Detailansicht und Arbeitsplatzbuchung}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 133130}
+\caption{Raum-Detailansicht mit grafischer 2D-Darstellung der Arbeitsplätze. Kalender und Tagesübersicht zeigen Homeoffice- und Office-Tage. Benutzer können ihren Status veröffentlichen und sehen, ob für den Tag bereits ein Arbeitsplatz reserviert ist}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 134106}
+\caption{Team-Anwesenheitsübersicht mit Filterung nach Datum und Büro}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 134422}
+\caption{Buchungsdialog mit Datums- und Zeitauswahl}
+\end{figure}
+
+\subsection{Buchungsverwaltung}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 173025}
+\caption{Meine Buchungen - Übersicht aller eigenen Buchungen}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 173215}
+\caption{Buchung bearbeiten - Dialog}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 173303}
+\caption{Dialog zum Hinzufügen eines neuen Raums mit Eingabefeldern für Raumdetails}
+\end{figure}
+
+\subsection{Anwesenheitsverwaltung}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 173336}
+\caption{Raumadministrator-Ansicht mit Möglichkeit zur Raumbearbeitung und Verwaltung zugewiesener Räume}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 173407}
+\caption{Hinzufügen neuer Arbeitsplätze im Raum. Dialog zur Definition von Arbeitsplatz-Eigenschaften}
+\end{figure}
+
+\subsection{Administrationsbereich}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 173451}
+\caption{2D-Editor für Arbeitsplätze. Benutzer können Arbeitsplätze per Drag-and-Drop verschieben und drehen}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 173607}
+\caption{Benutzerverwaltung für Raum. Zuweisung von Raumadministratoren und Berechtigungen}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 173650}
+\caption{Arbeitsplatzverwaltung innerhalb eines Raums. Übersicht aller Arbeitsplätze mit Bearbeitungsmöglichkeiten}
+\end{figure}
+
+\subsection{System-Administration}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 182703}
+\caption{Buchungserstellung für Arbeitsplatz mit Auswahl von Datum und Zeitbereich}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 183055}
+\caption{Übersicht der Arbeitsplatzreservierungen mit Datum, Zeit und Status}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 183141}
+\caption{Teilweise Reservierung eines Arbeitsplatzes für einen bestimmten Zeitraum (z.B. 09:00-12:00 Uhr)}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 183300}
+\caption{Ganztagesreservierung eines Arbeitsplatzes für den gesamten Arbeitstag}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{screenshots/Screenshot 2025-11-23 183349}
+\caption{Kalenderfilterung zur Auswahl des gewünschten Reservierungsdatums}
+\end{figure}
+
+
+\end{document}

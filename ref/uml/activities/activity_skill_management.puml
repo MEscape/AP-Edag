@@ -1,0 +1,187 @@
+@startuml activity_skill_management
+' Aktivitätsdiagramm: Skill-Verwaltung
+' Zeigt Hinzufügen, Aktualisieren und Löschen von Skills
+
+title Aktivitätsdiagramm - Skill-Verwaltung
+
+|Mitarbeiter|
+start
+:Login ins System;
+:Navigiere zu "Mein Profil";
+
+|Frontend|
+:Lade Profil-Daten;
+:Zeige Skills gruppiert\nnach Kategorien;
+
+|Mitarbeiter|
+if (Aktion?) then (Skill hinzufügen)
+  
+  |Frontend|
+  :Öffne "Skill hinzufügen" Dialog;
+  :Lade verfügbare Skills;
+  
+  |Mitarbeiter|
+  :Wähle Kategorie;
+  :Wähle Skill aus Dropdown;
+  :Setze Proficiency Score (0-100);
+  :Setze Jahre Erfahrung;
+  :Setze "Zuletzt verwendet" Datum;
+  
+  |Frontend|
+  :Validiere Eingaben;
+  if (Score zwischen 0-100?) then (nein)
+    :Zeige Fehler;
+    stop
+  else (ja)
+    :Sende POST /v1/profiles/me/skills;
+  endif
+  
+  |Backend|
+  :Prüfe Authorization;
+  :Validiere Skill-Existenz;
+  
+  if (Skill bereits vorhanden?) then (ja)
+    :Sende 409 Conflict;
+    |Frontend|
+    :Zeige "Skill bereits vorhanden";
+    stop
+  else (nein)
+    |Database|
+    :BEGIN TRANSACTION;
+    :INSERT INTO employee_skills;
+    
+    fork
+      :TRIGGER: log_skill_addition;
+      :INSERT INTO activities\n(SKILL_ADDED);
+    fork again
+      :TRIGGER: update_user_statistics;
+      :UPDATE user_statistics\nSET total_skills++,\naverage_skill_score = ...;
+    fork again
+      :TRIGGER: update_profile_completion;
+      :Neuberechnung Completion Rate;
+    fork end
+    
+    :COMMIT TRANSACTION;
+    
+    |Backend|
+    :Sende 201 Created;
+    
+    |Frontend|
+    :Invalidiere Cache;
+    :Zeige Erfolgsmeldung;
+    :Aktualisiere Skill-Liste;
+  endif
+
+elseif (Aktion?) then (Skill aktualisieren)
+  
+  |Frontend|
+  :Öffne "Skill bearbeiten" Dialog;
+  :Zeige aktuelle Werte;
+  
+  |Mitarbeiter|
+  :Ändere Score;
+  :oder ändere Jahre Erfahrung;
+  :oder ändere "Zuletzt verwendet";
+  
+  |Frontend|
+  :Validiere neue Werte;
+  :Sende PUT /v1/profiles/me/skills/{skillId};
+  
+  |Backend|
+  :Prüfe Authorization;
+  :Prüfe Skill-Existenz;
+  
+  if (Skill gefunden?) then (nein)
+    :Sende 404 Not Found;
+    stop
+  else (ja)
+    |Database|
+    :BEGIN TRANSACTION;
+    :UPDATE employee_skills\nSET proficiency_score = ?,\nyears_of_experience = ?,\nlast_used = ?;
+    
+    fork
+      :TRIGGER: log_skill_update;
+      :INSERT INTO activities\n(SKILL_UPDATED);
+    fork again
+      :TRIGGER: recalculate_skill_statistics;
+      :UPDATE user_statistics\nSET average_skill_score = ...;
+    fork end
+    
+    :COMMIT TRANSACTION;
+    
+    |Backend|
+    :Sende 200 OK;
+    
+    |Frontend|
+    :Invalidiere Cache;
+    :Zeige Erfolgsmeldung;
+    :Aktualisiere Skill-Anzeige;
+  endif
+
+elseif (Aktion?) then (Skill löschen)
+  
+  |Frontend|
+  :Zeige Bestätigungs-Dialog;
+  note right: "Möchten Sie diesen Skill\nwirklich löschen?"
+  
+  |Mitarbeiter|
+  if (Bestätigt?) then (nein)
+    :Abbrechen;
+    stop
+  else (ja)
+    |Frontend|
+    :Sende DELETE /v1/profiles/me/skills/{skillId};
+  endif
+  
+  |Backend|
+  :Prüfe Authorization;
+  :Prüfe Skill-Existenz;
+  
+  if (Skill gefunden?) then (nein)
+    :Sende 404 Not Found;
+    stop
+  else (ja)
+    |Database|
+    :BEGIN TRANSACTION;
+    
+    :Prüfe ob Skill in Projekten verwendet;
+    note right: Optional: Warnung wenn Skill\nin aktiven Projekten genutzt wird
+    
+    :DELETE FROM employee_skills;
+    
+    fork
+      :TRIGGER: log_skill_deletion;
+      :INSERT INTO activities\n(SKILL_REMOVED);
+    fork again
+      :TRIGGER: update_user_statistics;
+      :UPDATE user_statistics\nSET total_skills--,\naverage_skill_score = ...;
+    fork again
+      :CASCADE: Entferne aus skill_development;
+      :DELETE FROM skill_development\nWHERE skill_id = ?;
+    fork end
+    
+    :COMMIT TRANSACTION;
+    
+    |Backend|
+    :Sende 204 No Content;
+    
+    |Frontend|
+    :Invalidiere Cache;
+    :Zeige Erfolgsmeldung;
+    :Entferne Skill aus Anzeige;
+  endif
+
+else (Abbrechen)
+  :Schließe Dialog;
+endif
+
+|Mitarbeiter|
+:Prüfe aktualisiertes Profil;
+
+if (Weitere Änderungen?) then (ja)
+  detach
+else (nein)
+  stop
+endif
+
+@enduml

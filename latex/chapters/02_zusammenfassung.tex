@@ -1,0 +1,27 @@
+% ==========================================
+% ZUSAMMENFASSUNG
+% ==========================================
+\chapter*{Zusammenfassung}
+\addcontentsline{toc}{chapter}{Zusammenfassung}
+
+\textbf{Ausgangssituation}
+
+Die EDAG Engineering GmbH, ein international tätiger Engineering-Dienstleister mit Fokus auf Automotive und Mobility, benötigte ein effizientes System zur projektbezogenen Ressourcenplanung in der Abteilung Mobility IT (ca. 100 Mitarbeiter). Die bisherige manuelle Mitarbeitersuche über Excel-Listen und E-Mail-Anfragen war zeitintensiv (durchschnittlich 2,5 Stunden pro Projektbesetzung) und fehleranfällig. Projektmanager verfügten über keine zentrale Übersicht zu Mitarbeiterkompetenzen und Projekterfahrungen\cite{projektbesetzung_aufwand}.
+
+\textbf{Projektziel}
+
+Entwicklung eines webbasierten \gls{skill}-Management-Systems zur effizienten, datenbasierten Personalauswahl mit umfassender Kompetenzverwaltung, Such- und Filterfunktionen sowie rollenbasiertem Rechtemanagement für drei Benutzergruppen (Mitarbeiter, Manager, Administrator). Das System sollte die Suchzeit auf unter 15 Minuten reduzieren und eine jährliche Kostenersparnis von ca. 8.500~€ ermöglichen (siehe Kapitel~\ref{sec:nutzen_analyse}).
+
+\textbf{Technische Umsetzung}
+
+Das System wurde in 80 Stunden (1. Oktober bis 1. Dezember 2025) mit modernem Technology-Stack realisiert: Next.js 16 mit React 19 für das \gls{frontend}\cite{nextjs_docs,react_docs}, Spring Boot 3.5.7 mit Hexagonaler Architektur für das \gls{backend}\cite{spring_boot_docs}, PostgreSQL 15 als relationale Datenbank\cite{postgresql_docs}, Keycloak 23 für \gls{oauth}2/\gls{oidc}-Authentifizierung\cite{keycloak_docs} sowie Kubernetes-Deployment\cite{kubernetes_docs} mit Jenkins \gls{cicd}-Pipeline und SonarQube-Qualitätssicherung\cite{jenkins_docs,sonarqube_docs}.
+
+\textbf{Funktionsumfang}
+
+Das System bietet personalisierte Dashboards mit grafischer Skill-Visualisierung, umfassende Profilverwaltung (Skills mit Bewertung 0--100, Verfügbarkeit, Projekterfahrung), leistungsfähige Mitarbeitersuche nach Skills, Standort, Verfügbarkeit und Erfahrung, vollständiges Projektmanagement für Manager (Projektanlage, Team-Zusammenstellung) sowie Stammdaten- und Rechteverwaltung für Administratoren. Die Benutzeroberfläche erfüllt moderne Usability-Standards mit Antwortzeiten unter 2 Sekunden\cite{iso_standard}. Insgesamt wurden 15 Use Cases (siehe Anhang, Tabelle~\ref{tab:use_cases}) implementiert und erfolgreich validiert.
+
+\textbf{Projektergebnis}
+
+Die Implementierung erfüllt alle funktionalen und nicht-funktionalen Anforderungen vollständig. Das skalierbare System mit \gls{clean_architecture} bietet eine solide Grundlage für den unternehmensweiten Einsatz und zukünftige Erweiterungen wie KI-gestützte Skill-Empfehlungen oder Integration in bestehende HR-Systeme.
+
+\clearpage

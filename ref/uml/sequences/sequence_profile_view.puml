@@ -1,0 +1,62 @@
+@startuml sequence_profile_view
+' Sequenzdiagramm: Profil abrufen und anzeigen
+' Zeigt den vollständigen Datenabruf mit Skills und Projekten
+
+title Sequenzdiagramm - Profil anzeigen
+
+actor Benutzer
+participant "Browser\n(React)" as Browser
+participant "Redux Store\n(RTK Query)" as Redux
+participant "profileApi" as API
+participant "ProfileController" as Controller
+participant "ProfileServiceImpl" as Service
+participant "ProfileRepository" as Repository
+database "PostgreSQL" as DB
+
+== Seitenaufruf ==
+Benutzer -> Browser: Navigation zu /profile/me
+Browser -> Redux: useGetProfileQuery('me')
+Redux -> Redux: Prüfe Cache
+alt Daten im Cache
+  Redux --> Browser: Cached Profile Data
+else Keine Daten im Cache
+  Redux -> API: fetch('/v1/profiles/me', {Bearer Token})
+  API -> Controller: GET /v1/profiles/{userId}
+  
+  == Autorisierung ==
+  Controller -> Controller: authorizationUtils.resolveUserId('me', principal)
+  note right: Extrahiert User-ID aus JWT\n(principal.getName())
+  
+  Controller -> Service: profileService.getProfile(userId)
+  
+  == Datenabruf ==
+  Service -> Repository: findProfileByUserId(userId)
+  Repository -> DB: SELECT ep.*, u.*, p.position_name, l.location_name\nFROM employee_profiles ep\nJOIN users u ON ep.user_id = u.id\nLEFT JOIN positions p ON ep.position_id = p.id\nLEFT JOIN locations l ON ep.location_id = l.id\nWHERE ep.user_id = ?
+  DB --> Repository: Profile Basis-Daten
+  
+  Repository -> DB: SELECT es.*, s.name, sc.name as category\nFROM employee_skills es\nJOIN skills s ON es.skill_id = s.id\nJOIN skill_categories sc ON s.category_id = sc.id\nWHERE es.employee_id = ?
+  DB --> Repository: Skills mit Kategorien
+  
+  Repository -> DB: SELECT pr.*, pos.name as position_name\nFROM projects pr\nLEFT JOIN positions pos ON pr.position_id = pos.id\nWHERE pr.employee_id = ?\nORDER BY pr.start_date DESC
+  DB --> Repository: Projekt-Historie
+  
+  Repository -> DB: SELECT COUNT(*), AVG(proficiency_score)\nFROM employee_skills\nWHERE employee_id = ?
+  DB --> Repository: Aggregierte Statistiken
+  
+  Repository --> Service: UserProfile (vollständig)
+  Service --> Controller: UserProfile
+  
+  == Response Mapping ==
+  Controller -> Controller: UserProfileResponseDto.from(profile)
+  note right: Mapping Domain -> DTO
+  
+  Controller --> API: 200 OK (JSON)
+  API --> Redux: UserProfile Response
+  Redux -> Redux: Cache Result\n(Tag: Profile-{userId})
+  Redux --> Browser: Profile Data
+end
+
+Browser -> Browser: Rendere Profil-Komponenten
+Browser --> Benutzer: Vollständiges Profil anzeigen
+
+@enduml

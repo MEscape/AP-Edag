@@ -1,0 +1,114 @@
+@startuml usecase
+
+title Use-Case Diagramm – Skill Management System
+left to right direction
+
+' Akteure
+actor "Mitarbeiter\n(Employee)" as Employee
+actor "Projektleiter\n(Manager)" as Manager
+actor "Administrator" as Admin
+
+' Generalisierung (Manager erbt von Mitarbeiter, Admin erbt von Mitarbeiter)
+Manager --|> Employee
+Admin --|> Employee
+
+rectangle "Skill Management System" {
+
+  ' Mitarbeiter Use Cases
+  package "Profilverwaltung" {
+    usecase (Profil anzeigen) as UC1
+    usecase (Profil bearbeiten) as UC2
+    usecase (Skills hinzufügen) as UC3
+    usecase (Skills aktualisieren) as UC4
+    usecase (Skills löschen) as UC5
+  }
+
+  package "Projektverwaltung" {
+    usecase (Eigene Projekte anzeigen) as UC6
+    usecase (Projektdetails anzeigen) as UC7
+    usecase (Mitarbeiter suchen) as UC8
+    usecase (Projekte durchsuchen) as UC9
+  }
+
+  package "Dashboard & Analytics" {
+    usecase (Dashboard anzeigen) as UC10
+    usecase (Aktivitäten anzeigen) as UC11
+  }
+
+  package "Rollenverwaltung (Mitarbeiter)" {
+    usecase (Rollenanfrage stellen) as UC31
+  }
+
+  ' Manager Use Cases
+  package "Projektmanagement" {
+    usecase (Projekt erstellen) as UC13
+    usecase (Projekt aktualisieren) as UC14
+    usecase (Projekt löschen) as UC15
+    usecase (Team zusammenstellen) as UC16
+  }
+
+  package "Mitarbeiter-Discovery" {
+    usecase (Mitarbeiter nach Skills filtern) as UC17
+    usecase (Verfügbarkeit prüfen) as UC18
+    usecase (Skill-Match bewerten) as UC19
+  }
+
+  ' Admin Use Cases
+  package "Systemverwaltung" {
+    usecase (Benutzer verwalten) as UC20
+    usecase (Stammdaten verwalten) as UC21
+    usecase (Skills verwalten) as UC22
+    usecase (Kategorien verwalten) as UC23
+    usecase (Standorte verwalten) as UC24
+    usecase (Positionen verwalten) as UC25
+  }
+
+  package "Rollenverwaltung (Admin)" {
+    usecase (Rollenanfragen prüfen) as UC26
+    usecase (Rollen zuweisen) as UC27
+  }
+}
+
+' Mitarbeiter Beziehungen
+Employee --> UC1
+Employee --> UC2
+Employee --> UC3
+Employee --> UC4
+Employee --> UC5
+Employee --> UC6
+Employee --> UC7
+Employee --> UC8
+Employee --> UC9
+Employee --> UC10
+Employee --> UC11
+Employee --> UC31
+
+' Manager exklusive Use Cases (alle Mitarbeiter-UCs werden geerbt)
+Manager --> UC13
+Manager --> UC14
+Manager --> UC15
+Manager --> UC16
+Manager --> UC17
+Manager --> UC18
+Manager --> UC19
+
+' Admin exklusive Use Cases (alle Mitarbeiter-UCs werden geerbt)
+Admin --> UC20
+Admin --> UC21
+Admin --> UC22
+Admin --> UC23
+Admin --> UC24
+Admin --> UC25
+Admin --> UC26
+Admin --> UC27
+
+' Include/Extends Beziehungen
+UC3 ..> UC21 : <<include>>
+UC4 ..> UC21 : <<include>>
+UC5 ..> UC21 : <<include>>
+UC13 ..> UC8 : <<include>>
+UC16 ..> UC17 : <<include>>
+UC17 ..> UC18 : <<extends>>
+UC27 ..> UC26 : <<extends>>
+
+@enduml

@@ -1,0 +1,89 @@
+@startuml state_profile_completion
+' Zustandsdiagramm: Profil-Vervollständigung
+' Zeigt Zustände basierend auf Completion Rate
+
+title Zustandsdiagramm - Employee Profile Completion
+
+[*] --> Incomplete : User wird erstellt\n(via Keycloak Webhook)
+
+state Incomplete {
+  state "Minimal" as Minimal
+  state "Basic" as Basic
+  state "Partial" as Partial
+  
+  [*] --> Minimal : Initial State
+  
+  Minimal : completionRate < 30%
+  Minimal : Nur User-Daten vorhanden
+  Minimal : Keine Position/Location
+  Minimal : Keine Skills
+  Minimal : Keine Bio
+  
+  Minimal --> Basic : Position & Location gesetzt
+  
+  Basic : completionRate >= 30% && < 60%
+  Basic : Position gesetzt
+  Basic : Location gesetzt
+  Basic : Bio fehlt noch
+  Basic : Wenige oder keine Skills
+  
+  Basic --> Partial : Skills hinzugefügt\noder Bio geschrieben
+  
+  Partial : completionRate >= 60% && < 100%
+  Partial : Position & Location vorhanden
+  Partial : Einige Skills vorhanden
+  Partial : Bio kann noch fehlen
+  Partial : Profil nutzbar
+}
+
+Incomplete --> Complete : Alle Felder ausgefüllt
+
+state Complete {
+  Complete : completionRate = 100%
+  Complete : Position gesetzt
+  Complete : Location gesetzt
+  Complete : Bio vorhanden (min. 50 chars)
+  Complete : Mind. 3 Skills vorhanden
+  Complete : Alle Pflichtfelder gefüllt
+}
+
+Complete --> Incomplete : Daten gelöscht\n(z.B. Skills entfernt)
+
+note right of Minimal
+  Auswirkungen:
+  - Onboarding-Banner sichtbar
+  - Warnung bei Discovery-Suche
+  - Reduzierte Sichtbarkeit
+  - Aufforderung zur Vervollständigung
+  
+  Berechnung:
+  completionRate = (
+    (position_id IS NOT NULL ? 20 : 0) +
+    (location_id IS NOT NULL ? 20 : 0) +
+    (bio IS NOT NULL ? 20 : 0) +
+    (skill_count >= 3 ? 40 : skill_count * 13.33)
+  )
+end note
+
+note right of Complete
+  Vorteile:
+  - Kein Onboarding-Banner
+  - Höhere Sichtbarkeit in Suche
+  - Besseres Ranking
+  - Vollständige Features
+  
+  Trigger:
+  - Profil-Update
+  - Skill-Änderungen
+  - Automatische Neuberechnung
+end note
+
+note left of Incomplete
+  Status-Indikatoren:
+  - Progress Bar im Profil
+  - Fehlende Felder markiert
+  - "Quick Actions" für Vervollständigung
+  - Gamification möglich
+end note
+
+@enduml

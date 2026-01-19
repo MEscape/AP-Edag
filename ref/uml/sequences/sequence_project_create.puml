@@ -1,0 +1,114 @@
+@startuml sequence_project_create
+' Sequenzdiagramm: Projekt erstellen (Manager)
+' Zeigt komplette Validierung, Mitglieder-Zuordnung und Persistierung
+
+title Sequenzdiagramm - Projekt erstellen (Manager)
+
+actor Projektleiter
+participant "Browser\n(React)" as Browser
+participant "Redux\n(RTK Query)" as Redux
+participant "ProjectManagementController" as Controller
+participant "ProjectManagementServiceImpl" as Service
+participant "ProjectRepository" as ProjectRepo
+participant "EmployeeRepository" as EmployeeRepo
+database "PostgreSQL" as DB
+
+== Projekt-Dialog öffnen ==
+Projektleiter -> Browser: Klick auf "Neues Projekt"
+Browser -> Redux: useGetEmployeesQuery()
+Redux -> EmployeeRepo: GET /v1/discover/employees
+EmployeeRepo -> DB: SELECT ep.user_id, u.first_name, u.last_name,\nep.position_id, p.name as position\nFROM employee_profiles ep\nJOIN users u ON ep.user_id = u.id\nLEFT JOIN positions p ON ep.position_id = p.id
+DB --> EmployeeRepo: Mitarbeiter-Liste
+EmployeeRepo --> Redux: Employee[]
+Redux --> Browser: Mitarbeiter für Auswahl
+
+== Formular ausfüllen ==
+Projektleiter -> Browser: Eingabe von:\n- Name, Beschreibung\n- Start/End-Datum\n- Status, Client\n- Mitglieder (Multi-Select)\n- Technologien (Tags)
+Projektleiter -> Browser: Klick auf "Projekt erstellen"
+
+Browser -> Browser: Validiere Formular\n(Dates, Required Fields)
+alt Validierung erfolgreich
+  Browser -> Redux: useCreateProjectMutation()
+  Redux -> Controller: POST /v1/management/projects\n{name, description, status, startDate, endDate, client, members, technologies}
+  
+  == Authorization Check ==
+  Controller -> Controller: @PreAuthorize("hasRole('MANAGER')")
+  note right: Spring Security prüft Role in JWT
+  
+  alt Benutzer hat keine MANAGER-Rolle
+    Controller --> Browser: 403 Forbidden
+    Browser --> Projektleiter: Fehler: Keine Berechtigung
+  else Benutzer ist Manager
+    Controller -> Controller: authorizationUtils.resolveUserId('me', principal)
+    note right: Extrahiert Manager-ID aus Token
+    
+    Controller -> Service: createProject(projectRequest, managerId)
+    
+    == Validierung der Projektdaten ==
+    Service -> Service: Validiere Datumsbereiche\n(endDate >= startDate)
+    
+    alt Ungültiges Datum
+      Service --> Controller: throw InvalidProjectDataException
+      Controller --> Browser: 400 Bad Request
+      Browser --> Projektleiter: Fehler: Ungültiges Datum
+    else Datum gültig
+      == Validierung der Mitglieder ==
+      loop Für jeden Mitarbeiter in members
+        Service -> EmployeeRepo: existsByUserId(memberId)
+        EmployeeRepo -> DB: SELECT EXISTS(\n  SELECT 1 FROM employee_profiles\n  WHERE user_id = ?\n)
+        DB --> EmployeeRepo: true/false
+        
+        alt Mitarbeiter nicht gefunden
+          Service --> Controller: throw EmployeeNotFoundException
+          Controller --> Browser: 404 Not Found
+          Browser --> Projektleiter: Fehler: Mitarbeiter nicht gefunden
+        end
+      end
+      
+      == Projekt persistieren ==
+      Service -> ProjectRepo: save(project)
+      ProjectRepo -> DB: BEGIN TRANSACTION
+      
+      ProjectRepo -> DB: INSERT INTO projects\n(name, description, status, start_date, end_date,\nclient, team_size, created_by_user_id)\nVALUES (?, ?, ?, ?, ?, ?, ?, ?)\nRETURNING id
+      DB --> ProjectRepo: project_id
+      
+      == Mitglieder zuordnen ==
+      loop Für jeden Mitarbeiter
+        ProjectRepo -> DB: INSERT INTO project_members\n(project_id, employee_id, employee_name, position_id, position_name)\nVALUES (?, ?, ?, ?, ?)
+      end
+      
+      == Technologien zuordnen ==
+      loop Für jede Technologie
+        ProjectRepo -> DB: -- Lookup or create skill\nINSERT INTO project_skills\n(project_id, skill_id)\nVALUES (?, ?)
+      end
+      
+      == Datenbank-Trigger ==
+      DB -> DB: TRIGGER: log_project_creation()
+      DB -> DB: INSERT INTO activities\n(user_id, activity_type, entity_type, entity_id, details)\nVALUES (?, 'PROJECT_CREATED', 'PROJECT', ?, ?)
+      
+      DB -> DB: TRIGGER: update_user_statistics()
+      loop Für jeden Mitarbeiter
+        DB -> DB: UPDATE user_statistics\nSET total_projects = total_projects + 1,\nactive_projects = active_projects + 1\nWHERE user_id = ?
+      end
+      
+      ProjectRepo -> DB: COMMIT TRANSACTION
+      DB --> ProjectRepo: Project (vollständig mit Members)
+      
+      ProjectRepo --> Service: Project
+      Service --> Controller: Project
+      
+      Controller -> Controller: ProjectResponseDto.from(project)
+      Controller --> Redux: 201 Created (JSON)
+      
+      == Cache Invalidation ==
+      Redux -> Redux: Invalidate Tags:\n['Projects', 'Profile-{userId}', 'Dashboard']
+      
+      Redux --> Browser: Projekt erfolgreich erstellt
+      Browser --> Projektleiter: Erfolgsmeldung\nWeiterleitung zu Projektdetails
+    end
+  end
+else Validierungsfehler
+  Browser --> Projektleiter: Formularfehler anzeigen
+end
+
+@enduml

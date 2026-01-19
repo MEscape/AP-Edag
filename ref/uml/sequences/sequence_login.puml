@@ -1,0 +1,70 @@
+@startuml sequence_login
+' Sequenzdiagramm: Benutzer-Login über Keycloak OAuth2
+' Zeigt den kompletten OAuth2 Authorization Code Flow
+
+title Sequenzdiagramm - Login/Authentifizierung
+
+actor Benutzer
+participant "Browser\n(Next.js Frontend)" as Browser
+participant "Next.js\nAPI Route\n(/api/auth)" as NextAuth
+participant "Keycloak\nAuth Server" as Keycloak
+participant "Backend\nSpring Boot API" as Backend
+database "PostgreSQL" as DB
+
+== Login initiieren ==
+Benutzer -> Browser: Klick auf "Anmelden"
+Browser -> NextAuth: GET /api/auth/signin
+NextAuth -> Keycloak: Redirect zu /auth/realms/{realm}/protocol/openid-connect/auth
+Keycloak --> Browser: Login-Seite anzeigen
+
+== Authentifizierung ==
+Benutzer -> Keycloak: Eingabe von Username & Passwort
+Keycloak -> Keycloak: Validiere Credentials
+alt Erfolgreiche Authentifizierung
+  Keycloak -> Keycloak: Generiere Authorization Code
+  Keycloak --> Browser: Redirect mit Authorization Code
+  Browser -> NextAuth: Callback mit Authorization Code
+  NextAuth -> Keycloak: POST /token\n(Code, Client ID, Client Secret)
+  Keycloak -> Keycloak: Validiere Code
+  Keycloak --> NextAuth: Access Token, Refresh Token, ID Token
+  
+  NextAuth -> Keycloak: GET /userinfo\n(Authorization: Bearer {token})
+  Keycloak --> NextAuth: Benutzerdaten (sub, email, roles, groups)
+  
+  NextAuth -> NextAuth: Erstelle Session\n(JWT mit Tokens & User Info)
+  NextAuth --> Browser: Set Session Cookie
+  
+  == Webhook Benachrichtigung ==
+  Keycloak -> Backend: POST /v1/webhook/keycloak\n(User Created Event)
+  Backend -> Backend: Validiere Basic Auth
+  Backend -> DB: INSERT INTO users\n(Keycloak User Sync)
+  Backend -> DB: INSERT INTO employee_profiles\n(via Trigger)
+  DB --> Backend: User & Profile erstellt
+  Backend --> Keycloak: 200 OK
+  
+  Browser --> Benutzer: Weiterleitung zum Dashboard
+  
+else Fehlerhafte Credentials
+  Keycloak --> Browser: Fehler: Ungültige Credentials
+  Browser --> Benutzer: Fehlermeldung anzeigen
+end
+
+== Geschützte API-Anfrage ==
+Benutzer -> Browser: Aktion im Dashboard
+Browser -> Backend: GET /v1/profiles/me\n(Authorization: Bearer {token})
+Backend -> Backend: Validiere Token mit Keycloak\n(Introspection Endpoint)
+alt Token gültig
+  Backend -> DB: SELECT * FROM employee_profiles\nWHERE user_id = ?
+  DB --> Backend: Profildaten
+  Backend --> Browser: 200 OK (JSON Response)
+  Browser --> Benutzer: Daten anzeigen
+else Token ungültig
+  Backend --> Browser: 401 Unauthorized
+  Browser -> NextAuth: Token Refresh
+  NextAuth -> Keycloak: POST /token (Refresh Token)
+  Keycloak --> NextAuth: Neue Tokens
+  NextAuth --> Browser: Neue Session
+  Browser -> Backend: Wiederhole Request mit neuem Token
+end
+
+@enduml

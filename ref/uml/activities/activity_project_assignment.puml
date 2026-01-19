@@ -1,0 +1,171 @@
+@startuml activity_project_assignment
+' Aktivitätsdiagramm: Projekt-Zuweisung durch Manager
+' Zeigt Mitarbeitersuche, Auswahl und Projekt-Erstellung
+
+title Aktivitätsdiagramm - Projekt-Zuweisung (Manager)
+
+|Manager|
+start
+:Login ins System;
+:Navigiere zu "Projekte entdecken";
+
+|System|
+:Prüfe Rolle;
+if (Rolle = MANAGER?) then (nein)
+  :Zeige 403 Forbidden;
+  stop
+else (ja)
+  :Zeige Mitarbeiter-Discovery Page;
+endif
+
+|Manager|
+:Definiere Projekt-Anforderungen:
+* Benötigte Skills
+* Erfahrungslevel
+* Verfügbarkeit
+* Standort;
+
+|Frontend|
+:Erstelle Filter-Criteria;
+
+|Backend|
+fork
+  :Führe Skill-Match-Suche aus;
+  |Database|
+  :Komplexe Query mit:
+  * Skill Matching (AND/OR)
+  * Experience Filter
+  * Availability Check
+  * Location Filter
+  * Full-Text Search;
+  
+  :Berechne Match-Score;
+  :Sortiere nach Relevanz;
+fork end
+
+|Frontend|
+:Zeige Suchergebnisse;
+:Markiere Best Matches;
+
+|Manager|
+repeat
+  :Wähle Mitarbeiter aus Liste;
+  :Prüfe Detail-Profil;
+  :Bewerte Skills & Erfahrung;
+  
+  if (Mitarbeiter geeignet?) then (ja)
+    :Füge zu Auswahl hinzu;
+  else (nein)
+    :Suche weiter;
+  endif
+repeat while (Genug Mitarbeiter?) is (nein)
+->ja;
+
+:Klick auf "Neues Projekt";
+
+|Frontend|
+:Öffne Projekt-Dialog;
+:Zeige ausgewählte Mitarbeiter;
+
+|Manager|
+:Fülle Projekt-Daten aus:
+* Name
+* Beschreibung
+* Start-/End-Datum
+* Status
+* Client
+* Technologien;
+
+:Ordne Rollen zu;
+note right
+  Für jeden Mitarbeiter:
+  * Position im Projekt
+  * Rolle/Verantwortlichkeit
+end note
+
+:Klick auf "Projekt erstellen";
+
+|Frontend|
+:Validiere Formular;
+if (Validierung OK?) then (nein)
+  :Zeige Fehler;
+  detach
+else (ja)
+  :Sende POST /v1/management/projects;
+endif
+
+|Backend|
+:Prüfe MANAGER-Rolle;
+:Validiere Projekt-Daten;
+
+fork
+  :Validiere Datumsbereiche;
+fork again
+  :Prüfe Mitarbeiter-Existenz;
+fork again
+  :Validiere Skill-Zuordnungen;
+fork end
+
+if (Validierung erfolgreich?) then (nein)
+  :Sende 400 Bad Request;
+  |Frontend|
+  :Zeige Fehler-Details;
+  stop
+else (ja)
+  |Database|
+  :BEGIN TRANSACTION;
+  
+  :INSERT INTO projects;
+  note right: Speichere Basis-Daten
+  
+  fork
+    :INSERT INTO project_members;
+    note right: Für jeden Mitarbeiter
+  fork again
+    :INSERT INTO project_skills;
+    note right: Für jede Technologie
+  fork end
+  
+  :TRIGGER: log_project_creation;
+  :INSERT INTO activities\n(PROJECT_CREATED);
+  
+  :TRIGGER: update_user_statistics;
+  partition "Für jeden Mitarbeiter" {
+    :UPDATE user_statistics\nSET total_projects++, active_projects++;
+  }
+  
+  :TRIGGER: log_project_assignment;
+  partition "Für jeden Mitarbeiter" {
+    :INSERT INTO activities\n(ASSIGNED_TO_PROJECT);
+  }
+  
+  :COMMIT TRANSACTION;
+endif
+
+|Backend|
+:Sende 201 Created;
+
+|Frontend|
+:Invalidiere Cache:
+* Projects
+* Dashboard
+* Employee Profiles;
+
+:Zeige Erfolgs-Meldung;
+:Weiterleitung zu Projektdetails;
+
+|Manager|
+:Prüfe Projekt-Übersicht;
+:Verifiziere Team-Zusammenstellung;
+
+if (Projekt vollständig?) then (ja)
+  :Projekt ist einsatzbereit;
+else (nein)
+  :Bearbeite Projekt;
+  note right: Manager kann Projekt\nnachträglich anpassen
+  detach
+endif
+
+stop
+
+@enduml

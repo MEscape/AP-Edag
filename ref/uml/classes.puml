@@ -1,0 +1,639 @@
+@startuml classes
+' Klassendiagramm: Skill Management System
+' Zeigt vollständige Klassenstruktur mit allen Beziehungen
+
+title Klassendiagramm - Skill Management System (Backend)
+
+!define DOMAIN_COLOR #E8F5E9
+!define SERVICE_COLOR #E3F2FD
+!define CONTROLLER_COLOR #FFF3E0
+!define REPOSITORY_COLOR #F3E5F5
+!define ENTITY_COLOR #FCE4EC
+
+' ============================================================================
+' DOMAIN MODELS
+' ============================================================================
+
+package "Domain Model" <<Rectangle>> DOMAIN_COLOR {
+  
+  class User <<record>> {
+    + UUID id
+    + String username
+    + String email
+    + String firstName
+    + String lastName
+    + Instant createdAt
+    + Instant updatedAt
+  }
+  
+  class UserProfile <<record>> {
+    + UUID userId
+    + String firstName
+    + String lastName
+    + String email
+    + String position
+    + UUID positionId
+    + String location
+    + UUID locationId
+    + AvailabilityStatus availability
+    + Instant joinDate
+    + double yearsOfExperience
+    + String bio
+    + List<ProfileSkill> skills
+    + List<Project> projects
+    + int totalProjects
+    + int activeProjects
+    + int totalSkills
+    + double averageSkillScore
+    + double completionRate
+    + Instant lastUpdated
+  }
+  
+  class ProfileSkill <<record>> {
+    + UUID id
+    + String skillName
+    + String category
+    + int proficiencyScore
+    + double yearsOfExperience
+    + LocalDate lastUsed
+  }
+  
+  class Project <<record>> {
+    + UUID id
+    + String name
+    + String description
+    + ProjectStatus status
+    + LocalDate startDate
+    + LocalDate endDate
+    + String client
+    + Integer teamSize
+    + Set<String> technologies
+    + UUID createdByUserId
+    + Set<ProjectMemberName> members
+  }
+  
+  class ProjectRequest <<record>> {
+    + String name
+    + String description
+    + ProjectStatus status
+    + LocalDate startDate
+    + LocalDate endDate
+    + String client
+    + List<ProjectMemberRequestDto> members
+    + List<String> technologies
+  }
+  
+  class ProjectMemberName <<record>> {
+    + UUID employeeId
+    + String employeeName
+    + UUID positionId
+    + String positionName
+  }
+  
+  class RoleRequest <<record>> {
+    + UUID id
+    + UUID userId
+    + RoleType roleType
+    + RequestStatus status
+    + String justification
+    + UUID reviewedBy
+    + Instant reviewedAt
+    + String reviewComment
+    + Instant createdAt
+  }
+  
+  class Employee <<record>> {
+    + UUID userId
+    + String firstName
+    + String lastName
+    + String email
+    + String position
+    + UUID positionId
+    + String location
+    + UUID locationId
+    + String availability
+    + double yearsOfExperience
+    + List<EmployeeSkill> skills
+  }
+  
+  enum AvailabilityStatus {
+    AVAILABLE
+    PARTIALLY_AVAILABLE
+    UNAVAILABLE
+  }
+  
+  enum ProjectStatus {
+    PLANNED
+    ACTIVE
+    ON_HOLD
+    COMPLETED
+    CANCELLED
+  }
+  
+  enum RequestStatus {
+    PENDING
+    APPROVED
+    REJECTED
+  }
+  
+  enum RoleType {
+    MANAGER
+  }
+  
+  enum ActivityType {
+    USER_CREATED
+    PROFILE_UPDATED
+    SKILL_ADDED
+    SKILL_UPDATED
+    SKILL_REMOVED
+    PROJECT_CREATED
+    PROJECT_UPDATED
+    PROJECT_DELETED
+    ASSIGNED_TO_PROJECT
+    REMOVED_FROM_PROJECT
+    ROLE_REQUESTED
+    ROLE_APPROVED
+    ROLE_REJECTED
+  }
+  
+  ' Relationships in Domain
+  UserProfile *-- ProfileSkill
+  UserProfile *-- Project
+  Project *-- ProjectMemberName
+  UserProfile -- AvailabilityStatus
+  Project -- ProjectStatus
+  RoleRequest -- RequestStatus
+  RoleRequest -- RoleType
+}
+
+' ============================================================================
+' DOMAIN PORTS (Interfaces)
+' ============================================================================
+
+package "Domain Ports" <<Rectangle>> {
+  
+  package "Inbound Ports (Use Cases)" {
+    interface ProfileService {
+      + getProfile(UUID userId): UserProfile
+      + updateProfile(...): UserProfile
+    }
+    
+    interface SkillManagementService {
+      + addSkill(...): ProfileSkill
+      + updateSkill(...): ProfileSkill
+      + deleteSkill(...): void
+    }
+    
+    interface ProjectManagementService {
+      + createProject(...): Project
+      + updateProject(...): Project
+      + deleteProject(...): void
+    }
+    
+    interface ProjectDiscoveryService {
+      + searchProjects(...): Page<Project>
+      + getProjectById(...): Project
+      + getFilterOptions(): ProjectFilterOptions
+    }
+    
+    interface EmployeeDiscoveryService {
+      + searchEmployees(...): Page<Employee>
+      + getFilterOptions(): EmployeeFilterOptions
+    }
+    
+    interface RoleRequestService {
+      + createRoleRequest(...): RoleRequest
+      + reviewRoleRequest(...): RoleRequest
+      + getUserRoleRequests(...): Page<RoleRequest>
+      + getAllPendingRequests(...): Page<RoleRequest>
+    }
+    
+    interface UserAdminService {
+      + getAllUsers(...): Page<UserAdmin>
+    }
+    
+    interface AnalyticsService {
+      + getUserStatistics(...): UserStatistics
+      + getSkillDevelopment(...): List<SkillDevelopmentDataPoint>
+      + getRecentActivities(...): List<Activity>
+    }
+    
+    interface OptionsService {
+      + getLocations(): List<Location>
+      + getPositions(): List<Position>
+      + getSkills(): List<Skill>
+      + getSkillCategories(): List<SkillCategory>
+    }
+    
+    interface UserSyncService {
+      + syncUserFromKeycloak(...): void
+    }
+  }
+  
+  package "Outbound Ports (Infrastructure)" {
+    interface ProfileRepository {
+      + findProfileByUserId(...): Optional<UserProfile>
+      + updateProfileInfo(...): Optional<UserProfile>
+      + existsByUserId(...): boolean
+    }
+    
+    interface ProfileSkillRepository {
+      + findByEmployeeId(...): List<ProfileSkill>
+      + save(...): ProfileSkill
+      + update(...): Optional<ProfileSkill>
+      + delete(...): void
+      + existsByEmployeeAndSkill(...): boolean
+    }
+    
+    interface ProjectRepository {
+      + findById(...): Optional<Project>
+      + save(...): Project
+      + update(...): Optional<Project>
+      + delete(...): void
+      + findBySearchCriteria(...): Page<Project>
+      + findRecentProjects(...): List<Project>
+    }
+    
+    interface EmployeeRepository {
+      + findBySearchCriteria(...): Page<Employee>
+      + getFilterOptions(): EmployeeFilterOptions
+      + existsByUserId(...): boolean
+    }
+    
+    interface RoleRequestRepository {
+      + save(...): RoleRequest
+      + findById(...): Optional<RoleRequest>
+      + update(...): RoleRequest
+      + findByUserId(...): Page<RoleRequest>
+      + findAllPending(...): Page<RoleRequest>
+    }
+    
+    interface UserRepository {
+      + save(...): User
+      + findById(...): Optional<User>
+      + existsByUsername(...): boolean
+      + findAll(...): Page<User>
+    }
+    
+    interface OptionsRepository {
+      + findAllLocations(): List<Location>
+      + findAllPositions(): List<Position>
+      + findAllSkills(): List<Skill>
+      + findAllSkillCategories(): List<SkillCategory>
+      + skillExists(...): boolean
+    }
+    
+    interface KeycloakAdminClient {
+      + assignRole(...): void
+      + removeRole(...): void
+      + getUser(...): KeycloakUser
+    }
+    
+    interface ActivityRepository {
+      + findRecentByUserId(...): List<Activity>
+    }
+    
+    interface AnalyticsRepository {
+      + getUserStatistics(...): Optional<UserStatistics>
+      + getSkillDevelopment(...): List<SkillDevelopmentDataPoint>
+    }
+  }
+}
+
+' ============================================================================
+' APPLICATION LAYER (Service Implementations)
+' ============================================================================
+
+package "Application Services" <<Rectangle>> SERVICE_COLOR {
+  
+  class ProfileServiceImpl {
+    - ProfileRepository profileRepository
+    + getProfile(UUID userId): UserProfile
+    + updateProfile(...): UserProfile
+  }
+  
+  class SkillManagementServiceImpl {
+    - ProfileSkillRepository skillRepository
+    - OptionsRepository optionsRepository
+    + addSkill(...): ProfileSkill
+    + updateSkill(...): ProfileSkill
+    + deleteSkill(...): void
+  }
+  
+  class ProjectManagementServiceImpl {
+    - ProjectRepository projectRepository
+    - EmployeeRepository employeeRepository
+    + createProject(...): Project
+    + updateProject(...): Project
+    + deleteProject(...): void
+  }
+  
+  class ProjectDiscoveryServiceImpl {
+    - ProjectRepository projectRepository
+    + searchProjects(...): Page<Project>
+    + getProjectById(...): Project
+  }
+  
+  class EmployeeDiscoveryServiceImpl {
+    - EmployeeRepository employeeRepository
+    + searchEmployees(...): Page<Employee>
+  }
+  
+  class RoleRequestServiceImpl {
+    - RoleRequestRepository roleRequestRepository
+    - KeycloakAdminClient keycloakClient
+    + createRoleRequest(...): RoleRequest
+    + reviewRoleRequest(...): RoleRequest
+  }
+  
+  class UserAdminServiceImpl {
+    - UserRepository userRepository
+    + getAllUsers(...): Page<UserAdmin>
+  }
+  
+  class AnalyticsServiceImpl {
+    - AnalyticsRepository analyticsRepository
+    - ActivityRepository activityRepository
+    + getUserStatistics(...): UserStatistics
+  }
+  
+  class OptionsServiceImpl {
+    - OptionsRepository optionsRepository
+    + getLocations(): List<Location>
+    + getPositions(): List<Position>
+  }
+  
+  class UserSyncServiceImpl {
+    - UserRepository userRepository
+    + syncUserFromKeycloak(...): void
+  }
+}
+
+' Service implements Interface
+ProfileServiceImpl ..|> ProfileService
+SkillManagementServiceImpl ..|> SkillManagementService
+ProjectManagementServiceImpl ..|> ProjectManagementService
+ProjectDiscoveryServiceImpl ..|> ProjectDiscoveryService
+EmployeeDiscoveryServiceImpl ..|> EmployeeDiscoveryService
+RoleRequestServiceImpl ..|> RoleRequestService
+UserAdminServiceImpl ..|> UserAdminService
+AnalyticsServiceImpl ..|> AnalyticsService
+OptionsServiceImpl ..|> OptionsService
+UserSyncServiceImpl ..|> UserSyncService
+
+' Service uses Repository
+ProfileServiceImpl --> ProfileRepository
+SkillManagementServiceImpl --> ProfileSkillRepository
+SkillManagementServiceImpl --> OptionsRepository
+ProjectManagementServiceImpl --> ProjectRepository
+ProjectManagementServiceImpl --> EmployeeRepository
+ProjectDiscoveryServiceImpl --> ProjectRepository
+EmployeeDiscoveryServiceImpl --> EmployeeRepository
+RoleRequestServiceImpl --> RoleRequestRepository
+RoleRequestServiceImpl --> KeycloakAdminClient
+UserAdminServiceImpl --> UserRepository
+AnalyticsServiceImpl --> AnalyticsRepository
+AnalyticsServiceImpl --> ActivityRepository
+OptionsServiceImpl --> OptionsRepository
+UserSyncServiceImpl --> UserRepository
+
+' ============================================================================
+' INFRASTRUCTURE LAYER (Controllers)
+' ============================================================================
+
+package "Web Controllers" <<Rectangle>> CONTROLLER_COLOR {
+  
+  class ProfileController {
+    - ProfileService profileService
+    - AuthorizationUtils authUtils
+    + getProfile(...): ResponseEntity
+    + updateProfile(...): ResponseEntity
+  }
+  
+  class SkillsController {
+    - SkillManagementService skillService
+    + addSkill(...): ResponseEntity
+    + updateSkill(...): ResponseEntity
+    + deleteSkill(...): ResponseEntity
+  }
+  
+  class ProjectManagementController {
+    - ProjectManagementService projectService
+    + createProject(...): ResponseEntity
+    + updateProject(...): ResponseEntity
+    + deleteProject(...): ResponseEntity
+  }
+  
+  class ProjectDiscoverController {
+    - ProjectDiscoveryService projectService
+    + searchProjects(...): ResponseEntity
+    + getProject(...): ResponseEntity
+  }
+  
+  class EmployeeDiscoveryController {
+    - EmployeeDiscoveryService employeeService
+    + searchEmployees(...): ResponseEntity
+    + getFilterOptions(...): ResponseEntity
+  }
+  
+  class RoleRequestController {
+    - RoleRequestService roleRequestService
+    + createRoleRequest(...): ResponseEntity
+    + getMyRequests(...): ResponseEntity
+  }
+  
+  class UserAdminController {
+    - UserAdminService userAdminService
+    - RoleRequestService roleRequestService
+    + getAllUsers(...): ResponseEntity
+    + reviewRoleRequest(...): ResponseEntity
+  }
+  
+  class AnalyticsController {
+    - AnalyticsService analyticsService
+    + getUserStats(...): ResponseEntity
+    + getRecentActivities(...): ResponseEntity
+  }
+  
+  class OptionsController {
+    - OptionsService optionsService
+    + getLocations(...): ResponseEntity
+    + getPositions(...): ResponseEntity
+    + getSkills(...): ResponseEntity
+  }
+  
+  class KeycloakWebhookController {
+    - UserSyncService userSyncService
+    + handleKeycloakEvent(...): ResponseEntity
+  }
+}
+
+' Controller uses Service
+ProfileController --> ProfileService
+SkillsController --> SkillManagementService
+ProjectManagementController --> ProjectManagementService
+ProjectDiscoverController --> ProjectDiscoveryService
+EmployeeDiscoveryController --> EmployeeDiscoveryService
+RoleRequestController --> RoleRequestService
+UserAdminController --> UserAdminService
+UserAdminController --> RoleRequestService
+AnalyticsController --> AnalyticsService
+OptionsController --> OptionsService
+KeycloakWebhookController --> UserSyncService
+
+' ============================================================================
+' INFRASTRUCTURE LAYER (JPA Entities)
+' ============================================================================
+
+package "JPA Entities" <<Rectangle>> ENTITY_COLOR {
+  
+  class UserEntity {
+    - UUID id
+    - String username
+    - String email
+    - String firstName
+    - String lastName
+    - Instant createdAt
+    - Instant updatedAt
+  }
+  
+  class EmployeeEntity {
+    - UUID userId
+    - UUID positionId
+    - UUID locationId
+    - String availability
+    - Double yearsOfExperience
+    - String bio
+    - Instant createdAt
+    - Instant updatedAt
+    --
+    - PositionEntity position
+    - LocationEntity location
+    - List<EmployeeSkillEntity> skills
+  }
+  
+  class EmployeeSkillEntity {
+    - UUID id
+    - UUID employeeId
+    - UUID skillId
+    - Integer proficiencyScore
+    - Double yearsOfExperience
+    - LocalDate lastUsed
+    --
+    - SkillEntity skill
+  }
+  
+  class ProjectEntity {
+    - UUID id
+    - String name
+    - String description
+    - String status
+    - LocalDate startDate
+    - LocalDate endDate
+    - String client
+    - Integer teamSize
+    - UUID createdByUserId
+    - Instant createdAt
+    - Instant updatedAt
+    --
+    - List<ProjectMemberEntity> members
+    - List<ProjectSkillEntity> skills
+  }
+  
+  class ProjectMemberEntity {
+    - UUID id
+    - UUID projectId
+    - UUID employeeId
+    - String employeeName
+    - UUID positionId
+    - String positionName
+  }
+  
+  class RoleRequestEntity {
+    - UUID id
+    - UUID userId
+    - String roleType
+    - String status
+    - String justification
+    - UUID reviewedBy
+    - Instant reviewedAt
+    - String reviewComment
+    - Instant createdAt
+  }
+  
+  class SkillEntity {
+    - UUID id
+    - String name
+    - UUID categoryId
+    - Boolean isActive
+  }
+  
+  class SkillCategoryEntity {
+    - UUID id
+    - String name
+    - Boolean isActive
+  }
+  
+  class PositionEntity {
+    - UUID id
+    - String name
+    - Boolean isActive
+  }
+  
+  class LocationEntity {
+    - UUID id
+    - String name
+    - Boolean isActive
+  }
+}
+
+' Entity Relationships
+EmployeeEntity "1" --> "1" UserEntity : userId
+EmployeeEntity "1" --> "0..*" EmployeeSkillEntity : skills
+EmployeeEntity "*" --> "1" PositionEntity : position
+EmployeeEntity "*" --> "1" LocationEntity : location
+EmployeeSkillEntity "*" --> "1" SkillEntity : skill
+SkillEntity "*" --> "1" SkillCategoryEntity : category
+ProjectEntity "1" --> "0..*" ProjectMemberEntity : members
+ProjectEntity "1" --> "0..*" ProjectSkillEntity : skills
+
+' ============================================================================
+' CROSS-CUTTING CONCERNS
+' ============================================================================
+
+package "Security & Utilities" {
+  class AuthorizationUtils {
+    + resolveUserId(...): UUID
+    + validateUserAccess(...): void
+    + hasRole(...): boolean
+  }
+  
+  class CustomAccessDeniedHandler {
+    + handle(...): void
+  }
+  
+  class KeycloakAuthoritiesConverter {
+    + convert(...): Collection<GrantedAuthority>
+  }
+}
+
+ProfileController --> AuthorizationUtils
+ProjectManagementController --> AuthorizationUtils
+
+note top of ProfileService
+  Hexagonal Architecture (Ports & Adapters):
+  - Domain at center (models, ports)
+  - Application layer (service implementations)
+  - Infrastructure layer (controllers, repositories)
+  - Clear separation of concerns
+  - Technology-independent domain
+end note
+
+note bottom of ProjectRepository
+  Repositories abstract data access:
+  - JPA implementation
+  - Specification pattern for dynamic queries
+  - Mappers convert Entity ↔ Domain
+end note
+
+@enduml

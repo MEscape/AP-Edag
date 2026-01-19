@@ -1,0 +1,232 @@
+@startuml activity_role_request
+' Aktivitätsdiagramm: Rollenanfrage und Genehmigung
+' Zeigt den kompletten Workflow von Anfrage bis Rollenzuweisung
+
+title Aktivitätsdiagramm - Rollenanfrage-Workflow
+
+|Mitarbeiter|
+start
+:Login ins System;
+:Navigiere zum Dashboard;
+
+|Frontend|
+:Prüfe aktuelle Rollen;
+if (Hat MANAGER-Rolle?) then (ja)
+  :Zeige Manager-Features;
+  stop
+else (nein)
+  :Zeige "Rolle beantragen" Button;
+endif
+
+|Mitarbeiter|
+:Klick auf "Manager-Rolle beantragen";
+
+|Frontend|
+:Öffne Rollenanfrage-Dialog;
+:Zeige Formular;
+
+|Mitarbeiter|
+:Wähle gewünschte Rolle:
+* MANAGER;
+note right: Aktuell nur MANAGER-Rolle\nverfügbar, erweiterbar
+
+:Gebe Begründung ein;
+note right: Pflichtfeld, min. 50 Zeichen
+
+|Frontend|
+:Validiere Formular;
+if (Begründung ausreichend?) then (nein)
+  :Zeige Validierungsfehler;
+  detach
+else (ja)
+  :Sende POST /v1/role-requests;
+endif
+
+|Backend|
+:Prüfe Authorization;
+:Extrahiere User-ID aus JWT;
+
+|Database|
+:Prüfe auf bestehende Anfragen;
+if (Offene Anfrage existiert?) then (ja)
+  |Backend|
+  :Sende 409 Conflict;
+  |Frontend|
+  :Zeige "Sie haben bereits\neine offene Anfrage";
+  stop
+else (nein)
+  :BEGIN TRANSACTION;
+  :INSERT INTO role_requests\n(user_id, role, status='PENDING',\njustification, created_at);
+  
+  :TRIGGER: log_role_request;
+  :INSERT INTO activities\n(ROLE_REQUESTED);
+  
+  :COMMIT TRANSACTION;
+endif
+
+|Backend|
+:Sende 201 Created;
+
+|Frontend|
+:Invalidiere Cache;
+:Zeige Erfolgsmeldung;
+:Zeige Status "Ausstehend";
+
+|Mitarbeiter|
+:Warte auf Genehmigung;
+
+== Admin-Bearbeitung ==
+
+|Administrator|
+:Login ins System;
+:Navigiere zu Admin-Panel;
+
+|Frontend|
+:Lade offene Rollenanfragen;
+:GET /v1/admin/role-requests?status=PENDING;
+
+|Backend|
+:Prüfe ADMIN-Rolle;
+|Database|
+:SELECT rr.*, u.first_name, u.last_name,\nu.email, ep.position_id, p.name\nFROM role_requests rr\nJOIN users u ON rr.user_id = u.id\nLEFT JOIN employee_profiles ep ON ep.user_id = u.id\nLEFT JOIN positions p ON ep.position_id = p.id\nWHERE rr.status = 'PENDING'\nORDER BY rr.created_at ASC;
+
+|Frontend|
+:Zeige Anfragen-Liste;
+
+|Administrator|
+:Wähle Anfrage aus;
+:Prüfe Mitarbeiter-Profil;
+:Prüfe Begründung;
+:Bewerte Berechtigung;
+
+if (Anfrage genehmigen?) then (ja)
+  
+  |Frontend|
+  :Öffne Bestätigungs-Dialog;
+  
+  |Administrator|
+  :Optional: Füge Kommentar hinzu;
+  :Klick auf "Genehmigen";
+  
+  |Frontend|
+  :Sende POST /v1/admin/role-requests/{id}/review\n{decision: 'APPROVED', comment: '...'};
+  
+  |Backend|
+  :Prüfe ADMIN-Rolle;
+  :Validiere Anfrage existiert;
+  
+  |Database|
+  :BEGIN TRANSACTION;
+  :UPDATE role_requests\nSET status = 'APPROVED',\nreviewed_by = ?,\nreviewed_at = NOW(),\nreview_comment = ?;
+  
+  :TRIGGER: log_role_approval;
+  :INSERT INTO activities\n(ROLE_APPROVED);
+  
+  |Keycloak Integration|
+  :Rufe KeycloakAdminClient;
+  :Authentifiziere mit Admin-Credentials;
+  
+  fork
+    :GET /users/{userId};
+    :Hole Benutzer-Informationen;
+  fork again
+    :GET /realms/{realm}/roles/MANAGER;
+    :Hole Rollen-Definition;
+  fork end
+  
+  :POST /users/{userId}/role-mappings/realm;
+  :Füge MANAGER-Rolle hinzu;
+  
+  if (Keycloak-Zuweisung erfolgreich?) then (nein)
+    |Database|
+    :ROLLBACK TRANSACTION;
+    |Backend|
+    :Sende 500 Internal Server Error;
+    |Frontend|
+    :Zeige Fehler;
+    stop
+  else (ja)
+    |Database|
+    :COMMIT TRANSACTION;
+    
+    |Backend|
+    :Sende 200 OK;
+    
+    |Frontend|
+    :Invalidiere Cache;
+    :Zeige Erfolgsmeldung;
+    :Entferne aus Pending-Liste;
+  endif
+
+else (nein - Ablehnen)
+  
+  |Frontend|
+  :Öffne Ablehnungs-Dialog;
+  
+  |Administrator|
+  :Gebe Ablehnungsgrund ein\n(Pflichtfeld);
+  :Klick auf "Ablehnen";
+  
+  |Frontend|
+  :Sende POST /v1/admin/role-requests/{id}/review\n{decision: 'REJECTED', comment: '...'};
+  
+  |Backend|
+  :Prüfe ADMIN-Rolle;
+  
+  |Database|
+  :BEGIN TRANSACTION;
+  :UPDATE role_requests\nSET status = 'REJECTED',\nreviewed_by = ?,\nreviewed_at = NOW(),\nreview_comment = ?;
+  
+  :TRIGGER: log_role_rejection;
+  :INSERT INTO activities\n(ROLE_REJECTED);
+  
+  :COMMIT TRANSACTION;
+  
+  |Backend|
+  :Sende 200 OK;
+  
+  |Frontend|
+  :Invalidiere Cache;
+  :Zeige Bestätigung;
+  :Entferne aus Pending-Liste;
+endif
+
+== Mitarbeiter-Benachrichtigung ==
+
+|Mitarbeiter|
+:Login ins System;
+:Navigiere zu Dashboard;
+
+|Frontend|
+:Lade Rollenanfragen-Status;
+
+if (Status = APPROVED?) then (ja)
+  :Zeige Erfolgs-Banner;
+  :Lade neue Session mit MANAGER-Rolle;
+  
+  |Keycloak|
+  :Token Refresh mit neuen Rollen;
+  
+  |Frontend|
+  :Update Session;
+  :Zeige Manager-Features;
+  :Navigiere zu Manager-Dashboard;
+  
+  |Mitarbeiter|
+  :Kann jetzt Projekte erstellen;
+  
+else (nein - REJECTED)
+  :Zeige Ablehnungs-Nachricht;
+  :Zeige Ablehnungsgrund;
+  
+  |Mitarbeiter|
+  if (Erneut beantragen?) then (ja)
+    detach
+  else (nein)
+    stop
+  endif
+endif
+
+stop
+
+@enduml
