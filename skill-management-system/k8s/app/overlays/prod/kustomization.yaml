@@ -1,0 +1,40 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+  name: skill-management-system-prod
+resources:
+- ../../base
+- ingress.yaml
+- namespace.yaml
+- frontend/
+- backend/
+namespace: skill-management-system-prod
+namePrefix: prod-
+configMapGenerator:
+- behavior: merge
+  literals:
+  - KC_DB_URL=jdbc:postgresql://prod-sms-postgres-service:5433/keycloak
+  - BACKEND_HOST=http://api.skill-management.edag.com
+  - FRONTEND_HOST=http://skill-management.edag.com
+  name: keycloak-config
+- behavior: merge
+  literals:
+  - KC_SPI_EVENTS_LISTENER_WEBHOOK_EVENT_LISTENER_WEBHOOK_URL=http://api.skill-management.edag.com/v1/webhooks/keycloak
+  name: keycloak-webhook-config
+replicas:
+- count: 1
+  name: postgres
+- count: 1
+  name: keycloak
+- count: 1
+  name: frontend
+- count: 1
+  name: backend
+labels:
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/instance: prod
+    environment: production
+patches:
+- path: postgres-patch.yaml
+- path: keycloak-patch.yaml

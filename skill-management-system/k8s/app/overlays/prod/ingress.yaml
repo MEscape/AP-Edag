@@ -1,0 +1,47 @@
+# Frontend IngressRoute
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: frontend-http
+  namespace: skill-management-system-prod
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`skill-management.edag.com`)
+      kind: Rule
+      services:
+        - name: prod-sms-frontend-service
+          port: 3000
+---
+# Backend IngressRoute
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: backend-http
+  namespace: skill-management-system-prod
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`api.skill-management.edag.com`)
+      kind: Rule
+      services:
+        - name: prod-sms-backend-service
+          port: 8080
+---
+# Keycloak IngressRoute
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: keycloak-http
+  namespace: skill-management-system-prod
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`auth.skill-management.edag.com`)
+      kind: Rule
+      services:
+        - name: prod-sms-keycloak-service
+          port: 8080

@@ -1,0 +1,27 @@
+<svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- EDAG Text -->
+  <g fill="#1f2937">
+    <!-- E -->
+    <path d="M8 8h12v4H12v4h8v4h-8v4h12v4H8V8z"/>
+    <!-- D -->
+    <path d="M24 8h8c4.4 0 8 3.6 8 8s-3.6 8-8 8h-8V8zm4 4v8h4c2.2 0 4-1.8 4-4s-1.8-4-4-4h-4z"/>
+    <!-- A -->
+    <path d="M44 8h4l8 20h-4l-1.5-4h-9l-1.5 4h-4l8-20zm2 4l-3 8h6l-3-8z"/>
+    <!-- G -->
+    <path d="M60 8c4.4 0 8 3.6 8 8v1h-4v-1c0-2.2-1.8-4-4-4s-4 1.8-4 4v8c0 2.2 1.8 4 4 4h2v-4h-2v-4h6v8c0 4.4-3.6 8-8 8s-8-3.6-8-8v-8c0-4.4 3.6-8 8-8z"/>
+  </g>
+
+  <!-- Red accent line -->
+  <rect x="8" y="32" width="64" height="2" fill="#e1000f"/>
+
+  <!-- Engineering text -->
+  <text x="76" y="20" font-family="Arial, sans-serif" font-size="10" font-weight="600" fill="#6b7280">
+    Engineering
+  </text>
+
+  <!-- Mobility IT badge -->
+  <rect x="76" y="24" width="36" height="12" rx="6" fill="#e1000f" opacity="0.1"/>
+  <text x="94" y="32" font-family="Arial, sans-serif" font-size="8" font-weight="500" fill="#e1000f" text-anchor="middle">
+    Mobility IT
+  </text>
+</svg>

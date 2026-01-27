@@ -1,0 +1,197 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+    component: identity-provider
+    part-of: skill-management-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+        component: identity-provider
+        part-of: skill-management-system
+    spec:
+      containers:
+      - name: keycloak
+        image: quay.io/keycloak/keycloak:23.0
+        args:
+          - start
+          - --optimized
+          - --import-realm
+        ports:
+          - containerPort: 8080
+            name: http
+        env:
+          - name: KC_HOSTNAME_STRICT
+            value: "false"
+          - name: KC_HOSTNAME_STRICT_HTTPS
+            value: "false"
+          - name: KC_HTTP_ENABLED
+            value: "true"
+          - name: KC_PROXY
+            value: "edge"
+          - name: KC_DB_URL
+            valueFrom:
+              configMapKeyRef:
+                name: keycloak-config
+                key: KC_DB_URL
+          - name: KC_DB_USERNAME
+            value: "keycloak"
+          - name: KC_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-secret
+                key: KC_DB_PASSWORD
+          - name: KEYCLOAK_ADMIN
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-secret
+                key: KEYCLOAK_ADMIN
+          - name: KEYCLOAK_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-secret
+                key: KEYCLOAK_ADMIN_PASSWORD
+          - name: KEYCLOAK_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-secret
+                key: KEYCLOAK_CLIENT_ID
+          - name: KEYCLOAK_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-secret
+                key: KEYCLOAK_CLIENT_SECRET
+          - name: FRONTEND_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: keycloak-config
+                key: FRONTEND_HOST
+          - name: BACKEND_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: keycloak-config
+                key: BACKEND_HOST
+          - name: KC_SPI_EVENTS_LISTENER_WEBHOOK_EVENT_LISTENER_WEBHOOK_URL
+            valueFrom:
+              configMapKeyRef:
+                name: keycloak-webhook-config
+                key: KC_SPI_EVENTS_LISTENER_WEBHOOK_EVENT_LISTENER_WEBHOOK_URL
+          - name: KC_SPI_EVENTS_LISTENER_WEBHOOK_EVENT_LISTENER_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-secret
+                key: WEBHOOK_USERNAME
+          - name: KC_SPI_EVENTS_LISTENER_WEBHOOK_EVENT_LISTENER_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: keycloak-secret
+                key: WEBHOOK_PASSWORD
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /health/started
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 30
+        volumeMounts:
+          - name: realm-config
+            mountPath: /opt/keycloak/data/import/skill-management-realm.json
+            subPath: skill-management-realm.json
+            readOnly: true
+          - name: theme-storage
+            mountPath: /opt/keycloak/themes/edag/login/theme.properties
+            subPath: theme.properties
+            readOnly: true
+          - name: theme-storage
+            mountPath: /opt/keycloak/themes/edag/login/template.ftl
+            subPath: template.ftl
+            readOnly: true
+          - name: theme-storage
+            mountPath: /opt/keycloak/themes/edag/login/login.ftl
+            subPath: login.ftl
+            readOnly: true
+          - name: theme-storage
+            mountPath: /opt/keycloak/themes/edag/login/register.ftl
+            subPath: register.ftl
+            readOnly: true
+          - name: theme-storage
+            mountPath: /opt/keycloak/themes/edag/login/messages/messages_en.properties
+            subPath: messages_en.properties
+            readOnly: true
+          - name: theme-storage
+            mountPath: /opt/keycloak/themes/edag/login/messages/messages_de.properties
+            subPath: messages_de.properties
+            readOnly: true
+          - name: theme-storage
+            mountPath: /opt/keycloak/themes/edag/login/resources/css/common.css
+            subPath: common.css
+            readOnly: true
+          - name: theme-storage
+            mountPath: /opt/keycloak/themes/edag/login/resources/css/login.css
+            subPath: login.css
+            readOnly: true
+          - name: theme-storage
+            mountPath: /opt/keycloak/themes/edag/login/resources/css/register.css
+            subPath: register.css
+            readOnly: true
+          - name: theme-storage
+            mountPath: /opt/keycloak/themes/edag/login/resources/css/template.css
+            subPath: template.css
+            readOnly: true
+          - name: theme-storage
+            mountPath: /opt/keycloak/themes/edag/login/resources/img/favicon.ico
+            subPath: favicon.ico
+            readOnly: true
+          - name: theme-storage
+            mountPath: /opt/keycloak/themes/edag/login/resources/img/logo.png
+            subPath: logo.png
+            readOnly: true
+          - name: theme-storage
+            mountPath: /opt/keycloak/themes/edag/login/resources/js/password-strength.js
+            subPath: password-strength.js
+            readOnly: true
+          - name: theme-storage
+            mountPath: /opt/keycloak/themes/edag/login/resources/js/password-toggle.js
+            subPath: password-toggle.js
+            readOnly: true
+          - name: providers
+            mountPath: /opt/keycloak/providers/keycloak-webhook-listener.jar
+            subPath: keycloak-webhook-listener.jar
+            readOnly: true
+      volumes:
+        - name: realm-config
+          configMap:
+            name: keycloak-realm-config
+        - name: theme-storage
+          configMap:
+            name: keycloak-theme-config
+        - name: providers
+          configMap:
+            name: keycloak-providers

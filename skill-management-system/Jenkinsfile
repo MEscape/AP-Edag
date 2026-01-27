@@ -1,0 +1,184 @@
+pipeline {
+  agent none
+
+  options {
+    disableConcurrentBuilds()
+    timeout(time: 1, unit: 'HOURS')
+  }
+
+  environment {
+    REGISTRY_EXTERNAL = 'registry.skill-management-devops.edag.com'
+    BACKEND_IMAGE_EXTERNAL = "${REGISTRY_EXTERNAL}/skill-management-backend"
+    FRONTEND_IMAGE_EXTERNAL = "${REGISTRY_EXTERNAL}/skill-management-frontend"
+  }
+
+  stages {
+    stage('Checkout') {
+      agent { label 'universal' }
+      steps {
+        checkout scm
+      }
+    }
+
+    stage('Backend: Build & Analyze') {
+      agent { label 'backend' }
+      stages {
+        stage('Test & Package') {
+          steps {
+            container('maven') {
+              sh '''#!/bin/bash
+                set -euxo pipefail
+                cd backend
+                chmod +x ./mvnw
+                ./mvnw -B --no-transfer-progress clean test package
+              '''
+            }
+          }
+        }
+
+        stage('SonarQube Analysis') {
+          steps {
+            container('maven') {
+              withSonarQubeEnv('SonarQube') {
+                sh '''#!/bin/bash
+                  set -euxo pipefail
+                  cd backend
+                  chmod +x ./mvnw
+                  ./mvnw -B --no-transfer-progress sonar:sonar \
+                    -Dsonar.projectKey=sms-backend \
+                    -Dsonar.projectName="SMS Backend"
+                '''
+              }
+            }
+          }
+        }
+      }
+    }
+
+    stage('Backend: Quality Gate') {
+      agent { label 'universal' }
+      steps {
+        timeout(time: 10, unit: 'MINUTES') {
+          waitForQualityGate abortPipeline: true
+        }
+      }
+    }
+
+    stage('Frontend: Build & Analyze') {
+      agent { label 'frontend' }
+      stages {
+        stage('Install & Build') {
+          steps {
+            container('nodejs') {
+              sh '''#!/bin/bash
+                set -euxo pipefail
+                cd frontend
+                npm ci
+                export SKIP_ENV_VALIDATION=true
+                npm run build
+              '''
+            }
+          }
+        }
+
+        stage('SonarQube Analysis') {
+          steps {
+            container('nodejs') {
+              withSonarQubeEnv('SonarQube') {
+                sh '''#!/bin/bash
+                  set -euxo pipefail
+                  cd frontend
+                  npx sonar-scanner \
+                    -Dsonar.projectKey=sms-frontend \
+                    -Dsonar.projectName="SMS Frontend" \
+                    -Dsonar.sources=./src
+                '''
+              }
+            }
+          }
+        }
+      }
+    }
+
+    stage('Frontend: Quality Gate') {
+      agent { label 'universal' }
+      steps {
+        timeout(time: 10, unit: 'MINUTES') {
+          waitForQualityGate abortPipeline: true
+        }
+      }
+    }
+
+    stage('Build & Push Images') {
+      when {
+        branch 'main'
+      }
+      parallel {
+        stage('Backend: Build & Push Image') {
+          agent { label 'backend' }
+          steps {
+            container('docker') {
+              script {
+                docker.withRegistry("https://${REGISTRY_EXTERNAL}", 'docker-registry') {
+                  dir('backend') {
+                    def backendImage = docker.build("${BACKEND_IMAGE_EXTERNAL}:${BUILD_NUMBER}")
+                    backendImage.push()
+                    backendImage.push('latest')
+                    echo "Backend image pushed successfully: ${BACKEND_IMAGE_EXTERNAL}:${BUILD_NUMBER}"
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        stage('Frontend: Build & Push Image') {
+          agent { label 'frontend' }
+          steps {
+            container('docker') {
+              script {
+                docker.withRegistry("https://${REGISTRY_EXTERNAL}", 'docker-registry') {
+                  dir('frontend') {
+                    def frontendImage = docker.build("${FRONTEND_IMAGE_EXTERNAL}:${BUILD_NUMBER}")
+                    frontendImage.push()
+                    frontendImage.push('latest')
+                    echo "Frontend image pushed successfully: ${FRONTEND_IMAGE_EXTERNAL}:${BUILD_NUMBER}"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    stage('Trigger Deploy') {
+      when {
+        branch 'main'
+      }
+      agent { label 'universal' }
+      steps {
+        script {
+          build job: 'skill-management-deploy'
+        }
+      }
+    }
+  }
+
+  post {
+    success {
+      script {
+        if (env.BRANCH_NAME == 'main') {
+          echo "Build, push, and deployment completed successfully!"
+          echo "Backend: ${BACKEND_IMAGE_EXTERNAL}:${BUILD_NUMBER}"
+          echo "Frontend: ${FRONTEND_IMAGE_EXTERNAL}:${BUILD_NUMBER}"
+        } else {
+          echo "Build and quality checks completed successfully for branch: ${BRANCH_NAME}"
+        }
+      }
+    }
+    failure {
+      echo "Pipeline failed. Check stage logs for details."
+    }
+  }
+}

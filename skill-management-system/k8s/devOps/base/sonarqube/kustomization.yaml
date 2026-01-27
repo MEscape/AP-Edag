@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+  name: sonarqube-base
+resources:
+- deployment.yaml
+- service.yaml
+- pvc.yaml
+- job.yaml
+configMapGenerator:
+- literals:
+  - SONAR_JDBC_URL=jdbc:postgresql://prod-sms-postgres-sonar-service:5432/sonarqube
+  name: sonarqube-config
+labels:
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: sonarqube
+    app.kubernetes.io/part-of: skill-management-devops

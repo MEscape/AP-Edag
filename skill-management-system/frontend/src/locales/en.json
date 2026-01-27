@@ -1,0 +1,940 @@
+{
+  "common": {
+    "time": {
+      "minutesAgo": "A few minutes ago",
+      "hoursAgo": "{count, plural, =1 {An hour ago} other {# hours ago}}",
+      "yesterday": "Yesterday"
+    },
+    "skillLevel": {
+      "beginner": "Beginner",
+      "basic": "Basic",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "expert": "Expert"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "error": {
+      "title": "Error",
+      "description": "Something went wrong. Please try again.",
+      "retry": "Retry",
+      "goBack": "Go Back"
+    }
+  },
+  "errors": {
+    "api": {
+      "unauthorized": "Session expired. Please sign in again.",
+      "forbidden": "You don't have permission to access this resource.",
+      "notFound": "The requested resource was not found.",
+      "serverError": "A server error occurred. Please try again later.",
+      "networkError": "Network error. Please check your connection.",
+      "sessionExpired": "Your session has expired. Redirecting to login...",
+      "refreshFailed": "Failed to refresh session. Please sign in again.",
+      "unknown": "An unexpected error occurred."
+    }
+  },
+  "admin": {
+    "meta": {
+      "title": "Admin Dashboard",
+      "description": "Manage users, role requests, and master data"
+    },
+    "title": "Admin Dashboard",
+    "description": "Manage users, role requests, and master data",
+    "accessDenied": "Access Denied",
+    "accessDeniedDescription": "You do not have permission to access this area. Please contact an administrator if you need access.",
+    "backToDashboard": "Back to Dashboard",
+    "tabs": {
+      "users": "Users",
+      "roleRequests": "Role Requests",
+      "masterData": "Master Data"
+    },
+    "users": {
+      "title": "User Management",
+      "description": "Manage all users and their permissions",
+      "searchPlaceholder": "Search by name, email, or username...",
+      "showing": "Showing {from} to {to} of {total}",
+      "noUsers": "No users found",
+      "error": "Loading error",
+      "errorDescription": "The user list could not be loaded. Please try again later.",
+      "table": {
+        "username": "Username",
+        "email": "Email",
+        "name": "Name",
+        "createdAt": "Created At",
+        "updatedAt": "Updated At"
+      }
+    },
+    "roleRequests": {
+      "title": "Role Requests",
+      "description": "Manage requests for role changes",
+      "showing": "Showing {from} to {to} of {total}",
+      "tabs": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "reason": "Reason",
+      "adminComment": "Admin Comment",
+      "requestedOn": "Requested on {date}",
+      "reviewedBy": "Reviewed by {reviewer} on {date}",
+      "approve": "Approve",
+      "reject": "Reject",
+      "cancel": "Cancel",
+      "noPending": "No pending requests",
+      "noApproved": "No approved requests",
+      "noRejected": "No rejected requests",
+      "approveTitle": "Approve Request",
+      "rejectTitle": "Reject Request",
+      "approveDescription": "Do you really want to approve the role request from {username}?",
+      "rejectDescription": "Do you really want to reject the role request from {username}?",
+      "adminCommentLabel": "Admin Comment (optional)",
+      "adminCommentPlaceholder": "Add a comment...",
+      "adminCommentHint": "This comment will be visible to the user",
+      "confirmApprove": "Approve",
+      "confirmReject": "Reject",
+      "approveSuccess": "{username}'s request was successfully approved",
+      "rejectSuccess": "{username}'s request was successfully rejected",
+      "reviewError": "Error processing the request. Please try again."
+    },
+    "masterData": {
+      "title": "Master Data Management",
+      "description": "Manage locations, positions, skill categories, and skills",
+      "tabs": {
+        "locations": "Locations",
+        "positions": "Positions",
+        "skillCategories": "Skill Categories",
+        "skills": "Skills"
+      },
+      "locations": {
+        "total": "{count} locations",
+        "create": "Create Location",
+        "empty": "No locations available",
+        "error": "Loading error",
+        "errorDescription": "The locations could not be loaded. Please try again later.",
+        "createTitle": "Create New Location",
+        "createDescription": "Add a new location to the system",
+        "nameLabel": "Location Name",
+        "namePlaceholder": "e.g. Munich",
+        "nameRequired": "Please enter a name",
+        "createSuccess": "Location \"{name}\" was successfully created",
+        "createError": "Error creating the location. Please try again.",
+        "cancel": "Cancel"
+      },
+      "positions": {
+        "total": "{count} positions",
+        "create": "Create Position",
+        "empty": "No positions available",
+        "error": "Loading error",
+        "errorDescription": "The positions could not be loaded. Please try again later.",
+        "createTitle": "Create New Position",
+        "createDescription": "Add a new position to the system",
+        "nameLabel": "Position Name",
+        "namePlaceholder": "e.g. Senior Developer",
+        "nameRequired": "Please enter a name",
+        "createSuccess": "Position \"{name}\" was successfully created",
+        "createError": "Error creating the position. Please try again.",
+        "cancel": "Cancel"
+      },
+      "skillCategories": {
+        "total": "{count} categories",
+        "create": "Create Category",
+        "empty": "No categories available",
+        "error": "Loading error",
+        "errorDescription": "The categories could not be loaded. Please try again later.",
+        "createTitle": "Create New Skill Category",
+        "createDescription": "Add a new skill category to the system",
+        "nameLabel": "Category Name",
+        "namePlaceholder": "e.g. Programming Languages",
+        "nameRequired": "Please enter a name",
+        "createSuccess": "Category \"{name}\" was successfully created",
+        "createError": "Error creating the category. Please try again.",
+        "cancel": "Cancel"
+      },
+      "skills": {
+        "total": "{count} skills",
+        "create": "Create Skill",
+        "empty": "No skills available",
+        "error": "Loading error",
+        "errorDescription": "The skills could not be loaded. Please try again later.",
+        "createTitle": "Create New Skill",
+        "createDescription": "Add a new skill to the system",
+        "nameLabel": "Skill Name",
+        "namePlaceholder": "e.g. TypeScript",
+        "categoryLabel": "Category",
+        "categoryPlaceholder": "Select a category",
+        "nameRequired": "Please enter a name",
+        "categoryRequired": "Please select a category",
+        "createSuccess": "Skill \"{name}\" was successfully created",
+        "createError": "Error creating the skill. Please try again.",
+        "cancel": "Cancel"
+      }
+    }
+  },
+  "welcome": {
+    "meta": {
+      "title": "Welcome - Skill Management System",
+      "description": "Welcome to the Skill Management System by EDAG Engineering. Efficiently plan your projects with data-driven employee selection."
+    },
+    "navigation": {
+      "companyName": "EDAG Engineering",
+      "systemName": "Skill Management",
+      "signIn": "Sign In",
+      "toDashboard": "To Dashboard",
+      "dashboard": "Dashboard",
+      "profile": "Profile",
+      "employees": "Employees",
+      "projects": "Projects",
+      "admin": "Admin"
+    },
+    "hero": {
+      "badge": "Mobility IT",
+      "title": "Skill Management for Efficient Project Planning",
+      "description": "The central platform for project managers to make data-driven employee selection in customer projects.",
+      "getStarted": "Get Started",
+      "signIn": "Sign In",
+      "keycloakNote": "For EDAG employees with Keycloak",
+      "benefits": {
+        "skillOverview": "Central overview of all employee competencies",
+        "resourcePlanning": "Efficient project-based resource planning",
+        "dataDecisions": "Data-driven decision foundations",
+        "reducedEffort": "Reduced manual coordination effort"
+      }
+    },
+    "features": {
+      "title": "Core Features",
+      "description": "All tools for efficient and data-based resource planning",
+      "skillTracking": "Skill Tracking",
+      "skillTrackingDesc": "Capture and manage all skills and competencies of your employees in one central location.",
+      "teamCollaboration": "Team Collaboration",
+      "teamCollaborationDesc": "Foster collaboration between teams through transparent competency overviews.",
+      "careerGrowth": "Career Growth",
+      "careerGrowthDesc": "Support professional development through targeted competency analyses and recommendations."
+    },
+    "useCases": {
+      "title": "Developed for Mobility IT",
+      "description": "The Skill Management System was specifically developed for the requirements of the Mobility IT department and enables efficient project-based resource deployment planning.",
+      "subDescription": "Through the combination of self-maintained competency profiles and documented project deployments, more objective and efficient employee selection is enabled.",
+      "skillBasedSearch": "Skill-based Search",
+      "skillBasedSearchDesc": "Quickly find the right experts for your project",
+      "evaluationLogic": "Evaluation Logic",
+      "evaluationLogicDesc": "Objective evaluation based on experience and project deployments",
+      "skillDevelopment": "Skill Development",
+      "skillDevelopmentDesc": "Visualization of competency development over time"
+    },
+    "footer": {
+      "companyName": "EDAG Engineering",
+      "systemName": "Skill Management System",
+      "copyright": "© 2025 EDAG Engineering GmbH"
+    },
+    "loading": {
+      "text": "Loading..."
+    }
+  },
+  "dashboard": {
+    "meta": {
+      "title": "Dashboard - Skill Management System",
+      "description": "Your personal overview and quick actions in the Skill Management System"
+    },
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "welcomeBack": "Welcome back, {name}",
+    "overview": "Your personal overview and quick actions",
+    "refresh": "Refresh",
+    "error": "Error loading data",
+    "errorDescription": "Unable to load dashboard data. Please try again.",
+
+    "roles": {
+      "admin": "Administrator",
+      "manager": "Manager",
+      "user": "User"
+    },
+
+    "stats": {
+      "totalSkills": "Total Skills",
+      "totalProjects": "Total Projects",
+      "averageSkillScore": "Average Skill Score",
+      "totalRecommendations": "Total Recommendations"
+    },
+
+    "skillDevelopment": {
+      "title": "Skill Development",
+      "description": "Track your skill development over time",
+      "totalSkills": "Total Skills",
+      "skillsDeleted": "Skills Deleted",
+      "skillsAdded": "Skills Added",
+      "skillsUpdated": "Skills Updated"
+    },
+
+    "quickActions": {
+      "title": "Quick Actions",
+      "description": "Frequently used actions",
+      "requestRole": "Request Role",
+      "requestRoleDescription": "Apply for a higher role",
+      "goToProfile": "Go to Profile",
+      "goToProfileDescription": "Visit your profile",
+      "findEmployee": "Find Employee",
+      "findEmployeeDescription": "Search through employee list",
+      "viewProjects": "View Projects",
+      "viewProjectsDescription": "View all projects",
+      "adminPanel": "Admin Panel",
+      "adminPanelDescription": "Access admin functions"
+    },
+
+    "recentProjects": {
+      "title": "Recent Projects",
+      "description": "Your recently worked on projects",
+      "noProjects": "No projects found",
+      "viewAll": "View All",
+      "status": {
+        "active": "Active",
+        "completed": "Completed",
+        "planned": "Planned"
+      }
+    },
+
+    "recentActivities": {
+      "title": "Recent Activities",
+      "description": "Your latest activities",
+      "noActivities": "No activities found",
+      "viewAll": "View All",
+      "types": {
+        "skill_added": {
+          "title": "Skill Added",
+          "description": "A new skill was added to your profile"
+        },
+        "skill_updated": {
+          "title": "Skill Updated",
+          "description": "An existing skill on your profile was updated"
+        },
+        "skill_removed": {
+          "title": "Skill Removed",
+          "description": "A skill was removed from your profile"
+        },
+
+        "project_created": {
+          "title": "Project Created",
+          "description": "A new project was created"
+        },
+        "project_started": {
+          "title": "Project Started",
+          "description": "The project is now active"
+        },
+        "project_completed": {
+          "title": "Project Completed",
+          "description": "The project has been successfully completed"
+        },
+        "project_planned": {
+          "title": "Project Planned",
+          "description": "A project is currently in planning status"
+        },
+        "project_updated": {
+          "title": "Project Updated",
+          "description": "A project was updated"
+        },
+        "project_deleted": {
+          "title": "Project Deleted",
+          "description": "A project was removed from the system"
+        },
+
+        "project_member_added": {
+          "title": "Project Member Added",
+          "description": "You were added to a project as a team member"
+        },
+        "project_member_removed": {
+          "title": "Project Member Removed",
+          "description": "You were removed from a project"
+        },
+        "project_member_role_changed": {
+          "title": "Project Role Changed",
+          "description": "Your role in a project was changed"
+        },
+
+        "project_skill_added": {
+          "title": "Project Skill Added",
+          "description": "A required technology was added to the project"
+        },
+        "project_skill_removed": {
+          "title": "Project Skill Removed",
+          "description": "A required technology was removed from the project"
+        },
+
+        "role_request_created": {
+          "title": "Role Request Created",
+          "description": "You submitted a new role request"
+        },
+        "role_request_approved": {
+          "title": "Role Request Approved",
+          "description": "Your role request has been approved"
+        },
+        "role_request_rejected": {
+          "title": "Role Request Rejected",
+          "description": "Your role request has been rejected"
+        },
+        "role_request_cancelled": {
+          "title": "Role Request Cancelled",
+          "description": "Your role request was cancelled"
+        },
+        "role_request_reviewed": {
+          "title": "Role Request Reviewed",
+          "description": "You reviewed a role request"
+        },
+        "role_request_updated": {
+          "title": "Role Request Updated",
+          "description": "Your role request was updated"
+        },
+
+        "profile_created": {
+          "title": "Profile Created",
+          "description": "Your profile was created"
+        },
+        "profile_updated": {
+          "title": "Profile Updated",
+          "description": "Your profile was updated"
+        },
+
+        "user_account_created": {
+          "title": "User Account Created",
+          "description": "Your user account was successfully created"
+        },
+        "user_email_changed": {
+          "title": "Email Changed",
+          "description": "Your email address was updated"
+        },
+        "user_name_changed": {
+          "title": "Name Changed",
+          "description": "Your name was updated"
+        },
+        "user_account_deleted": {
+          "title": "User Account Deleted",
+          "description": "Your user account was deleted"
+        }
+      }
+    },
+
+    "roleRequest": {
+      "title": "Request Role",
+      "description": "Apply for a role with extended permissions",
+      "selectRole": "Select Role",
+      "reason": "Reason",
+      "reasonPlaceholder": "Please explain why you need this role...",
+      "reasonHint": "At least 10 characters required",
+      "reasonTooShort": "Reason must be at least 10 characters long",
+      "reasonTooLong": "Reason must not exceed 1000 characters",
+      "cancel": "Cancel",
+      "submit": "Submit Request",
+      "createSuccess": "Role request created successfully",
+      "genericError": "Error creating request",
+      "alreadyHasPendingRequest": "You already have a pending request",
+      "cancelSuccess": "Request cancelled successfully",
+      "cancelError": "Error cancelling request",
+      "roleUpdated": "Your role has been updated to {role}",
+      "sessionUpdateError": "Error updating session. Please reload the page.",
+
+      "roles": {
+        "manager": "Manager",
+        "admin": "Administrator"
+      },
+
+      "roleDescriptions": {
+        "manager": "Access to team management features",
+        "admin": "Full system access"
+      },
+
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+
+      "myRequests": "My Role Requests",
+      "myRequestsDescription": "Manage your role requests",
+      "noRequests": "No requests found",
+      "loadError": "Error loading requests",
+      "pending": "Pending",
+      "history": "History",
+      "yourReason": "Your Reason",
+      "adminComment": "Admin Comment",
+      "requestedOn": "Requested on",
+      "reviewedOn": "Reviewed on",
+      "reviewedBy": "Reviewed by"
+    }
+  },
+  "myProjects": {
+    "meta": {
+      "title": "My Projects - Skill Management System",
+      "description": "Overview of all projects I'm involved in"
+    },
+    "title": "My Projects",
+    "description": "Overview of all your projects and their status",
+    "totalProjects": "{count, plural, =0 {No projects} one {# project} other {# projects}}",
+
+    "error": "Error loading projects",
+    "errorDescription": "The projects could not be loaded. Please try again.",
+    "backToDashboard": "Back to Dashboard",
+
+    "noProjects": "No projects yet",
+
+    "showing": "Showing {from} to {to} of {total}",
+
+    "status": {
+      "active": "Active",
+      "completed": "Completed",
+      "planned": "Planned"
+    }
+  },
+  "myActivities": {
+    "meta": {
+      "title": "My Activities - Skill Management System",
+      "description": "Overview of all my activities in the system"
+    },
+    "title": "My Activities",
+    "description": "Overview of all your recent activities and changes",
+    "totalActivities": "{count, plural, =0 {No activities} one {# activity} other {# activities}}",
+
+    "error": "Error loading activities",
+    "errorDescription": "The activities could not be loaded. Please try again.",
+    "backToDashboard": "Back to Dashboard",
+
+    "noActivities": "No activities yet",
+    "noActivitiesDescription": "You don't have any activities yet. Your future actions will be displayed here.",
+
+    "showing": "Showing {from} to {to} of {total}",
+    "types": {
+      "skill_added": {
+        "title": "Skill Added",
+        "description": "A new skill was added to your profile"
+      },
+      "skill_updated": {
+        "title": "Skill Updated",
+        "description": "An existing skill on your profile was updated"
+      },
+      "skill_removed": {
+        "title": "Skill Removed",
+        "description": "A skill was removed from your profile"
+      },
+
+      "project_created": {
+        "title": "Project Created",
+        "description": "A new project was created"
+      },
+      "project_started": {
+        "title": "Project Started",
+        "description": "The project is now active"
+      },
+      "project_completed": {
+        "title": "Project Completed",
+        "description": "The project has been successfully completed"
+      },
+      "project_planned": {
+        "title": "Project Planned",
+        "description": "A project is currently in planning status"
+      },
+      "project_updated": {
+        "title": "Project Updated",
+        "description": "A project was updated"
+      },
+      "project_deleted": {
+        "title": "Project Deleted",
+        "description": "A project was removed from the system"
+      },
+
+      "project_member_added": {
+        "title": "Project Member Added",
+        "description": "You were added to a project as a team member"
+      },
+      "project_member_removed": {
+        "title": "Project Member Removed",
+        "description": "You were removed from a project"
+      },
+      "project_member_role_changed": {
+        "title": "Project Role Changed",
+        "description": "Your role in a project was changed"
+      },
+
+      "project_skill_added": {
+        "title": "Project Skill Added",
+        "description": "A required technology was added to the project"
+      },
+      "project_skill_removed": {
+        "title": "Project Skill Removed",
+        "description": "A required technology was removed from the project"
+      },
+
+      "role_request_created": {
+        "title": "Role Request Created",
+        "description": "You submitted a new role request"
+      },
+      "role_request_approved": {
+        "title": "Role Request Approved",
+        "description": "Your role request has been approved"
+      },
+      "role_request_rejected": {
+        "title": "Role Request Rejected",
+        "description": "Your role request has been rejected"
+      },
+      "role_request_cancelled": {
+        "title": "Role Request Cancelled",
+        "description": "Your role request was cancelled"
+      },
+      "role_request_reviewed": {
+        "title": "Role Request Reviewed",
+        "description": "You reviewed a role request"
+      },
+      "role_request_updated": {
+        "title": "Role Request Updated",
+        "description": "Your role request was updated"
+      },
+
+      "profile_created": {
+        "title": "Profile Created",
+        "description": "Your profile was created"
+      },
+      "profile_updated": {
+        "title": "Profile Updated",
+        "description": "Your profile was updated"
+      },
+
+      "user_account_created": {
+        "title": "User Account Created",
+        "description": "Your user account was successfully created"
+      },
+      "user_email_changed": {
+        "title": "Email Changed",
+        "description": "Your email address was updated"
+      },
+      "user_name_changed": {
+        "title": "Name Changed",
+        "description": "Your name was updated"
+      },
+      "user_account_deleted": {
+        "title": "User Account Deleted",
+        "description": "Your user account was deleted"
+      }
+    }
+  },
+  "discoverEmployees": {
+    "meta": {
+      "title": "Discover Employees - Skill Management System",
+      "description": "Find the right employees for your project based on skills and availability."
+    },
+    "header": {
+      "title": "Discover Employees",
+      "description": "Find the right employees for your projects.",
+      "resultsCount": "{count, plural, one {# result} other {# results}}",
+      "clearFilters": "Clear Filters",
+      "filters": "Filters",
+      "refresh": "Refresh"
+    },
+    "searchPlaceholder": "Search by name, position, or skills...",
+    "error": "Failed to load employees",
+    "errorDescription": "An error occurred while loading the employee list. Please try again.",
+    "showing": "Showing {from} to {to} of {total}",
+    "filters": {
+      "title": "Filters",
+      "availability": {
+        "title": "Availability",
+        "available": "Available",
+        "partially_available": "Partially Available",
+        "unavailable": "Unavailable"
+      },
+      "skillCategories": "Skill Categories",
+      "skills": "Skills",
+      "locations": "Locations",
+      "experience": {
+        "title": "Years of Experience",
+        "select": "Select minimum experience",
+        "any": "Any experience",
+        "years": "{years}+ years"
+      }
+    },
+    "employeeCard": {
+      "availability": {
+        "available": "Available",
+        "partially_available": "Partially Available",
+        "unavailable": "Unavailable"
+      },
+      "stats": {
+        "skills": "Skills",
+        "projects": "Projects",
+        "experience": "Years"
+      },
+      "topSkills": "Top Skills",
+      "moreSkills": "more",
+      "viewProfile": "View Profile",
+      "select": "Select",
+      "selected": "Selected"
+    },
+    "employeeGrid": {
+      "noResults": "No employees found matching your criteria."
+    },
+    "selectionMode": {
+      "title": "{count, plural, =0 {No employees selected} one {# employee selected} other {# employees selected}}",
+      "description": "Select employees to add to your project.",
+      "cancel": "Cancel",
+      "confirm": "Confirm Selection"
+    },
+    "filterMode": {
+      "title": "{count, plural, =0 {No employees selected} one {# employee selected} other {# employees selected}}",
+      "description": "Select employees to filter projects.",
+      "cancel": "Cancel",
+      "confirm": "Apply Filter"
+    }
+  },
+  "profile": {
+    "meta": {
+      "title": "Profile - {name} - Skill Management System",
+      "description": "View and manage the profile of {name} in the Skill Management System"
+    },
+    "error": "Error loading data",
+    "errorDescription": "Unable to load profile data. Please try again.",
+    "refresh": "Refresh",
+    "editProfile": "Edit Profile",
+    "profileCompletion": "Profile Completion",
+    "completeProfileHint": "Complete your profile for better visibility",
+    "joinedDate": "Joined {date}",
+    "noPosition": "No position specified",
+
+    "onboarding": {
+      "title": "Complete Your Profile",
+      "description": "Complete your profile to showcase your skills and be discovered by colleagues."
+    },
+
+    "availability": {
+      "available": "Available",
+      "partially_available": "Partially Available",
+      "unavailable": "Unavailable"
+    },
+
+    "tabs": {
+      "skills": "Skills",
+      "projects": "Projects"
+    },
+
+    "stats": {
+      "totalSkills": "Total Skills",
+      "averageScore": "Average Score",
+      "totalProjects": "Total Projects",
+      "activeProjects": "Active Projects"
+    },
+
+    "skills": {
+      "title": "Skills",
+      "addSkill": "Add Skill",
+      "addFirstSkill": "Add First Skill",
+      "noSkills": "No Skills Yet",
+      "noSkillsDescription": "This user hasn't added any skills yet.",
+      "noSkillsDescriptionOwn": "Add skills to showcase your expertise.",
+      "deleteConfirm": "Are you sure you want to delete this skill?",
+      "deleteSuccess": "Skill deleted successfully",
+      "deleteError": "Error deleting skill",
+      "lastUsed": "Last used:",
+      "year": "year",
+      "years": "years"
+    },
+
+    "skillLevel": {
+      "beginner": "Beginner",
+      "basic": "Basic",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced",
+      "expert": "Expert"
+    },
+
+    "projects": {
+      "title": "Projects",
+      "noProjects": "No Projects Yet",
+      "noProjectsDescription": "This user hasn't been assigned to any projects yet.",
+      "noProjectsDescriptionOwn": "You haven't been assigned to any projects yet.",
+      "ongoing": "Ongoing",
+      "status": {
+        "active": "Active",
+        "completed": "Completed",
+        "planned": "Planned"
+      }
+    },
+
+    "editDialog": {
+      "title": "Edit Profile",
+      "description": "Update your profile information",
+      "position": "Position",
+      "positionPlaceholder": "Enter position...",
+      "location": "Location",
+      "locationPlaceholder": "Enter location...",
+      "yearsOfExperience": "Years of Experience",
+      "availability": "Availability",
+      "selectAvailability": "Select availability",
+      "bio": "Bio",
+      "bioPlaceholder": "Tell us about yourself...",
+      "characters": "characters",
+      "remaining": "remaining",
+      "noSuggestionsFound": "No suggestions found",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "updateSuccess": "Profile updated successfully",
+      "updateError": "Error updating profile"
+    },
+
+    "skillDialog": {
+      "addTitle": "Add Skill",
+      "addDescription": "Add a new skill to your profile",
+      "editTitle": "Edit Skill",
+      "editDescription": "Update your skill information",
+      "category": "Category",
+      "selectCategory": "Select category",
+      "skillName": "Skill Name",
+      "skillNamePlaceholder": "Enter skill...",
+      "skillLevel": "Skill Level",
+      "yearsOfExperience": "Years of Experience",
+      "lastUsed": "Last Used",
+      "noSuggestionsFound": "No suggestions found",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "addSuccess": "Skill added successfully",
+      "updateSuccess": "Skill updated successfully",
+      "saveError": "Error saving skill"
+    }
+  },
+  "discoverProjects": {
+    "meta": {
+      "title": "Projects - Skill Management System",
+      "description": "Manage projects and assign employees based on their skills"
+    },
+    "title": "Projects",
+    "description": "Manage and browse all projects",
+    "error": "Error loading projects",
+    "errorDescription": "Failed to load projects. Please try again.",
+    "noProjects": "No projects found",
+    "searchPlaceholder": "Search by project name, client, or descriptions...",
+    "noProjectsDescription": "No projects match your search criteria.",
+    "showing": "Showing {from} to {to} of {total}",
+    "refresh": "Refresh",
+    "createSuccess": "Project '{name}' created successfully",
+    "createError": "Failed to create project",
+    "updateSuccess": "Project updated successfully",
+    "updateError": "Failed to update project",
+    "deleteSuccess": "Project deleted successfully",
+    "deleteError": "Failed to delete project",
+    "deleteConfirmation": "Are you sure you want to delete this project?",
+
+    "header": {
+      "title": "Projects",
+      "description": "Manage and browse all projects",
+      "resultsCount": "{count} {count, plural, one {Project} other {Projects}}",
+      "clearFilters": "Clear Filters",
+      "filters": "Filters",
+      "refresh": "Refresh",
+      "createProject": "Create Project"
+    },
+
+    "card": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "owner": "Owner",
+      "teamSize": "{count} {count, plural, one {Member} other {Members}}",
+      "viewDetails": "View Details",
+      "status": {
+        "active": "Active",
+        "completed": "Completed",
+        "planned": "Planned"
+      }
+    },
+
+    "filters": {
+      "title": "Filters",
+      "status": "Status",
+      "employees": "Employees",
+      "skills": "Technologies",
+      "selectEmployees": "Select Employees",
+      "skillsPlaceholder": "Search technology...",
+      "noSkills": "No technologies found",
+      "skillsSelected": "{count} {count, plural, one {Technology} other {Technologies}} selected",
+      "statusOptions": {
+        "active": "Active",
+        "completed": "Completed",
+        "planned": "Planned"
+      }
+    },
+
+    "dialog": {
+      "addTitle": "Create New Project",
+      "addDescription": "Create a new project with all required details",
+      "editTitle": "Edit Project",
+      "editDescription": "Edit project details",
+      "name": "Project Name",
+      "namePlaceholder": "e.g. Website Redesign",
+      "description": "Description",
+      "descriptionPlaceholder": "Describe the project...",
+      "status": "Status",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "client": "Client",
+      "clientPlaceholder": "e.g. ACME Corporation",
+      "technologies": "Technologies",
+      "technologiesPlaceholder": "Add technology...",
+      "noTechnologies": "No technologies found",
+      "teamMembers": "Team Members",
+      "selectMembers": "Select Members",
+      "membersSelected": "{count} {count, plural, one {Member} other {Members}} selected",
+      "memberPosition": "Project Position",
+      "selectPosition": "Select Position",
+      "cancel": "Cancel",
+      "create": "Create",
+      "save": "Save",
+      "saving": "Saving...",
+      "statusOptions": {
+        "planned": "Planned",
+        "active": "Active",
+        "completed": "Completed"
+      },
+      "validation": {
+        "membersRequired": "Please select at least one team member",
+        "technologiesRequired": "Please select at least one technology",
+        "positionsRequired": "Please assign a position to all members"
+      }
+    }
+  },
+  "projectDetail": {
+    "meta": {
+      "title": "Project Details - Skill Management System",
+      "description": "Detailed project information"
+    },
+    "error": "Project Not Found",
+    "errorDescription": "The requested project could not be loaded.",
+    "backToProjects": "Back to Projects",
+    "projectInformation": "Project Information",
+    "description": "Description",
+    "timeline": "Timeline",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "ongoing": "Ongoing",
+    "projectDuration": "Project Duration",
+    "clientInformation": "Client",
+    "teamMembers": "Team Members",
+    "noMembers": "No Members",
+    "viewProfile": "View Profile",
+    "technologiesUsed": "Technologies Used",
+    "noTechnologies": "No Technologies",
+    "duration": "Duration",
+    "teamSize": "Team Size",
+    "client": "Client",
+    "technologies": "Technologies",
+    "technologiesCount": "{count} {count, plural, one {Technology} other {Technologies}}",
+    "durationDays": "{days} {days, plural, one {Day} other {Days}}",
+    "durationMonths": "{months} {months, plural, one {Month} other {Months}}",
+    "durationFull": "{months} {months, plural, one {Month} other {Months}} and {days} {days, plural, one {Day} other {Days}}",
+    "status": {
+      "active": "Active",
+      "completed": "Completed",
+      "planned": "Planned"
+    }
+  }
+}

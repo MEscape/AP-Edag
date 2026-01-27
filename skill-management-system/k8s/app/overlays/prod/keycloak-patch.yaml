@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: keycloak
+        args:
+        - start
+        - --db=postgres
+        - --import-realm
+        - --health-enabled=true
+        - --metrics-enabled=true
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "300m"
+          limits:
+            memory: "1Gi"
+            cpu: "600m"
+        env:
+        - name: KC_HOSTNAME
+          value: "auth.skill-management.edag.com"
+        - name: KC_HOSTNAME_ADMIN
+          value: "auth.skill-management.edag.com"
+        - name: JAVA_OPTS_APPEND
+          value: "-Djgroups.dns.query=prod-sms-keycloak-headless.skill-management-system-prod.svc.cluster.local"
+        - name: KC_HOSTNAME_STRICT
+          value: "true"
+        - name: KC_HOSTNAME_STRICT_HTTPS
+          value: "true"
+        - name: KC_HTTP_ENABLED
+          value: "false"
+        - name: KC_PROXY
+          value: "edge"
+        - name: KC_CACHE
+          value: "ispn"
+        - name: KC_CACHE_STACK
+          value: "kubernetes"

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: skill-management-system-dev
+  labels:
+    name: skill-management-system-dev
+    environment: development
+    app.kubernetes.io/part-of: skill-management-system

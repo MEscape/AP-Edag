@@ -1,0 +1,36 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: ["--allow-multiple-documents"]
+      - id: check-added-large-files
+        args: ['--maxkb=2000']
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.8.2
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]
+
+  # Java formatting for backend
+  - repo: local
+    hooks:
+      - id: backend-format
+        name: Format Backend Java code
+        entry: bash -c 'cd backend && ./mvnw spotless:apply'
+        language: system
+        files: ^backend/.*\.(java|xml)$
+        pass_filenames: false
+
+  # Next.js formatting for frontend
+  - repo: local
+    hooks:
+      - id: frontend-format
+        name: Format Frontend Next.js code
+        entry: bash -c 'cd frontend && npm run lint:fix'
+        language: system
+        files: ^frontend/.*\.(js|jsx|ts|tsx|json|css|scss|md|mdx)$
+        pass_filenames: false

@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+  name: skill-management-system-base
+resources:
+- postgres/
+- keycloak/
+namespace: skill-management-system
+namePrefix: sms-
+images:
+- name: postgres
+  newTag: 15-alpine
+- name: quay.io/keycloak/keycloak
+  newTag: "23.0"
+labels:
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/part-of: skill-management-system

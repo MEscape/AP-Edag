@@ -1,0 +1,32 @@
+# ------------------------------
+# Keycloak HTTP Route
+# ------------------------------
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: keycloak-https
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`keycloak.dev.local`)
+      kind: Rule
+      services:
+        - name: dev-sms-keycloak-service
+          port: 8080
+---
+# ------------------------------
+# PostgreSQL TCP Route
+# ------------------------------
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: postgres-tcp
+spec:
+  entryPoints:
+    - postgres
+  routes:
+    - match: HostSNI(`*`)
+      services:
+        - name: dev-sms-postgres-service
+          port: 5433

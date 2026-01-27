@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+  name: backend
+resources:
+- deployment.yaml
+- service.yaml
+namePrefix: sms-
+configMapGenerator:
+- literals:
+  - DATABASE_URL=jdbc:postgresql://prod-sms-postgres-service:5433/skillmanagement
+  - KEYCLOAK_AUTH_URL=http://auth.skill-management.edag.com/realms/skill-management/protocol/openid-connect/auth
+  - KEYCLOAK_TOKEN_URL=http://auth.skill-management.edag.com/realms/skill-management/protocol/openid-connect/token
+  - KEYCLOAK_INTROSPECTION_URI=http://prod-sms-keycloak-headless:8080/realms/skill-management/protocol/openid-connect/token/introspect
+  - FRONTEND_URL=http://skill-management.edag.com
+  - KEYCLOAK_URL=http://auth.skill-management.edag.com
+  - KEYCLOAK_URL_INTERNAL=http://prod-sms-keycloak-headless:8080
+  - KEYCLOAK_MASTER_REALM=master
+  - KEYCLOAK_TARGET_REALM=skill-management
+  name: backend-config
+labels:
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/component: api
+    app.kubernetes.io/name: backend
+    app.kubernetes.io/part-of: skill-management-system

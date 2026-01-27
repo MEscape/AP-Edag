@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: skill-management-devops-prod
+  labels:
+    name: skill-management-devops-prod
+    environment: production
+    app.kubernetes.io/part-of: skill-management-devops

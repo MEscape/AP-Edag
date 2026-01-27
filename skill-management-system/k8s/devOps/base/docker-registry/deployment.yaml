@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docker-registry
+  labels:
+    app: docker-registry
+    component: storage
+    part-of: skill-management-devops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docker-registry
+  template:
+    metadata:
+      labels:
+        app: docker-registry
+        component: storage
+        part-of: skill-management-devops
+    spec:
+      containers:
+      - name: registry
+        image: registry:2.8
+        ports:
+          - containerPort: 5000
+            name: http
+        env:
+          - name: REGISTRY_STORAGE_DELETE_ENABLED
+            value: "true"
+          - name: REGISTRY_HTTP_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: docker-registry-secret
+                key: REGISTRY_HTTP_SECRET
+          - name: REGISTRY_AUTH
+            value: "htpasswd"
+          - name: REGISTRY_AUTH_HTPASSWD_REALM
+            value: "Registry Realm"
+          - name: REGISTRY_AUTH_HTPASSWD_PATH
+            value: "/auth/htpasswd"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          tcpSocket:
+            port: 5000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          tcpSocket:
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        startupProbe:
+          tcpSocket:
+            port: 5000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 30
+        volumeMounts:
+          - name: registry-storage
+            mountPath: /var/lib/registry
+          - name: registry-auth
+            mountPath: /auth
+            readOnly: true
+      volumes:
+        - name: registry-storage
+          persistentVolumeClaim:
+            claimName: docker-registry-pvc
+        - name: registry-auth
+          secret:
+            secretName: docker-registry-secret
+            items:
+            - key: REGISTRY_AUTH_HTPASSWD
+              path: htpasswd

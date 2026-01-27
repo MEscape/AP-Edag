@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* EDAG Brand Colors - Professional Engineering Design */
+    --background: 0 0% 100%;
+    --foreground: 220 15% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 20%;
+
+    /* EDAG Primary - Signature Red #D32F2F */
+    --primary: 0 67% 51%;
+    --primary-foreground: 0 0% 100%;
+
+    /* EDAG Secondary - Professional Dark Gray */
+    --secondary: 220 15% 30%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Muted & Accents - Subtle and Professional */
+    --muted: 220 15% 96%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 0 67% 51%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Status Colors */
+    --destructive: 0 67% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    /* UI Elements - Clean and Minimal */
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
+    --ring: 0 67% 51%;
+
+    /* Chart Colors - EDAG Palette */
+    --chart-1: 0 67% 51%; /* EDAG Red */
+    --chart-2: 220 15% 30%; /* Dark Gray */
+    --chart-3: 142 76% 36%; /* Success Green */
+    --chart-4: 38 92% 50%; /* Warning Orange */
+    --chart-5: 210 50% 50%; /* Info Blue */
+
+    /* EDAG Design System - Spacing */
+    --radius: 0.125rem; /* 2px - very sharp */
+    --radius-sm: 0.0625rem; /* 1px */
+    --radius-md: 0.125rem; /* 2px */
+    --radius-lg: 0.25rem; /* 4px */
+    --radius-xl: 0.375rem; /* 6px */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings:
+            'rlig' 1,
+            'calt' 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* EDAG Typography - Clean and Professional */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-semibold tracking-tight;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    @apply text-5xl lg:text-6xl;
+  }
+
+  h2 {
+    @apply text-3xl lg:text-4xl;
+  }
+
+  h3 {
+    @apply text-2xl lg:text-3xl;
+  }
+
+  /* Smooth Transitions - Subtle and Fast */
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    @apply transition-all duration-150 ease-out;
+  }
+
+  /* Focus Styles - EDAG Red Brand */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Scrollbar Styling - Minimal and Clean */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/20 rounded-full hover:bg-muted-foreground/30;
+  }
+
+  /* Selection Color - EDAG Red */
+  ::selection {
+    @apply bg-primary/20 text-foreground;
+  }
+}
+
+@layer utilities {
+  /* EDAG Custom Utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Professional Shadows */
+  .shadow-edag {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+  }
+
+  .shadow-edag-md {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  }
+
+  /* EDAG Gradient Accents */
+  .gradient-edag {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
+  }
+
+  .gradient-edag-subtle {
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.05) 0%, transparent 100%);
+  }
+}

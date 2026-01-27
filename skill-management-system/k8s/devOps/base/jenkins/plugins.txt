@@ -1,0 +1,12 @@
+kubernetes
+workflow-aggregator
+git
+configuration-as-code
+sonar
+docker-workflow
+pipeline-stage-view
+blueocean
+credentials-binding
+maven-plugin
+job-dsl
+cloudbees-bitbucket-branch-source

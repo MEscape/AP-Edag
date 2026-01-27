@@ -1,0 +1,91 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sonarqube-init-admin
+spec:
+  ttlSecondsAfterFinished: 60
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      serviceAccountName: sonarqube-init-sa
+      containers:
+      - name: init-admin
+        image: curlimages/curl:latest
+        command:
+        - sh
+        - -c
+        - |
+          set -e
+
+          # Wait for SonarQube
+          until curl -sf http://prod-sms-sonarqube-service:9000/api/system/status | grep -q '"status":"UP"'; do
+            echo "Waiting for SonarQube..."
+            sleep 10
+          done
+
+          # Change password
+          curl -sf -X POST "http://prod-sms-sonarqube-service:9000/api/users/change_password" \
+            -u admin:admin \
+            -d "login=admin&previousPassword=admin&password=$NEW_PASSWORD" || true
+
+          sleep 5
+
+          # Generate token and extract it
+          TOKEN_RESPONSE=$(curl -s -u "admin:$NEW_PASSWORD" -X POST \
+            "http://prod-sms-sonarqube-service:9000/api/user_tokens/generate?name=k8s-token")
+
+          echo "Response: $TOKEN_RESPONSE"
+
+          SONAR_TOKEN=$(echo "$TOKEN_RESPONSE" | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
+
+          if [ -z "$SONAR_TOKEN" ]; then
+            # Try alternative extraction methods
+            SONAR_TOKEN=$(echo "$TOKEN_RESPONSE" | grep -o '"token":"[^"]*"' | sed 's/"token":"//;s/"$//')
+          fi
+
+          [ -z "$SONAR_TOKEN" ] && echo "INFO: Token empty, already set" && exit 0
+          echo "Token extracted: ${SONAR_TOKEN:0:10}..."
+
+          # Update secret
+          SA_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+          NAMESPACE=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
+
+          curl -sf --cacert /var/run/secrets/kubernetes.io/serviceaccount/ca.crt \
+            -H "Authorization: Bearer $SA_TOKEN" \
+            -H "Content-Type: application/merge-patch+json" \
+            -X PATCH \
+            "https://kubernetes.default.svc/api/v1/namespaces/${NAMESPACE}/secrets/sonarqube-secret" \
+            -d "{\"stringData\":{\"SONARQUBE_TOKEN\":\"$SONAR_TOKEN\"}}"
+        env:
+        - name: NEW_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sonarqube-secret
+              key: SONAR_ADMIN_PASSWORD
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sonarqube-init-sa
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sonarqube-init-role
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["patch", "get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sonarqube-init-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sonarqube-init-role
+subjects:
+- kind: ServiceAccount
+  name: sonarqube-init-sa

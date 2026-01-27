@@ -1,0 +1,6 @@
+# Environment files containing secrets
+/devOps/.env
+/app/.env.dev
+/app/.env.prod
+# Corporate CA certs (downloaded)
+/devOps/certs/

@@ -1,0 +1,38 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+  name: skill-management-devops-prod
+resources:
+- jenkins/
+- sonarqube/
+- docker-registry/
+- postgres-sonar/
+- ingress.yaml
+- namespace.yaml
+namespace: skill-management-devops-prod
+namePrefix: prod-sms-
+images:
+- name: jenkins/jenkins
+  newTag: 2.534-jdk21
+- name: sonarqube
+  newTag: 25.10.0.114319-community
+- name: postgres
+  newTag: 15-alpine
+- name: registry
+  newTag: "2.8"
+replicas:
+- count: 1
+  name: jenkins
+- count: 1
+  name: sonarqube
+- count: 1
+  name: docker-registry
+- count: 1
+  name: postgres-sonar
+labels:
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/instance: prod
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/part-of: skill-management-devops
+    environment: production

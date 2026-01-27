@@ -1,0 +1,81 @@
+{
+  "id": "skill-management",
+  "realm": "skill-management",
+  "loginTheme": "edag",
+  "displayName": "Skill Management System",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": true,
+  "rememberMe": true,
+  "bruteForceProtected": true,
+  "internationalizationEnabled": true,
+  "supportedLocales": ["en", "de"],
+  "defaultLocale": "de",
+  "accessTokenLifespan": 300,
+  "passwordPolicy": "length(8) and upperCase and lowerCase and digits and specialChars and notUsername",
+  "eventsEnabled": true,
+  "eventsExpiration": 259200,
+  "eventsListeners": ["jboss-logging", "webhook-event-listener"],
+  "enabledEventTypes": [
+    "LOGIN",
+    "LOGIN_ERROR",
+    "REGISTER",
+    "LOGOUT",
+    "UPDATE_EMAIL",
+    "UPDATE_PASSWORD",
+    "UPDATE_PROFILE"
+  ],
+  "adminEventsEnabled": true,
+  "adminEventsDetailsEnabled": true,
+  "defaultRoles": ["user"],
+  "clients": [
+    {
+      "clientId": "${KEYCLOAK_CLIENT_ID}",
+      "name": "Skill Management Application",
+      "enabled": true,
+      "publicClient": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "secret": "${KEYCLOAK_CLIENT_SECRET}",
+      "redirectUris": [
+        "${BACKEND_HOST}/swagger-ui/oauth2-redirect.html",
+        "${BACKEND_HOST}/api/swagger-ui/oauth2-redirect.html",
+        "${FRONTEND_HOST}/api/auth/callback/keycloak"
+      ],
+      "webOrigins": ["${BACKEND_HOST}/", "${FRONTEND_HOST}/"],
+      "protocolMappers": [
+        {
+          "name": "realm-roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "multivalued": "true",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "claim.name": "realm_access.roles",
+            "jsonType.label": "String"
+          }
+        }
+      ]
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "user",
+        "description": "Standard user role"
+      },
+      {
+        "name": "admin",
+        "description": "Administrator role"
+      },
+      {
+        "name": "manager",
+        "description": "Manager role"
+      }
+    ]
+  }
+}

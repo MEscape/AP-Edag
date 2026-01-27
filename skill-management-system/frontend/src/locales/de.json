@@ -1,0 +1,933 @@
+{
+  "common": {
+    "time": {
+      "minutesAgo": "Vor wenigen Minuten",
+      "hoursAgo": "{count, plural, =1 {Vor einer Stunde} other {Vor # Stunden}}",
+      "yesterday": "Gestern"
+    },
+    "skillLevel": {
+      "beginner": "Einsteiger",
+      "basic": "Grundkenntnisse",
+      "intermediate": "Fortgeschritten",
+      "advanced": "Erweitert",
+      "expert": "Experte"
+    },
+    "pagination": {
+      "previous": "Zurück",
+      "next": "Weiter"
+    },
+    "error": {
+      "title": "Fehler",
+      "description": "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+      "retry": "Erneut versuchen",
+      "goBack": "Zurück"
+    }
+  },
+  "errors": {
+    "api": {
+      "unauthorized": "Sitzung abgelaufen. Bitte melden Sie sich erneut an.",
+      "forbidden": "Sie haben keine Berechtigung für diese Ressource.",
+      "notFound": "Die angeforderte Ressource wurde nicht gefunden.",
+      "serverError": "Ein Serverfehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
+      "networkError": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.",
+      "sessionExpired": "Ihre Sitzung ist abgelaufen. Sie werden zum Login weitergeleitet...",
+      "refreshFailed": "Sitzungserneuerung fehlgeschlagen. Bitte melden Sie sich erneut an.",
+      "unknown": "Ein unerwarteter Fehler ist aufgetreten."
+    }
+  },
+  "admin": {
+    "meta": {
+      "title": "Admin Dashboard",
+      "description": "Verwalten Sie Benutzer, Rollenanfragen und Stammdaten"
+    },
+    "title": "Admin Dashboard",
+    "description": "Verwalten Sie Benutzer, Rollenanfragen und Stammdaten",
+    "accessDenied": "Zugriff verweigert",
+    "accessDeniedDescription": "Sie haben keine Berechtigung, auf diesen Bereich zuzugreifen. Bitte kontaktieren Sie einen Administrator, wenn Sie Zugriff benötigen.",
+    "backToDashboard": "Zurück zum Dashboard",
+    "tabs": {
+      "users": "Benutzer",
+      "roleRequests": "Rollenanfragen",
+      "masterData": "Stammdaten"
+    },
+    "users": {
+      "title": "Benutzerverwaltung",
+      "description": "Verwalten Sie alle Benutzer und deren Berechtigungen",
+      "searchPlaceholder": "Suche nach Name, E-Mail oder Benutzername...",
+      "showing": "Zeige {from} bis {to} von {total}",
+      "noUsers": "Keine Benutzer gefunden",
+      "error": "Fehler beim Laden",
+      "errorDescription": "Die Benutzerliste konnte nicht geladen werden. Bitte versuchen Sie es später erneut.",
+      "table": {
+        "username": "Benutzername",
+        "email": "E-Mail",
+        "name": "Name",
+        "createdAt": "Erstellt am",
+        "updatedAt": "Aktualisiert am"
+      }
+    },
+    "roleRequests": {
+      "title": "Rollenanfragen",
+      "description": "Verwalten Sie Anfragen für Rollenänderungen",
+      "showing": "Zeige {from} bis {to} von {total}",
+      "tabs": {
+        "pending": "Ausstehend",
+        "approved": "Genehmigt",
+        "rejected": "Abgelehnt"
+      },
+      "status": {
+        "pending": "Ausstehend",
+        "approved": "Genehmigt",
+        "rejected": "Abgelehnt"
+      },
+      "reason": "Begründung",
+      "adminComment": "Admin-Kommentar",
+      "requestedOn": "Angefragt am {date}",
+      "reviewedBy": "Überprüft von {reviewer} am {date}",
+      "approve": "Genehmigen",
+      "reject": "Ablehnen",
+      "cancel": "Abbrechen",
+      "noPending": "Keine ausstehenden Anfragen",
+      "noApproved": "Keine genehmigten Anfragen",
+      "noRejected": "Keine abgelehnten Anfragen",
+      "approveTitle": "Anfrage genehmigen",
+      "rejectTitle": "Anfrage ablehnen",
+      "approveDescription": "Möchten Sie die Rollenanfrage von {username} wirklich genehmigen?",
+      "rejectDescription": "Möchten Sie die Rollenanfrage von {username} wirklich ablehnen?",
+      "adminCommentLabel": "Admin-Kommentar (optional)",
+      "adminCommentPlaceholder": "Fügen Sie einen Kommentar hinzu...",
+      "adminCommentHint": "Dieser Kommentar ist für den Benutzer sichtbar",
+      "confirmApprove": "Genehmigen",
+      "confirmReject": "Ablehnen",
+      "approveSuccess": "Anfrage von {username} wurde erfolgreich genehmigt",
+      "rejectSuccess": "Anfrage von {username} wurde erfolgreich abgelehnt",
+      "reviewError": "Fehler beim Verarbeiten der Anfrage. Bitte versuchen Sie es erneut."
+    },
+    "masterData": {
+      "title": "Stammdatenverwaltung",
+      "description": "Verwalten Sie Standorte, Positionen, Skill-Kategorien und Skills",
+      "tabs": {
+        "locations": "Standorte",
+        "positions": "Positionen",
+        "skillCategories": "Skill-Kategorien",
+        "skills": "Skills"
+      },
+      "locations": {
+        "total": "{count} Standorte",
+        "create": "Standort erstellen",
+        "empty": "Keine Standorte vorhanden",
+        "error": "Fehler beim Laden",
+        "errorDescription": "Die Standorte konnten nicht geladen werden. Bitte versuchen Sie es später erneut.",
+        "createTitle": "Neuen Standort erstellen",
+        "createDescription": "Fügen Sie einen neuen Standort zum System hinzu",
+        "nameLabel": "Standortname",
+        "namePlaceholder": "z.B. München",
+        "nameRequired": "Bitte geben Sie einen Namen ein",
+        "createSuccess": "Standort \"{name}\" wurde erfolgreich erstellt",
+        "createError": "Fehler beim Erstellen des Standorts. Bitte versuchen Sie es erneut.",
+        "cancel": "Abbrechen"
+      },
+      "positions": {
+        "total": "{count} Positionen",
+        "create": "Position erstellen",
+        "empty": "Keine Positionen vorhanden",
+        "error": "Fehler beim Laden",
+        "errorDescription": "Die Positionen konnten nicht geladen werden. Bitte versuchen Sie es später erneut.",
+        "createTitle": "Neue Position erstellen",
+        "createDescription": "Fügen Sie eine neue Position zum System hinzu",
+        "nameLabel": "Positionsname",
+        "namePlaceholder": "z.B. Senior Developer",
+        "nameRequired": "Bitte geben Sie einen Namen ein",
+        "createSuccess": "Position \"{name}\" wurde erfolgreich erstellt",
+        "createError": "Fehler beim Erstellen der Position. Bitte versuchen Sie es erneut.",
+        "cancel": "Abbrechen"
+      },
+      "skillCategories": {
+        "total": "{count} Kategorien",
+        "create": "Kategorie erstellen",
+        "empty": "Keine Kategorien vorhanden",
+        "error": "Fehler beim Laden",
+        "errorDescription": "Die Kategorien konnten nicht geladen werden. Bitte versuchen Sie es später erneut.",
+        "createTitle": "Neue Skill-Kategorie erstellen",
+        "createDescription": "Fügen Sie eine neue Skill-Kategorie zum System hinzu",
+        "nameLabel": "Kategoriename",
+        "namePlaceholder": "z.B. Programmiersprachen",
+        "nameRequired": "Bitte geben Sie einen Namen ein",
+        "createSuccess": "Kategorie \"{name}\" wurde erfolgreich erstellt",
+        "createError": "Fehler beim Erstellen der Kategorie. Bitte versuchen Sie es erneut.",
+        "cancel": "Abbrechen"
+      },
+      "skills": {
+        "total": "{count} Skills",
+        "create": "Skill erstellen",
+        "empty": "Keine Skills vorhanden",
+        "error": "Fehler beim Laden",
+        "errorDescription": "Die Skills konnten nicht geladen werden. Bitte versuchen Sie es später erneut.",
+        "createTitle": "Neuen Skill erstellen",
+        "createDescription": "Fügen Sie einen neuen Skill zum System hinzu",
+        "nameLabel": "Skill-Name",
+        "namePlaceholder": "z.B. TypeScript",
+        "categoryLabel": "Kategorie",
+        "categoryPlaceholder": "Wählen Sie eine Kategorie",
+        "nameRequired": "Bitte geben Sie einen Namen ein",
+        "categoryRequired": "Bitte wählen Sie eine Kategorie",
+        "createSuccess": "Skill \"{name}\" wurde erfolgreich erstellt",
+        "createError": "Fehler beim Erstellen des Skills. Bitte versuchen Sie es erneut.",
+        "cancel": "Abbrechen"
+      }
+    }
+  },
+  "welcome": {
+    "meta": {
+      "title": "Willkommen - Skill Management System",
+      "description": "Willkommen zum Skill Management System von EDAG Engineering. Optimieren Sie Ihre Projektplanung durch datengestützte Mitarbeiterauswahl."
+    },
+    "navigation": {
+      "companyName": "EDAG Engineering",
+      "systemName": "Skill Management",
+      "signIn": "Anmelden",
+      "toDashboard": "Zum Dashboard",
+      "dashboard": "Dashboard",
+      "profile": "Profil",
+      "employees": "Mitarbeiter",
+      "projects": "Projekte",
+      "admin": "Admin"
+    },
+    "hero": {
+      "badge": "Mobility IT",
+      "title": "Skill Management für effiziente Projektplanung",
+      "description": "Die zentrale Plattform für projektverantwortliche Personen zur datengestützten Mitarbeiterauswahl in Kundenprojekten.",
+      "getStarted": "Jetzt starten",
+      "signIn": "Anmelden",
+      "keycloakNote": "Für EDAG Mitarbeiter mit Keycloak",
+      "benefits": {
+        "skillOverview": "Zentrale Übersicht aller Mitarbeiterkompetenzen",
+        "resourcePlanning": "Effiziente projektbezogene Ressourcenplanung",
+        "dataDecisions": "Datengestützte Entscheidungsgrundlagen",
+        "reducedEffort": "Reduzierter manueller Abstimmungsaufwand"
+      }
+    },
+    "features": {
+      "title": "Kernfunktionen",
+      "description": "Alle Werkzeuge für eine effiziente und datenbasierte Ressourcenplanung",
+      "skillTracking": "Kompetenz-Tracking",
+      "skillTrackingDesc": "Erfassen und verwalten Sie alle Fähigkeiten und Kompetenzen Ihrer Mitarbeiter an einem zentralen Ort.",
+      "teamCollaboration": "Team-Zusammenarbeit",
+      "teamCollaborationDesc": "Fördern Sie die Zusammenarbeit zwischen Teams durch transparente Kompetenzübersichten.",
+      "careerGrowth": "Karriereentwicklung",
+      "careerGrowthDesc": "Unterstützen Sie die berufliche Entwicklung durch gezielte Kompetenzanalysen und -empfehlungen."
+    },
+    "useCases": {
+      "title": "Entwickelt für Mobility IT",
+      "description": "Das Skill Management System wurde speziell für die Anforderungen der Mobility IT Abteilung entwickelt und ermöglicht eine effiziente projektbezogene Ressourceneinsatzplanung.",
+      "subDescription": "Durch die Kombination von selbst gepflegten Kompetenzprofilen und dokumentierten Projekteinsätzen wird eine objektivere und effizientere Mitarbeiterauswahl ermöglicht.",
+      "skillBasedSearch": "Skill-basierte Suche",
+      "skillBasedSearchDesc": "Finden Sie schnell die richtigen Experten für Ihr Projekt",
+      "evaluationLogic": "Bewertungslogik",
+      "evaluationLogicDesc": "Objektive Bewertung basierend auf Erfahrung und Projekteinsätzen",
+      "skillDevelopment": "Skill-Entwicklung",
+      "skillDevelopmentDesc": "Visualisierung der Kompetenzentwicklung über Zeit"
+    },
+    "footer": {
+      "companyName": "EDAG Engineering",
+      "systemName": "Skill Management System",
+      "copyright": "© 2025 EDAG Engineering GmbH"
+    },
+    "loading": {
+      "text": "Wird geladen..."
+    }
+  },
+  "dashboard": {
+    "meta": {
+      "title": "Dashboard - Skill Management System",
+      "description": "Ihr persönlicher Überblick über Skills, Projekte und Aktivitäten"
+    },
+    "title": "Dashboard",
+    "welcome": "Willkommen zurück",
+    "welcomeBack": "Willkommen zurück, {name}",
+    "overview": "Ihr persönlicher Überblick und Quick Actions",
+    "refresh": "Aktualisieren",
+    "error": "Fehler beim Laden",
+    "errorDescription": "Die Dashboard-Daten konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+
+    "roles": {
+      "admin": "Administrator",
+      "manager": "Manager",
+      "user": "Benutzer"
+    },
+
+    "stats": {
+      "totalSkills": "Gesamte Skills",
+      "totalProjects": "Gesamte Projekte",
+      "averageSkillScore": "Ø Skill-Bewertung",
+      "totalRecommendations": "Gesamte Empfehlungen"
+    },
+
+    "skillDevelopment": {
+      "title": "Skill-Entwicklung",
+      "description": "Verfolgen Sie Ihre Skill-Entwicklung über die Zeit",
+      "totalSkills": "Gesamte Skills",
+      "skillsDeleted": "Skills gelöscht",
+      "skillsAdded": "Skills hinzugefügt",
+      "skillsUpdated": "Skills aktualisiert"
+    },
+
+    "quickActions": {
+      "title": "Quick Actions",
+      "description": "Häufig verwendete Aktionen",
+      "requestRole": "Rolle anfragen",
+      "requestRoleDescription": "Beantragen Sie eine höhere Rolle",
+      "goToProfile": "Zum Profil",
+      "goToProfileDescription": "Besuchen Sie Ihr Profil",
+      "findEmployee": "Mitarbeiter finden",
+      "findEmployeeDescription": "Durchsuchen Sie die Mitarbeiterliste",
+      "viewProjects": "Projekte anzeigen",
+      "viewProjectsDescription": "Alle Projekte anzeigen",
+      "adminPanel": "Admin-Panel",
+      "adminPanelDescription": "Zugriff auf Admin-Funktionen"
+    },
+
+    "recentProjects": {
+      "title": "Aktuelle Projekte",
+      "description": "Ihre zuletzt bearbeiteten Projekte",
+      "noProjects": "Keine Projekte vorhanden",
+      "viewAll": "Alle anzeigen",
+      "status": {
+        "active": "Aktiv",
+        "completed": "Abgeschlossen",
+        "planned": "Geplant"
+      }
+    },
+
+    "recentActivities": {
+      "title": "Letzte Aktivitäten",
+      "description": "Ihre neuesten Aktivitäten",
+      "noActivities": "Keine Aktivitäten vorhanden",
+      "viewAll": "Alle anzeigen",
+      "types": {
+        "skill_added": {
+          "title": "Skill hinzugefügt",
+          "description": "Ein neuer Skill wurde deinem Profil hinzugefügt"
+        },
+        "skill_updated": {
+          "title": "Skill aktualisiert",
+          "description": "Ein bestehender Skill wurde aktualisiert"
+        },
+        "skill_removed": {
+          "title": "Skill entfernt",
+          "description": "Ein Skill wurde aus deinem Profil entfernt"
+        },
+
+        "project_created": {
+          "title": "Projekt erstellt",
+          "description": "Ein neues Projekt wurde angelegt"
+        },
+        "project_started": {
+          "title": "Projekt gestartet",
+          "description": "Das Projekt hat den Status 'Aktiv' erhalten"
+        },
+        "project_completed": {
+          "title": "Projekt abgeschlossen",
+          "description": "Das Projekt wurde erfolgreich abgeschlossen"
+        },
+        "project_planned": {
+          "title": "Projekt geplant",
+          "description": "Ein Projekt befindet sich im Planungsstatus"
+        },
+        "project_updated": {
+          "title": "Projekt aktualisiert",
+          "description": "Ein Projekt wurde aktualisiert"
+        },
+        "project_deleted": {
+          "title": "Projekt gelöscht",
+          "description": "Ein Projekt wurde aus dem System entfernt"
+        },
+
+        "project_member_added": {
+          "title": "Projektmitglied hinzugefügt",
+          "description": "Du wurdest einem Projekt als Teammitglied hinzugefügt"
+        },
+        "project_member_removed": {
+          "title": "Projektmitglied entfernt",
+          "description": "Du wurdest aus einem Projekt entfernt"
+        },
+        "project_member_role_changed": {
+          "title": "Projektrolle geändert",
+          "description": "Deine Rolle in einem Projekt wurde geändert"
+        },
+
+        "project_skill_added": {
+          "title": "Projekt-Skill hinzugefügt",
+          "description": "Eine erforderliche Technologie wurde zum Projekt hinzugefügt"
+        },
+        "project_skill_removed": {
+          "title": "Projekt-Skill entfernt",
+          "description": "Eine erforderliche Technologie wurde aus dem Projekt entfernt"
+        },
+
+        "role_request_created": {
+          "title": "Rollenanfrage erstellt",
+          "description": "Du hast eine neue Rollenanfrage eingereicht"
+        },
+        "role_request_approved": {
+          "title": "Rollenanfrage genehmigt",
+          "description": "Deine Rollenanfrage wurde genehmigt"
+        },
+        "role_request_rejected": {
+          "title": "Rollenanfrage abgelehnt",
+          "description": "Deine Rollenanfrage wurde abgelehnt"
+        },
+        "role_request_cancelled": {
+          "title": "Rollenanfrage storniert",
+          "description": "Deine Rollenanfrage wurde storniert"
+        },
+        "role_request_reviewed": {
+          "title": "Rollenanfrage geprüft",
+          "description": "Du hast eine Rollenanfrage geprüft"
+        },
+        "role_request_updated": {
+          "title": "Rollenanfrage aktualisiert",
+          "description": "Deine Rollenanfrage wurde aktualisiert"
+        },
+
+        "profile_created": {
+          "title": "Profil erstellt",
+          "description": "Dein Profil wurde erstellt"
+        },
+        "profile_updated": {
+          "title": "Profil aktualisiert",
+          "description": "Dein Profil wurde aktualisiert"
+        },
+
+        "user_account_created": {
+          "title": "Benutzerkonto erstellt",
+          "description": "Dein Benutzerkonto wurde erfolgreich erstellt"
+        },
+        "user_email_changed": {
+          "title": "E-Mail-Adresse geändert",
+          "description": "Deine E-Mail-Adresse wurde aktualisiert"
+        },
+        "user_name_changed": {
+          "title": "Name geändert",
+          "description": "Dein Name wurde aktualisiert"
+        },
+        "user_account_deleted": {
+          "title": "Benutzerkonto gelöscht",
+          "description": "Dein Benutzerkonto wurde gelöscht"
+        }
+      }
+    },
+
+    "roleRequest": {
+      "title": "Rolle anfragen",
+      "description": "Beantragen Sie eine Rolle mit erweiterten Berechtigungen",
+      "selectRole": "Rolle auswählen",
+      "reason": "Begründung",
+      "reasonPlaceholder": "Bitte erklären Sie, warum Sie diese Rolle benötigen...",
+      "reasonHint": "Mindestens 10 Zeichen erforderlich",
+      "reasonTooShort": "Begründung muss mindestens 10 Zeichen lang sein",
+      "reasonTooLong": "Begründung darf maximal 1000 Zeichen lang sein",
+      "cancel": "Abbrechen",
+      "submit": "Anfrage senden",
+      "createSuccess": "Rollenanfrage erfolgreich erstellt",
+      "genericError": "Fehler beim Erstellen der Anfrage",
+      "alreadyHasPendingRequest": "Sie haben bereits eine ausstehende Anfrage",
+      "cancelSuccess": "Anfrage erfolgreich abgebrochen",
+      "cancelError": "Fehler beim Abbrechen der Anfrage",
+      "roleUpdated": "Ihre Rolle wurde auf {role} aktualisiert",
+      "sessionUpdateError": "Fehler beim Aktualisieren der Sitzung. Bitte laden Sie die Seite neu.",
+
+      "roles": {
+        "manager": "Manager",
+        "admin": "Administrator"
+      },
+
+      "roleDescriptions": {
+        "manager": "Zugriff auf Team-Management-Funktionen",
+        "admin": "Voller Systemzugriff"
+      },
+
+      "status": {
+        "pending": "Ausstehend",
+        "approved": "Genehmigt",
+        "rejected": "Abgelehnt"
+      },
+
+      "myRequests": "Meine Rollenanfragen",
+      "myRequestsDescription": "Verwalten Sie Ihre Rollenanfragen",
+      "noRequests": "Keine Anfragen vorhanden",
+      "loadError": "Fehler beim Laden der Anfragen",
+      "pending": "Ausstehend",
+      "history": "Verlauf",
+      "yourReason": "Ihre Begründung",
+      "adminComment": "Admin-Kommentar",
+      "requestedOn": "Angefragt am",
+      "reviewedOn": "Überprüft am",
+      "reviewedBy": "Überprüft von"
+    }
+  },
+  "myProjects": {
+    "meta": {
+      "title": "Meine Projekte - Skill Management System",
+      "description": "Übersicht aller Projekte, in denen ich beteiligt bin"
+    },
+    "title": "Meine Projekte",
+    "description": "Alle Projekte, in denen Sie als Teammitglied beteiligt sind",
+    "backToDashboard": "Zurück zum Dashboard",
+    "error": "Fehler beim Laden der Projekte",
+    "errorDescription": "Beim Laden Ihrer Projekte ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+    "noProjects": "Keine Projekte gefunden",
+    "noProjectsDescription": "Sie sind derzeit in keinen Projekten als Teammitglied eingetragen.",
+    "totalProjects": "{count, plural, =0 {Keine Projekte} =1 {1 Projekt} other {# Projekte}} gesamt",
+    "status": {
+      "active": "Aktiv",
+      "completed": "Abgeschlossen",
+      "planned": "Geplant"
+    }
+  },
+  "myActivities": {
+    "meta": {
+      "title": "Meine Aktivitäten - Skill Management System",
+      "description": "Übersicht aller meiner Aktivitäten im System"
+    },
+    "title": "Meine Aktivitäten",
+    "description": "Alle Ihre Aktivitäten und Änderungen im System",
+    "backToDashboard": "Zurück zum Dashboard",
+    "error": "Fehler beim Laden der Aktivitäten",
+    "errorDescription": "Beim Laden Ihrer Aktivitäten ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+    "noActivities": "Keine Aktivitäten gefunden",
+    "noActivitiesDescription": "Es wurden noch keine Aktivitäten in Ihrem Profil aufgezeichnet.",
+    "totalActivities": "{count, plural, =0 {Keine Aktivitäten} =1 {1 Aktivität} other {# Aktivitäten}} gesamt",
+    "types": {
+      "skill_added": {
+        "title": "Skill hinzugefügt",
+        "description": "Ein neuer Skill wurde deinem Profil hinzugefügt"
+      },
+      "skill_updated": {
+        "title": "Skill aktualisiert",
+        "description": "Ein bestehender Skill wurde aktualisiert"
+      },
+      "skill_removed": {
+        "title": "Skill entfernt",
+        "description": "Ein Skill wurde aus deinem Profil entfernt"
+      },
+
+      "project_created": {
+        "title": "Projekt erstellt",
+        "description": "Ein neues Projekt wurde angelegt"
+      },
+      "project_started": {
+        "title": "Projekt gestartet",
+        "description": "Das Projekt hat den Status 'Aktiv' erhalten"
+      },
+      "project_completed": {
+        "title": "Projekt abgeschlossen",
+        "description": "Das Projekt wurde erfolgreich abgeschlossen"
+      },
+      "project_planned": {
+        "title": "Projekt geplant",
+        "description": "Ein Projekt befindet sich im Planungsstatus"
+      },
+      "project_updated": {
+        "title": "Projekt aktualisiert",
+        "description": "Ein Projekt wurde aktualisiert"
+      },
+      "project_deleted": {
+        "title": "Projekt gelöscht",
+        "description": "Ein Projekt wurde aus dem System entfernt"
+      },
+
+      "project_member_added": {
+        "title": "Projektmitglied hinzugefügt",
+        "description": "Du wurdest einem Projekt als Teammitglied hinzugefügt"
+      },
+      "project_member_removed": {
+        "title": "Projektmitglied entfernt",
+        "description": "Du wurdest aus einem Projekt entfernt"
+      },
+      "project_member_role_changed": {
+        "title": "Projektrolle geändert",
+        "description": "Deine Rolle in einem Projekt wurde geändert"
+      },
+
+      "project_skill_added": {
+        "title": "Projekt-Skill hinzugefügt",
+        "description": "Eine erforderliche Technologie wurde zum Projekt hinzugefügt"
+      },
+      "project_skill_removed": {
+        "title": "Projekt-Skill entfernt",
+        "description": "Eine erforderliche Technologie wurde aus dem Projekt entfernt"
+      },
+
+      "role_request_created": {
+        "title": "Rollenanfrage erstellt",
+        "description": "Du hast eine neue Rollenanfrage eingereicht"
+      },
+      "role_request_approved": {
+        "title": "Rollenanfrage genehmigt",
+        "description": "Deine Rollenanfrage wurde genehmigt"
+      },
+      "role_request_rejected": {
+        "title": "Rollenanfrage abgelehnt",
+        "description": "Deine Rollenanfrage wurde abgelehnt"
+      },
+      "role_request_cancelled": {
+        "title": "Rollenanfrage storniert",
+        "description": "Deine Rollenanfrage wurde storniert"
+      },
+      "role_request_reviewed": {
+        "title": "Rollenanfrage geprüft",
+        "description": "Du hast eine Rollenanfrage geprüft"
+      },
+      "role_request_updated": {
+        "title": "Rollenanfrage aktualisiert",
+        "description": "Deine Rollenanfrage wurde aktualisiert"
+      },
+
+      "profile_created": {
+        "title": "Profil erstellt",
+        "description": "Dein Profil wurde erstellt"
+      },
+      "profile_updated": {
+        "title": "Profil aktualisiert",
+        "description": "Dein Profil wurde aktualisiert"
+      },
+
+      "user_account_created": {
+        "title": "Benutzerkonto erstellt",
+        "description": "Dein Benutzerkonto wurde erfolgreich erstellt"
+      },
+      "user_email_changed": {
+        "title": "E-Mail-Adresse geändert",
+        "description": "Deine E-Mail-Adresse wurde aktualisiert"
+      },
+      "user_name_changed": {
+        "title": "Name geändert",
+        "description": "Dein Name wurde aktualisiert"
+      },
+      "user_account_deleted": {
+        "title": "Benutzerkonto gelöscht",
+        "description": "Dein Benutzerkonto wurde gelöscht"
+      }
+    }
+  },
+  "discoverEmployees": {
+    "meta": {
+      "title": "Mitarbeiter entdecken - Skill Management System",
+      "description": "Finden Sie die richtigen Mitarbeiter für Ihr Projekt basierend auf Skills und Verfügbarkeit"
+    },
+    "header": {
+      "title": "Mitarbeiter entdecken",
+      "description": "Finden Sie die richtigen Mitarbeiter für Ihre Projekte.",
+      "resultsCount": "{count, plural, one {# Ergebnis} other {# Ergebnisse}}",
+      "clearFilters": "Filter löschen",
+      "filters": "Filter",
+      "refresh": "Aktualisieren"
+    },
+    "searchPlaceholder": "Suche nach Name, Position oder Skills...",
+    "error": "Fehler beim Laden der Mitarbeiter",
+    "errorDescription": "Beim Laden der Mitarbeiterliste ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+    "showing": "Zeige {from} bis {to} von {total}",
+    "filters": {
+      "title": "Filter",
+      "availability": {
+        "title": "Verfügbarkeit",
+        "available": "Verfügbar",
+        "partially_available": "Teilweise verfügbar",
+        "unavailable": "Nicht verfügbar"
+      },
+      "skillCategories": "Skill-Kategorien",
+      "skills": "Skills",
+      "locations": "Standorte",
+      "experience": {
+        "title": "Jahre Erfahrung",
+        "select": "Mindesterfahrung auswählen",
+        "any": "Beliebige Erfahrung",
+        "years": "{years}+ Jahre"
+      }
+    },
+    "employeeCard": {
+      "availability": {
+        "available": "Verfügbar",
+        "partially_available": "Teilweise verfügbar",
+        "unavailable": "Nicht verfügbar"
+      },
+      "stats": {
+        "skills": "Skills",
+        "projects": "Projekte",
+        "experience": "Jahre"
+      },
+      "topSkills": "Top Skills",
+      "moreSkills": "weitere",
+      "viewProfile": "Profil anzeigen",
+      "select": "Auswählen",
+      "selected": "Ausgewählt"
+    },
+    "employeeGrid": {
+      "noResults": "Keine Mitarbeiter gefunden, die Ihren Kriterien entsprechen."
+    },
+    "selectionMode": {
+      "title": "{count, plural, =0 {Keine Mitarbeiter ausgewählt} one {# Mitarbeiter ausgewählt} other {# Mitarbeiter ausgewählt}}",
+      "description": "Wählen Sie Mitarbeiter aus, um sie Ihrem Projekt hinzuzufügen.",
+      "cancel": "Abbrechen",
+      "confirm": "Auswahl bestätigen"
+    },
+    "filterMode": {
+      "title": "{count, plural, =0 {Keine Mitarbeiter ausgewählt} one {# Mitarbeiter ausgewählt} other {# Mitarbeiter ausgewählt}}",
+      "description": "Wählen Sie Mitarbeiter aus, um Projekte zu filtern.",
+      "cancel": "Abbrechen",
+      "confirm": "Filter anwenden"
+    }
+  },
+  "profile": {
+    "meta": {
+      "title": "Profil – {name} – Skill Management System",
+      "description": "Profil von {name} im Skill Management System anzeigen und verwalten."
+    },
+
+    "error": "Fehler beim Laden",
+    "errorDescription": "Das Profil konnte nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "refresh": "Aktualisieren",
+    "editProfile": "Profil bearbeiten",
+    "profileCompletion": "Profilvollständigkeit",
+    "completeProfileHint": "Vervollständigen Sie Ihr Profil für bessere Sichtbarkeit",
+    "joinedDate": "Beigetreten am {date}",
+    "noPosition": "Keine Position angegeben",
+
+    "onboarding": {
+      "title": "Profil vervollständigen",
+      "description": "Vervollständigen Sie Ihr Profil, um Ihre Fähigkeiten zu präsentieren und von Kollegen gefunden zu werden."
+    },
+
+    "availability": {
+      "available": "Verfügbar",
+      "partially_available": "Teilweise verfügbar",
+      "unavailable": "Nicht verfügbar"
+    },
+
+    "tabs": {
+      "skills": "Skills",
+      "projects": "Projekte"
+    },
+
+    "stats": {
+      "totalSkills": "Gesamte Skills",
+      "averageScore": "Durchschnittliche Bewertung",
+      "totalProjects": "Gesamte Projekte",
+      "activeProjects": "Aktive Projekte"
+    },
+
+    "skills": {
+      "title": "Skills",
+      "addSkill": "Skill hinzufügen",
+      "addFirstSkill": "Ersten Skill hinzufügen",
+      "noSkills": "Keine Skills vorhanden",
+      "noSkillsDescription": "Dieser Benutzer hat noch keine Skills hinzugefügt.",
+      "noSkillsDescriptionOwn": "Fügen Sie Skills hinzu, um Ihre Expertise zu zeigen.",
+      "deleteConfirm": "Möchten Sie diesen Skill wirklich löschen?",
+      "deleteSuccess": "Skill erfolgreich gelöscht",
+      "deleteError": "Fehler beim Löschen des Skills",
+      "lastUsed": "Zuletzt verwendet:",
+      "year": "Jahr",
+      "years": "Jahre"
+    },
+
+    "skillLevel": {
+      "beginner": "Anfänger",
+      "basic": "Grundlagen",
+      "intermediate": "Fortgeschritten",
+      "advanced": "Erfahren",
+      "expert": "Experte"
+    },
+
+    "projects": {
+      "title": "Projekte",
+      "noProjects": "Keine Projekte vorhanden",
+      "noProjectsDescription": "Dieser Benutzer ist noch keinen Projekten zugeordnet.",
+      "noProjectsDescriptionOwn": "Sie sind noch keinen Projekten zugeordnet.",
+      "ongoing": "Laufend",
+      "status": {
+        "active": "Aktiv",
+        "completed": "Abgeschlossen",
+        "planned": "Geplant"
+      }
+    },
+
+    "editDialog": {
+      "title": "Profil bearbeiten",
+      "description": "Aktualisieren Sie Ihre Profil-Informationen",
+      "position": "Position",
+      "positionPlaceholder": "Position eingeben...",
+      "location": "Standort",
+      "locationPlaceholder": "Standort eingeben...",
+      "yearsOfExperience": "Jahre Erfahrung",
+      "availability": "Verfügbarkeit",
+      "selectAvailability": "Verfügbarkeit auswählen",
+      "bio": "Biografie",
+      "bioPlaceholder": "Erzählen Sie etwas über sich...",
+      "characters": "Zeichen",
+      "remaining": "verbleibend",
+      "noSuggestionsFound": "Keine Vorschläge gefunden",
+      "cancel": "Abbrechen",
+      "save": "Speichern",
+      "saving": "Wird gespeichert...",
+      "updateSuccess": "Profil erfolgreich aktualisiert",
+      "updateError": "Fehler beim Aktualisieren des Profils"
+    },
+
+    "skillDialog": {
+      "addTitle": "Skill hinzufügen",
+      "addDescription": "Fügen Sie einen neuen Skill zu Ihrem Profil hinzu",
+      "editTitle": "Skill bearbeiten",
+      "editDescription": "Aktualisieren Sie Ihre Skill-Informationen",
+      "category": "Kategorie",
+      "selectCategory": "Kategorie auswählen",
+      "skillName": "Skill-Name",
+      "skillNamePlaceholder": "Skill eingeben...",
+      "skillLevel": "Skill-Level",
+      "yearsOfExperience": "Jahre Erfahrung",
+      "lastUsed": "Zuletzt verwendet",
+      "noSuggestionsFound": "Keine Vorschläge gefunden",
+      "cancel": "Abbrechen",
+      "save": "Speichern",
+      "saving": "Wird gespeichert...",
+      "addSuccess": "Skill erfolgreich hinzugefügt",
+      "updateSuccess": "Skill erfolgreich aktualisiert",
+      "saveError": "Fehler beim Speichern des Skills"
+    }
+  },
+  "discoverProjects": {
+    "meta": {
+      "title": "Projekte - Skill Management System",
+      "description": "Verwalten Sie Projekte und weisen Sie Mitarbeiter basierend auf ihren Fähigkeiten zu"
+    },
+    "title": "Projekte",
+    "description": "Verwalten und durchsuchen Sie alle Projekte",
+    "error": "Fehler beim Laden der Projekte",
+    "errorDescription": "Die Projekte konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "noProjects": "Keine Projekte gefunden",
+    "searchPlaceholder": "Suche nach Projektname, Kunde oder Beschreibungen...",
+    "noProjectsDescription": "Es wurden keine Projekte gefunden, die Ihren Suchkriterien entsprechen.",
+    "showing": "Zeige {from} bis {to} von {total}",
+    "refresh": "Aktualisieren",
+    "createSuccess": "Projekt '{name}' erfolgreich erstellt",
+    "createError": "Fehler beim Erstellen des Projekts",
+    "updateSuccess": "Projekt erfolgreich aktualisiert",
+    "updateError": "Fehler beim Aktualisieren des Projekts",
+    "deleteSuccess": "Projekt erfolgreich gelöscht",
+    "deleteError": "Fehler beim Löschen des Projekts",
+    "deleteConfirmation": "Möchten Sie dieses Projekt wirklich löschen?",
+
+    "header": {
+      "title": "Projekte",
+      "description": "Verwalten und durchsuchen Sie alle Projekte",
+      "resultsCount": "{count} {count, plural, one {Projekt} other {Projekte}}",
+      "clearFilters": "Filter zurücksetzen",
+      "filters": "Filter",
+      "refresh": "Aktualisieren",
+      "createProject": "Projekt erstellen"
+    },
+
+    "card": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "owner": "Eigentümer",
+      "teamSize": "{count} {count, plural, one {Mitglied} other {Mitglieder}}",
+      "viewDetails": "Details anzeigen",
+      "status": {
+        "active": "Aktiv",
+        "completed": "Abgeschlossen",
+        "planned": "Geplant"
+      }
+    },
+
+    "filters": {
+      "title": "Filter",
+      "status": "Status",
+      "employees": "Mitarbeiter",
+      "skills": "Technologien",
+      "selectEmployees": "Mitarbeiter auswählen",
+      "skillsPlaceholder": "Technologie suchen...",
+      "noSkills": "Keine Technologien gefunden",
+      "skillsSelected": "{count} {count, plural, one {Technologie} other {Technologien}} ausgewählt",
+      "statusOptions": {
+        "active": "Aktiv",
+        "completed": "Abgeschlossen",
+        "planned": "Geplant"
+      }
+    },
+
+    "dialog": {
+      "addTitle": "Neues Projekt erstellen",
+      "addDescription": "Erstellen Sie ein neues Projekt mit allen erforderlichen Details",
+      "editTitle": "Projekt bearbeiten",
+      "editDescription": "Bearbeiten Sie die Projektdetails",
+      "name": "Projektname",
+      "namePlaceholder": "z.B. Website Redesign",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Beschreiben Sie das Projekt...",
+      "status": "Status",
+      "startDate": "Startdatum",
+      "endDate": "Enddatum",
+      "client": "Kunde",
+      "clientPlaceholder": "z.B. ACME Corporation",
+      "technologies": "Technologien",
+      "technologiesPlaceholder": "Technologie hinzufügen...",
+      "noTechnologies": "Keine Technologien gefunden",
+      "teamMembers": "Teammitglieder",
+      "selectMembers": "Mitglieder auswählen",
+      "membersSelected": "{count} {count, plural, one {Mitglied} other {Mitglieder}} ausgewählt",
+      "memberPosition": "Position im Projekt",
+      "selectPosition": "Position auswählen",
+      "cancel": "Abbrechen",
+      "create": "Erstellen",
+      "save": "Speichern",
+      "saving": "Wird gespeichert...",
+      "statusOptions": {
+        "planned": "Geplant",
+        "active": "Aktiv",
+        "completed": "Abgeschlossen"
+      },
+      "validation": {
+        "membersRequired": "Bitte wählen Sie mindestens ein Teammitglied aus",
+        "technologiesRequired": "Bitte wählen Sie mindestens eine Technologie aus",
+        "positionsRequired": "Bitte weisen Sie allen Mitgliedern eine Position zu"
+      }
+    }
+  },
+  "projectDetail": {
+    "meta": {
+      "title": "Projektdetails - Skill Management System",
+      "description": "Detaillierte Informationen zum Projekt"
+    },
+    "error": "Projekt nicht gefunden",
+    "errorDescription": "Das angeforderte Projekt konnte nicht geladen werden.",
+    "backToProjects": "Zurück zu Projekten",
+    "projectInformation": "Projektinformationen",
+    "description": "Beschreibung",
+    "timeline": "Zeitlinie",
+    "startDate": "Startdatum",
+    "endDate": "Enddatum",
+    "ongoing": "Laufend",
+    "projectDuration": "Projektdauer",
+    "clientInformation": "Kunde",
+    "teamMembers": "Teammitglieder",
+    "noMembers": "Keine Mitglieder",
+    "viewProfile": "Profil anzeigen",
+    "technologiesUsed": "Verwendete Technologien",
+    "noTechnologies": "Keine Technologien",
+    "duration": "Laufzeit",
+    "teamSize": "Teamgröße",
+    "client": "Kunde",
+    "technologies": "Technologien",
+    "technologiesCount": "{count} {count, plural, one {Technologie} other {Technologien}}",
+    "durationDays": "{days} {days, plural, one {Tag} other {Tage}}",
+    "durationMonths": "{months} {months, plural, one {Monat} other {Monate}}",
+    "durationFull": "{months} {months, plural, one {Monat} other {Monate}} und {days} {days, plural, one {Tag} other {Tage}}",
+    "status": {
+      "active": "Aktiv",
+      "completed": "Abgeschlossen",
+      "planned": "Geplant"
+    }
+  }
+}

@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sonarqube
+  labels:
+    app: sonarqube
+    component: server
+    part-of: skill-management-devops
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonarqube
+  template:
+    metadata:
+      labels:
+        app: sonarqube
+        component: server
+        part-of: skill-management-devops
+    spec:
+      initContainers:
+      - name: init-sysctl
+        image: busybox:1.36
+        command:
+        - sh
+        - -c
+        - |
+          sysctl -w vm.max_map_count=524288
+          sysctl -w fs.file-max=131072
+        securityContext:
+          privileged: true
+      - name: init-sonarqube-dirs
+        image: busybox:1.36
+        command:
+        - sh
+        - -c
+        - |
+          mkdir -p /pvc/data /pvc/extensions && chown -R 1000:1000 /pvc
+        volumeMounts:
+        - name: sonarqube-data
+          mountPath: /pvc
+      containers:
+      - name: sonarqube
+        image: sonarqube:25.10.0.114319-community
+        ports:
+        - containerPort: 9000
+          name: http
+        env:
+        - name: SONAR_JDBC_URL
+          valueFrom:
+            configMapKeyRef:
+              name: sonarqube-config
+              key: SONAR_JDBC_URL
+        - name: SONAR_JDBC_USERNAME
+          value: "sonarqube"
+        - name: SONAR_JDBC_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sonarqube-secret
+              key: SONAR_JDBC_PASSWORD
+        - name: SONAR_WEB_JAVAADDITIONALOPTS
+          value: "-server"
+        - name: SONAR_CE_JAVAADDITIONALOPTS
+          value: "-server"
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        livenessProbe:
+          httpGet:
+            path: /api/system/status
+            port: 9000
+          initialDelaySeconds: 120
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /api/system/status
+            port: 9000
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        volumeMounts:
+        - name: sonarqube-data
+          mountPath: /opt/sonarqube/data
+          subPath: data
+        - name: sonarqube-data
+          mountPath: /opt/sonarqube/extensions
+          subPath: extensions
+        - name: sonarqube-logs
+          mountPath: /opt/sonarqube/logs
+      volumes:
+      - name: sonarqube-data
+        persistentVolumeClaim:
+          claimName: sonarqube-pvc
+      - name: sonarqube-logs
+        emptyDir: {}

@@ -1,0 +1,89 @@
+---
+# Self-Signed Certificate Issuer
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned-issuer
+spec:
+  selfSigned: {}
+---
+# Single Certificate for all DevOps services
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: devops-cert
+  namespace: skill-management-devops-prod
+spec:
+  secretName: devops-tls
+  duration: 8760h # 1 year
+  renewBefore: 720h # 30 days
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer
+  commonName: skill-management-devops.edag.com
+  dnsNames:
+    - jenkins.skill-management-devops.edag.com
+    - sonarqube.skill-management-devops.edag.com
+---
+# Jenkins IngressRoute
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jenkins-https
+  namespace: skill-management-devops-prod
+  labels:
+    app: jenkins
+    environment: production
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`jenkins.skill-management-devops.edag.com`)
+      kind: Rule
+      services:
+        - name: prod-sms-jenkins-service
+          port: 8080
+  tls:
+    secretName: devops-tls
+---
+# SonarQube IngressRoute
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: sonarqube-https
+  namespace: skill-management-devops-prod
+  labels:
+    app: sonarqube
+    environment: production
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`sonarqube.skill-management-devops.edag.com`)
+      kind: Rule
+      services:
+        - name: prod-sms-sonarqube-service
+          port: 9000
+  tls:
+    secretName: devops-tls
+---
+# Docker Registry IngressRoute
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: registry-http
+  namespace: skill-management-devops-prod
+  labels:
+    app: docker-registry
+    environment: production
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`registry.skill-management-devops.edag.com`)
+      kind: Rule
+      services:
+        - name: prod-sms-docker-registry-service
+          port: 5000
+  tls:
+    secretName: devops-tls

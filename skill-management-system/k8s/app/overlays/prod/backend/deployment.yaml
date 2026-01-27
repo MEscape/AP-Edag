@@ -1,0 +1,154 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+    component: api
+    part-of: skill-management-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+        component: api
+        part-of: skill-management-system
+    spec:
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: skill-management-backend
+        image: registry.skill-management-devops.edag.com/skill-management-backend:latest
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "prod"
+        - name: API_DOCS_ENABLED
+          value: "true"
+        - name: SWAGGER_UI_ENABLED
+          value: "true"
+        - name: LOGGING_FILE_NAME
+          value: "/app/logs/application.log"
+        - name: DATABASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: DATABASE_URL
+        - name: KEYCLOAK_URL
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: KEYCLOAK_URL
+        - name: KEYCLOAK_AUTH_URL
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: KEYCLOAK_AUTH_URL
+        - name: KEYCLOAK_TOKEN_URL
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: KEYCLOAK_TOKEN_URL
+        - name: KEYCLOAK_INTROSPECTION_URI
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: KEYCLOAK_INTROSPECTION_URI
+        - name: FRONTEND_URL
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: FRONTEND_URL
+        - name: KEYCLOAK_MASTER_REALM
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: KEYCLOAK_MASTER_REALM
+        - name: KEYCLOAK_TARGET_REALM
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: KEYCLOAK_TARGET_REALM
+        - name: DATABASE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: DATABASE_USERNAME
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: DATABASE_PASSWORD
+        - name: OAUTH2_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: OAUTH2_CLIENT_ID
+        - name: OAUTH2_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: OAUTH2_CLIENT_SECRET
+        - name: KEYCLOAK_ADMIN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: KEYCLOAK_ADMIN_USERNAME
+        - name: KEYCLOAK_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: KEYCLOAK_ADMIN_PASSWORD
+        - name: WEBHOOK_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: WEBHOOK_USERNAME
+        - name: WEBHOOK_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: WEBHOOK_PASSWORD
+        volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "1000m"
+          limits:
+            memory: "2Gi"
+            cpu: "2000m"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1001
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: false
+      volumes:
+      - name: logs
+        emptyDir: {}
